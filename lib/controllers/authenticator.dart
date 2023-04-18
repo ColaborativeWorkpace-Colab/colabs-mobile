@@ -1,3 +1,4 @@
+import 'package:colabs_mobile/types/user_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:oauth2_client/access_token_response.dart';
@@ -11,6 +12,8 @@ class Authenticator extends ChangeNotifier {
   final GoogleOAuth2Client googleClient = GoogleOAuth2Client(
       redirectUri: dotenv.env['GOOGLE_CALLBACK_URL']!, customUriScheme: 'http');
   AccessTokenResponse? _accessToken;
+  bool _hasUserAgreed = false;
+  UserType _selectedUserType = UserType.freelancer;
 
   Future<AccessTokenResponse> getGithubToken() async {
     return githubClient.getTokenWithAuthCodeFlow(
@@ -31,6 +34,18 @@ class Authenticator extends ChangeNotifier {
     notifyListeners();
   }
 
+  set setHasUserAgreed(bool value) {
+    _hasUserAgreed = value;
+    notifyListeners();
+  }
+
+  set setUserType(UserType value) {
+    _selectedUserType = value;
+    notifyListeners();
+  }
+
   AccessTokenResponse? get getAccessToken => _accessToken;
   bool get isUserAuthorized => _isAuthorized;
+  bool get hasUserAgreed => _hasUserAgreed;
+  UserType get getUserType => _selectedUserType;
 }
