@@ -1,67 +1,44 @@
+import 'package:colabs_mobile/controllers/authenticator.dart';
+import 'package:colabs_mobile/screens/login.dart';
+import 'package:colabs_mobile/screens/home.dart';
+import 'package:colabs_mobile/screens/signin.dart';
+import 'package:colabs_mobile/themes/default_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
+  runApp(const ColabsApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class ColabsApp extends StatelessWidget {
+  const ColabsApp({Key? key}) : super(key: key);
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
+    return  MultiProvider(
+      providers: <SingleChildWidget>[
+        ChangeNotifierProvider<Authenticator>(create: (_) => Authenticator()),
+      ],
+      builder: (BuildContext context, _){
+        Authenticator auth = Provider.of<Authenticator>(context);
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+        return MaterialApp(
+          title: 'Colabs',
+          theme: defaultTheme,
+          debugShowCheckedModeBanner: false,
+          initialRoute: auth.isUserAuthorized ? '/' : '/login',
+          routes: <String, Widget Function(BuildContext)>{
+            '/': (_) => const HomeScreen(),
+            '/login': (_) => LoginScreen(),
+            '/signup': (_) => const SignupScreen(),
+          }
+        );
+      }
     );
   }
 }

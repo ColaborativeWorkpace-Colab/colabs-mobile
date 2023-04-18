@@ -43,7 +43,6 @@ linter:
     - avoid_catches_without_on_clauses
     - avoid_final_parameters
     - avoid_null_checks_in_equality_operators
-    - avoid_setters_without_getters
     - avoid_unnecessary_containers
     - avoid_void_async
     - constant_identifier_names
