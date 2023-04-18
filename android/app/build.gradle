@@ -51,11 +51,6 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
-        //TODO: Add Authentication Domain
-        // manifestPlaceholders = [
-        //     appAuthRedirectScheme: "com.example.colabs_mobile", 
-        //     applicationName: "com.example.colabs_mobile.Application"] 
-    
     }
 
     buildTypes {

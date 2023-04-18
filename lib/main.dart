@@ -1,7 +1,7 @@
 import 'package:colabs_mobile/controllers/authenticator.dart';
 import 'package:colabs_mobile/screens/login.dart';
 import 'package:colabs_mobile/screens/home.dart';
-import 'package:colabs_mobile/screens/signin.dart';
+import 'package:colabs_mobile/screens/signup.dart';
 import 'package:colabs_mobile/themes/default_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -33,9 +33,9 @@ class ColabsApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           initialRoute: auth.isUserAuthorized ? '/' : '/login',
           routes: <String, Widget Function(BuildContext)>{
-            '/': (_) => const HomeScreen(),
+            '/': (_) => HomeScreen(),
             '/login': (_) => LoginScreen(),
-            '/signup': (_) => const SignupScreen(),
+            '/signup': (_) => SignupScreen(),
           }
         );
       }
