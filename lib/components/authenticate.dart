@@ -21,8 +21,10 @@ class Authenticate extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(5))),
               onPressed: () async {
-                authenticator.setAccessToken =
-                    await authenticator.getGoogleToken();
+                //TODO: Revert to original
+                //authenticator.setAccessToken =
+                //    await authenticator.getGoogleToken();
+                Navigator.pushNamed(context, '/');
               },
               child: Row(children: const <Widget>[
                 Image(
@@ -58,7 +60,7 @@ class Authenticate extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 15),
               child: const Divider(thickness: 2.5)),
           Positioned(
-              left: screenWidth * .47,
+              left: screenWidth * .37,
               child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   decoration: const BoxDecoration(color: Colors.white),

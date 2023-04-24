@@ -33,7 +33,7 @@ class ColabsApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           initialRoute: auth.isUserAuthorized ? '/' : '/login',
           routes: <String, Widget Function(BuildContext)>{
-            '/': (_) => HomeScreen(),
+            '/': (_) => const HomeScreen(),
             '/login': (_) => LoginScreen(),
             '/signup': (_) => SignupScreen(),
           }
