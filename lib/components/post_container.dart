@@ -11,9 +11,9 @@ class PostContainer extends StatelessWidget {
     return Container(
         height: screenHeight * .62,
         width: screenWidth * .95,
-        margin: const EdgeInsets.symmetric(vertical: 5),
+        margin: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
-            color: Colors.grey, borderRadius: BorderRadius.circular(7)),
+            color: Colors.white, borderRadius: BorderRadius.circular(7)),
         child: Column(children: <Widget>[
           Row(children: <Widget>[
             Container(
@@ -35,29 +35,61 @@ class PostContainer extends StatelessWidget {
           const SizedBox(height: 30),
           Container(
               margin: const EdgeInsets.all(10),
-              child: const Divider(height: 1, color: Colors.black)),
+              child: const Divider(
+                  height: 1, thickness: 1, color: Color(0xFF5521B5))),
           Row(children: <Widget>[
             SizedBox(
                 height: 50,
                 width: screenWidth * .25,
                 child: ElevatedButton(
-                    onPressed: () {},
-                    child: const Icon(Icons.thumb_up_alt_rounded))),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[100]!),
+                    onPressed: () {
+                      //TODO: Like a post
+                    },
+                    child: const Icon(
+                      Icons.thumb_up_alt_rounded,
+                      color: Color(0xFF5521B5),
+                    ))),
             SizedBox(
                 height: 50,
                 width: screenWidth * .25,
                 child: ElevatedButton(
-                    onPressed: () {}, child: const Icon(Icons.comment))),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[100]!),
+                    onPressed: () {
+                      //TODO: Comment on a post
+                    },
+                    child: const Icon(
+                      Icons.comment,
+                      color: Color(0xFF5521B5),
+                    ))),
             SizedBox(
                 height: 50,
                 width: screenWidth * .25,
                 child: ElevatedButton(
-                    onPressed: () {}, child: const Icon(Icons.share))),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[100]!),
+                    onPressed: () {
+                      //TODO: share a post
+                    },
+                    child: const Icon(
+                      Icons.share,
+                      color: Color(0xFF5521B5),
+                    ))),
             SizedBox(
                 height: 50,
                 width: screenWidth * .25,
                 child: ElevatedButton(
-                    onPressed: () {}, child: const Icon(Icons.send)))
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[100]!),
+                    onPressed: () {
+                      //TODO: Send a post in private message
+                    },
+                    child: const Icon(
+                      Icons.send,
+                      color: Color(0xFF5521B5),
+                    )))
           ])
         ]));
   }

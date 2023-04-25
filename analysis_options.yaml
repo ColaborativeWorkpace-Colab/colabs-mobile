@@ -48,7 +48,6 @@ linter:
     - constant_identifier_names
     - empty_constructor_bodies
     - library_prefixes
-    - no_default_cases
     - no_leading_underscores_for_local_identifiers
     - no_leading_underscores_for_library_prefixes
     - parameter_assignments

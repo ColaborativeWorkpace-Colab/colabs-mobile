@@ -21,7 +21,7 @@ class Authenticate extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(5))),
               onPressed: () async {
-                //TODO: Revert to original
+                //FIXME: Revert to original
                 //authenticator.setAccessToken =
                 //    await authenticator.getGoogleToken();
                 Navigator.pushNamed(context, '/');

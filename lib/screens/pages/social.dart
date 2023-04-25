@@ -8,18 +8,21 @@ class SocialPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Column(
-        children: <Widget>[
-          const Navbar(),
-          Expanded(
-            child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: 5,
-                itemBuilder: (BuildContext context, int index) {
-                  return const PostContainer();
-                }),
-          )
-        ],
+      child: Container(
+        color: Colors.grey[200]!,
+        child: Column(
+          children: <Widget>[
+            const Navbar(searchFilter: SearchFilter.social),
+            Expanded(
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: 5,
+                  itemBuilder: (BuildContext context, int index) {
+                    return const PostContainer();
+                  }),
+            )
+          ],
+        ),
       ),
     );
   }
