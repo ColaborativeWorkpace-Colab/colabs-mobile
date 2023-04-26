@@ -2,6 +2,7 @@ import 'package:colabs_mobile/controllers/authenticator.dart';
 import 'package:colabs_mobile/screens/login.dart';
 import 'package:colabs_mobile/screens/home.dart';
 import 'package:colabs_mobile/screens/pages/profile.dart';
+import 'package:colabs_mobile/screens/pages/settings.dart';
 import 'package:colabs_mobile/screens/signup.dart';
 import 'package:colabs_mobile/themes/default_theme.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +38,8 @@ class ColabsApp extends StatelessWidget {
             '/': (_) => HomeScreen(),
             '/login': (_) => LoginScreen(),
             '/signup': (_) => SignupScreen(),
-            '/profile': (_) => const ProfilePage()
+            '/profile': (_) => const ProfilePage(),
+            '/settings': (_) => const SettingsPage()
           }
         );
       }

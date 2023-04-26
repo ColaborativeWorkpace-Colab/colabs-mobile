@@ -15,7 +15,7 @@ final ThemeData defaultTheme = ThemeData(
         700: Color(0xCC5521B5), //80%
         800: Color(0xE65521B5), //90%
         900: Color(0xff5521B5), //100%
-      },
+      }
     ),
     appBarTheme: const AppBarTheme(color: Color(0xFF5521B5)),
     elevatedButtonTheme: ElevatedButtonThemeData(

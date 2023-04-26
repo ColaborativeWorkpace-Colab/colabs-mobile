@@ -34,6 +34,8 @@ class Navbar extends StatelessWidget {
             child: TextField(
                 style: const TextStyle(fontSize: 15),
                 decoration: InputDecoration(
+                    contentPadding:
+                        const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
                     suffixIcon: IconButton(
                         onPressed: () {
                           switch (searchFilter) {
@@ -51,6 +53,7 @@ class Navbar extends StatelessWidget {
                     hintText: 'Search ${searchFilter.name}',
                     border: const OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(45)))))),
+        //FIXME: Fix bug with different search bars concerning hero tag
         Hero(
           tag: 'ProfileTag',
           child: ElevatedButton(

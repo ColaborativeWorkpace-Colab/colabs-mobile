@@ -12,7 +12,7 @@ class ProfilePage extends StatelessWidget {
           actions: <Widget>[
             IconButton(
                 onPressed: () {
-                  //Navigator.pushNamed(context, ModalRoute.withName('/settings'));
+                  Navigator.pushNamed(context, '/settings');
                 },
                 icon: const Icon(Icons.settings)),
             IconButton(

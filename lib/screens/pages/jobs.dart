@@ -1,3 +1,4 @@
+import 'package:colabs_mobile/components/job_container.dart';
 import 'package:colabs_mobile/components/navbar.dart';
 import 'package:flutter/material.dart';
 
@@ -11,12 +12,19 @@ class JobsPage extends StatelessWidget {
       const Navbar(searchFilter: SearchFilter.job),
       Expanded(
         child: ListView.builder(
+          padding: const EdgeInsets.only(bottom: 95),
           itemCount: 4,
-          shrinkWrap: true,
           itemBuilder: (BuildContext context, int index) {
-            return const ListTile(
-              title: Text('Job Title'),
-              subtitle: Text('Job Description'),
+            return JobContainer(
+              jobTitle: 'Sample Title',
+              timeStamp: DateTime.now(),
+              description: 'This is a sample description',
+              requirements: const <String>[
+                'Requirement1',
+                'Requirement1',
+                'Requirement1',
+                'Requirement1',
+              ],
             );
           },
         ),
