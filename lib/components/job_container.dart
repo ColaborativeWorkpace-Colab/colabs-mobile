@@ -64,7 +64,7 @@ class JobContainer extends StatelessWidget {
                             margin: const EdgeInsets.only(right: 10),
                             child: InkWell(
                                 onTap: () {
-                                  showBottomSheet(
+                                  showModalBottomSheet(
                                       context: context,
                                       builder: (BuildContext context) =>
                                           Container(height: screenHeight * .5));
@@ -81,7 +81,7 @@ class JobContainer extends StatelessWidget {
                   child: Chip(
                       backgroundColor: isVerified
                           ? const Color(0xFF5521B5)
-                          : Colors.grey[200],
+                          : Colors.grey[300],
                       label: isVerified
                           ? SizedBox(
                               width: 150,

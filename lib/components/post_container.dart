@@ -59,6 +59,7 @@ class PostContainer extends StatelessWidget {
                         backgroundColor: Colors.grey[100]!),
                     onPressed: () {
                       //TODO: Comment on a post
+                      Navigator.pushNamed(context, '/comments');
                     },
                     child: const Icon(
                       Icons.comment,
@@ -72,6 +73,11 @@ class PostContainer extends StatelessWidget {
                         backgroundColor: Colors.grey[100]!),
                     onPressed: () {
                       //TODO: share a post
+                      showModalBottomSheet(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Container(height: screenHeight * .5);
+                          });
                     },
                     child: const Icon(
                       Icons.share,
@@ -85,6 +91,11 @@ class PostContainer extends StatelessWidget {
                         backgroundColor: Colors.grey[100]!),
                     onPressed: () {
                       //TODO: Send a post in private message
+                      showModalBottomSheet(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Container(height: screenHeight * .5);
+                          });
                     },
                     child: const Icon(
                       Icons.send,

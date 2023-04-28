@@ -14,6 +14,8 @@ class Authenticator extends ChangeNotifier {
   AccessTokenResponse? _accessToken;
   bool _hasUserAgreed = false;
   UserType _selectedUserType = UserType.freelancer;
+  //TODO: Get UserId
+  String? _userId;
 
   Future<AccessTokenResponse> getGithubToken() async {
     return githubClient.getTokenWithAuthCodeFlow(
@@ -48,4 +50,5 @@ class Authenticator extends ChangeNotifier {
   bool get isUserAuthorized => _isAuthorized;
   bool get hasUserAgreed => _hasUserAgreed;
   UserType get getUserType => _selectedUserType;
+  String? get getUserId => _userId;
 }

@@ -1,8 +1,12 @@
 import 'package:colabs_mobile/controllers/authenticator.dart';
+import 'package:colabs_mobile/controllers/layout_controller.dart';
+import 'package:colabs_mobile/controllers/restservice.dart';
+import 'package:colabs_mobile/screens/comments.dart';
 import 'package:colabs_mobile/screens/login.dart';
 import 'package:colabs_mobile/screens/home.dart';
-import 'package:colabs_mobile/screens/pages/profile.dart';
-import 'package:colabs_mobile/screens/pages/settings.dart';
+import 'package:colabs_mobile/screens/profile.dart';
+import 'package:colabs_mobile/screens/settings.dart';
+import 'package:colabs_mobile/screens/projectview.dart';
 import 'package:colabs_mobile/screens/signup.dart';
 import 'package:colabs_mobile/themes/default_theme.dart';
 import 'package:flutter/material.dart';
@@ -22,27 +26,33 @@ class ColabsApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return  MultiProvider(
-      providers: <SingleChildWidget>[
-        ChangeNotifierProvider<Authenticator>(create: (_) => Authenticator()),
-      ],
-      builder: (BuildContext context, _){
-        Authenticator auth = Provider.of<Authenticator>(context);
+    return MultiProvider(
+        providers: <SingleChildWidget>[
+          ChangeNotifierProvider<Authenticator>(create: (_) => Authenticator()),
+          ChangeNotifierProvider<LayoutController>(
+              create: (_) => LayoutController()),
+          ChangeNotifierProvider<RESTService>(create: (_) => RESTService()),
+        ],
+        builder: (BuildContext context, _) {
+          Authenticator auth = Provider.of<Authenticator>(context);
+          RESTService restService = Provider.of<RESTService>(context);
+          
+          restService.setAuthenticator = auth;
 
-        return MaterialApp(
-          title: 'Colabs',
-          theme: defaultTheme,
-          debugShowCheckedModeBanner: false,
-          initialRoute: auth.isUserAuthorized ? '/' : '/login',
-          routes: <String, Widget Function(BuildContext)>{
-            '/': (_) => HomeScreen(),
-            '/login': (_) => LoginScreen(),
-            '/signup': (_) => SignupScreen(),
-            '/profile': (_) => const ProfilePage(),
-            '/settings': (_) => const SettingsPage()
-          }
-        );
-      }
-    );
+          return MaterialApp(
+              title: 'Colabs',
+              theme: defaultTheme,
+              debugShowCheckedModeBanner: false,
+              initialRoute: auth.isUserAuthorized ? '/' : '/login',
+              routes: <String, Widget Function(BuildContext)>{
+                '/': (_) => HomeScreen(),
+                '/login': (_) => LoginScreen(),
+                '/signup': (_) => SignupScreen(),
+                '/profile': (_) => const ProfilePage(),
+                '/settings': (_) => const SettingsPage(),
+                '/projectview': (_) => const ProjectView(),
+                '/comments': (_) => const Comments()
+              });
+        });
   }
 }

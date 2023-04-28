@@ -1,10 +1,12 @@
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
+import 'package:colabs_mobile/controllers/layout_controller.dart';
 import 'package:colabs_mobile/screens/pages/jobs.dart';
 import 'package:colabs_mobile/screens/pages/messages.dart';
 import 'package:colabs_mobile/screens/pages/post.dart';
 import 'package:colabs_mobile/screens/pages/projects.dart';
 import 'package:colabs_mobile/screens/pages/social.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
@@ -12,6 +14,8 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    LayoutController layoutController = Provider.of<LayoutController>(context);
+
     return Scaffold(
         resizeToAvoidBottomInset: false,
         body: Stack(children: <Widget>[
@@ -76,7 +80,8 @@ class HomeScreen extends StatelessWidget {
                     pageController.animateToPage(page,
                         duration: const Duration(milliseconds: 350),
                         curve: Curves.easeInOut);
-
+                    layoutController.setSearchFilter =
+                        SearchFilter.values[page];
                     if (page == 2 && pageController.page == 2) {
                       //TODO: Submit post
                     }
