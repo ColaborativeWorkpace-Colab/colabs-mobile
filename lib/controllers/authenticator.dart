@@ -17,18 +17,20 @@ class Authenticator extends ChangeNotifier {
   //TODO: Get UserId
   String? _userId;
 
+  //TODO: Get valid github scope
   Future<AccessTokenResponse> getGithubToken() async {
     return githubClient.getTokenWithAuthCodeFlow(
         clientId: dotenv.env['GITHUB_CLIENT_ID']!,
         clientSecret: dotenv.env['GITHUB_CLIENT_SECRET']!,
-        scopes: <String>['repo']);
+        scopes: <String>['']);
   }
 
+  //TODO: Open authentication in external window
   Future<AccessTokenResponse> getGoogleToken() async {
     return googleClient.getTokenWithAuthCodeFlow(
         clientId: dotenv.env['GOOGLE_CLIENT_ID']!,
         clientSecret: dotenv.env['GOOGLE_CLIENT_SECRET']!,
-        scopes: <String>['repo']);
+        scopes: <String>['profile']);
   }
 
   set setAccessToken(AccessTokenResponse value) {

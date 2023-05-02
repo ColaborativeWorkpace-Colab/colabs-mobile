@@ -36,7 +36,7 @@ class ColabsApp extends StatelessWidget {
         builder: (BuildContext context, _) {
           Authenticator auth = Provider.of<Authenticator>(context);
           RESTService restService = Provider.of<RESTService>(context);
-          
+
           restService.setAuthenticator = auth;
 
           return MaterialApp(
