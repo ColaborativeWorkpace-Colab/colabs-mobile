@@ -22,9 +22,9 @@ class Authenticate extends StatelessWidget {
                       borderRadius: BorderRadius.circular(5))),
               onPressed: () async {
                 //FIXME: Revert to original
-                //authenticator.setAccessToken =
-                //    await authenticator.getGoogleToken();
-                Navigator.pushNamed(context, '/');
+                // authenticator.setAccessToken =
+                //     await authenticator.getGoogleToken();
+                await Navigator.pushNamed(context, '/');
               },
               child: Row(children: const <Widget>[
                 Image(
