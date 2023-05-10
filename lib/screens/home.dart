@@ -23,12 +23,12 @@ class HomeScreen extends StatelessWidget {
               clipBehavior: Clip.none,
               controller: pageController,
               physics: const NeverScrollableScrollPhysics(),
-              children: const <Widget>[
-                SocialPage(),
-                MessagesPage(),
+              children: <Widget>[
+                const SocialPage(),
+                const MessagesPage(),
                 PostPage(),
-                ProjectsPage(),
-                JobsPage(),
+                const ProjectsPage(),
+                const JobsPage(),
               ]),
           Positioned(
               bottom: 1,
