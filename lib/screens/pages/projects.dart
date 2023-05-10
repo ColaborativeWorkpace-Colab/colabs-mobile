@@ -22,7 +22,7 @@ class ProjectsPage extends StatelessWidget {
                     },
                     title: const Text('Project Name'),
                     trailing: PopupMenuButton<String>(
-                        icon: const Icon(Icons.wysiwyg),
+                        icon: const Icon(Icons.more_vert),
                         itemBuilder: (BuildContext context) =>
                             <PopupMenuEntry<String>>[
                               const PopupMenuItem<String>(

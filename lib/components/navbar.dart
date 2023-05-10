@@ -10,7 +10,7 @@ class Navbar extends StatelessWidget {
     double screenWidth = MediaQuery.of(context).size.width;
 
     return Container(
-        margin: const EdgeInsets.only(left: 25, top: 15, bottom: 20),
+        margin: const EdgeInsets.only(left: 25, top: 15),
         child: Row(children: <Widget>[
           SizedBox(
               height: 50,
