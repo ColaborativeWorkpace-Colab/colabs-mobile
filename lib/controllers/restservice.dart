@@ -6,6 +6,15 @@ import 'package:http/http.dart' as http;
 class RESTService extends ChangeNotifier {
   final String urlHost = dotenv.env['DEV_URL']!;
   Authenticator? authenticator;
+  final List<String> _userConnections = <String>[
+    'a',
+    'b',
+    'c',
+    'd',
+    'e',
+    'f',
+    'g'
+  ];
 
   RESTService();
 
@@ -29,4 +38,6 @@ class RESTService extends ChangeNotifier {
   set setAuthenticator(Authenticator value) {
     authenticator = value;
   }
+
+  List<String> get getUserConnections => _userConnections;
 }
