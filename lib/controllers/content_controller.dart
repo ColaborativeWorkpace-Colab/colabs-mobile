@@ -5,6 +5,7 @@ class ContentController extends ChangeNotifier {
   final List<File> _attachements = <File>[];
   final List<String> _tags = <String>[];
   final List<String> _taggedUsers = <String>[];
+  bool _isPublic = false;
 
   void addAttachements(List<File> files) {
     _attachements.addAll(files);
@@ -35,6 +36,13 @@ class ContentController extends ChangeNotifier {
     notifyListeners();
   }
 
+  void clearInputs() {
+    _taggedUsers.clear();
+    _attachements.clear();
+    _tags.clear();
+    notifyListeners();
+  }
+
   List<String> _removeDuplicateTags(List<String> value) {
     List<String> temp = <String>[];
     for (String element in value) {
@@ -43,7 +51,13 @@ class ContentController extends ChangeNotifier {
     return temp;
   }
 
+  set setIsPublic(bool value) {
+    _isPublic = value;
+    notifyListeners();
+  }
+
   List<String> get getTags => _tags;
   List<String> get getTaggedUsers => _taggedUsers;
   List<File> get getAttachments => _attachements;
+  bool get getIsPublic => _isPublic;
 }

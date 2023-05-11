@@ -3,6 +3,7 @@ import 'package:colabs_mobile/components/connections_grid_view.dart';
 import 'package:colabs_mobile/controllers/content_controller.dart';
 import 'package:colabs_mobile/utils/filter_tags.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 class PostPage extends StatelessWidget {
@@ -36,13 +37,53 @@ class PostPage extends StatelessWidget {
             margin: const EdgeInsets.only(right: 10),
             child: PopupMenuButton<String>(
                 icon: const Icon(Icons.more_vert),
+                onSelected: (String value) {
+                  switch (value) {
+                    case 'Clear':
+                      contentController.clearInputs();
+                      break;
+                    default:
+                      contentController.setIsPublic =
+                          !contentController.getIsPublic;
+                  }
+                },
                 itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                      const PopupMenuItem<String>(
-                          value: 'Option 1', child: Text('Option 1')),
-                      const PopupMenuItem<String>(
-                          value: 'Delete', child: Text('Delete')),
-                      const PopupMenuItem<String>(
-                          value: 'Option 1', child: Text('Option 1'))
+                      PopupMenuItem<String>(
+                          value: contentController.getIsPublic.toString(),
+                          child: ListTile(
+                              title: (contentController.getIsPublic)
+                                  ? Row(
+                                      children: const <Widget>[
+                                        FaIcon(FontAwesomeIcons.globe,
+                                            color: Colors.blue),
+                                        SizedBox(width: 15),
+                                        Text('Public'),
+                                      ],
+                                    )
+                                  : Row(
+                                      children: const <Widget>[
+                                        FaIcon(FontAwesomeIcons.eyeSlash),
+                                        SizedBox(width: 15),
+                                        Text('Only for you'),
+                                      ],
+                                    ),
+                              trailing: Switch(
+                                  value: contentController.getIsPublic,
+                                  onChanged: (bool value) {
+                                    contentController.setIsPublic = value;
+                                  }))),
+                      PopupMenuItem<String>(
+                          value: 'Clear',
+                          child: Row(children: <Widget>[
+                            Container(
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 15),
+                              child: const FaIcon(FontAwesomeIcons.trashCan,
+                                  color: Color.fromARGB(255, 218, 102, 94))
+                            ),
+                            const Text(
+                              'Clear')
+                          ]))
                     ]))
       ]),
       Form(
@@ -166,11 +207,11 @@ class PostPage extends StatelessWidget {
 
                                 return OutlinedButton(
                                   style: OutlinedButton.styleFrom(
-                                      backgroundColor: 
-                                      //TODO: Implement switch when tag is used
-                                      (false)
-                                          ? const Color(0xFF5521B5)
-                                          : null,
+                                      backgroundColor:
+                                          //TODO: Implement switch when tag is used
+                                          (false)
+                                              ? const Color(0xFF5521B5)
+                                              : null,
                                       side: const BorderSide(
                                           color: Color(0xFF5521B5))),
                                   child: Text(tags[index]),
