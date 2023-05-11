@@ -33,7 +33,8 @@ class ColabsApp extends StatelessWidget {
           ChangeNotifierProvider<LayoutController>(
               create: (_) => LayoutController()),
           ChangeNotifierProvider<RESTService>(create: (_) => RESTService()),
-          ChangeNotifierProvider<ContentController>(create: (_) => ContentController()),
+          ChangeNotifierProvider<ContentController>(
+              create: (_) => ContentController()),
         ],
         builder: (BuildContext context, _) {
           Authenticator auth = Provider.of<Authenticator>(context);
