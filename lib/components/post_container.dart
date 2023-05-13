@@ -1,7 +1,9 @@
+import 'package:colabs_mobile/models/post.dart';
 import 'package:flutter/material.dart';
 
 class PostContainer extends StatelessWidget {
-  const PostContainer({super.key});
+  final Post post;
+  const PostContainer({super.key, required this.post});
 
   @override
   Widget build(BuildContext context) {
@@ -20,12 +22,13 @@ class PostContainer extends StatelessWidget {
                 margin: const EdgeInsets.all(10),
                 child: const CircleAvatar(
                     radius: 25, backgroundColor: Colors.black)),
-            Column(children: const <Widget>[
-              Text('User Name',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-              Text('Occupation', style: TextStyle(fontSize: 10)),
-              Text('24/4/2023',
-                  style: TextStyle(fontStyle: FontStyle.italic, fontSize: 10))
+            Column(children: <Widget>[
+              Text(post.postOwnerId,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                  //TODO: Get User occupation
+              Text(post.postOwnerId, style: const TextStyle(fontSize: 10)),
+              Text(post.timeStamp.toString(),
+                  style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 10))
             ])
           ]),
           Image(

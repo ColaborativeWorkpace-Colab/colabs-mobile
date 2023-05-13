@@ -1,6 +1,7 @@
 import 'package:colabs_mobile/components/attachement_viewer.dart';
 import 'package:colabs_mobile/components/connections_grid_view.dart';
 import 'package:colabs_mobile/controllers/content_controller.dart';
+import 'package:colabs_mobile/controllers/restservice.dart';
 import 'package:colabs_mobile/utils/filter_tags.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -17,6 +18,7 @@ class PostPage extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
     ContentController contentController =
         Provider.of<ContentController>(context);
+    RESTService restService = Provider.of<RESTService>(context);
 
     return SafeArea(
         child: SingleChildScrollView(
@@ -85,8 +87,8 @@ class PostPage extends StatelessWidget {
                                             Color.fromARGB(255, 218, 102, 94))),
                                 const Text('Clear')
                               ]))
-                        ])),
-          ],
+                        ]))
+          ]
         )
       ]),
       Form(
@@ -95,9 +97,11 @@ class PostPage extends StatelessWidget {
             Container(
                 margin: const EdgeInsets.symmetric(horizontal: 15),
                 child: TextFormField(
-                    onSaved: (String? value) async {
-                      filterTags(value!, contentController);
-                    },
+                    controller: postController,
+                    //FIXME: Uncomment if no solution exists
+                    // onSaved: (String? value) async {
+                    //   filterTags(value!, contentController);
+                    // },
                     minLines: 5,
                     maxLines: 15,
                     decoration: InputDecoration(
@@ -178,6 +182,23 @@ class PostPage extends StatelessWidget {
 
                             if (!isValid) return;
                             formKey.currentState!.save();
+
+                            List<String>? filteredTags = filterTags(
+                                postController.text, contentController);
+                            
+                            restService.postContentRequest(<String, dynamic>{
+                              'textContent': postController.text,
+                              'imageContent':
+                                  contentController.getAttachments.join(','),
+                              'tags': (filteredTags != null)
+                                  ? filteredTags.join(',')
+                                  : '',
+                              'visibility':
+                                  contentController.getIsPublic.toString(),
+                              'taggedUsers':
+                                  contentController.getTaggedUsers.join(',')
+                            }).whenComplete(
+                                () => contentController.clearInputs());
                           },
                           child: const Text('Post')))
                 ])),

@@ -8,24 +8,25 @@ import 'package:oauth2_client/google_oauth2_client.dart';
 class Authenticator extends ChangeNotifier {
   final bool _isAuthorized = false;
   final GitHubOAuth2Client githubClient = GitHubOAuth2Client(
-      redirectUri: dotenv.env['GITHUB_CALLBACK_URL']!, customUriScheme: 'http');
+      redirectUri: dotenv.env['GITHUB_CALLBACK_URL']!,
+      customUriScheme: 'http');
   final GoogleOAuth2Client googleClient = GoogleOAuth2Client(
-      redirectUri: dotenv.env['GOOGLE_CALLBACK_URL']!, customUriScheme: 'http');
+      redirectUri: dotenv.env['GOOGLE_CALLBACK_URL']!,
+      customUriScheme: 'http');
   AccessTokenResponse? _accessToken;
   bool _hasUserAgreed = false;
   UserType _selectedUserType = UserType.freelancer;
   //TODO: Get UserId
-  String? _userId;
+  String? _userId = '64344fc7fe1d1fa62a1fc423';
 
   //TODO: Get valid github scope
   Future<AccessTokenResponse> getGithubToken() async {
     return githubClient.getTokenWithAuthCodeFlow(
         clientId: dotenv.env['GITHUB_CLIENT_ID']!,
         clientSecret: dotenv.env['GITHUB_CLIENT_SECRET']!,
-        scopes: <String>['']);
+        scopes: <String>['repo']);
   }
 
-  //TODO: Open authentication in external window
   Future<AccessTokenResponse> getGoogleToken() async {
     return googleClient.getTokenWithAuthCodeFlow(
         clientId: dotenv.env['GOOGLE_CLIENT_ID']!,

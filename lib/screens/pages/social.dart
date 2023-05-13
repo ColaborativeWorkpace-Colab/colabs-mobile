@@ -11,7 +11,7 @@ class SocialPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     RESTService restService = Provider.of<RESTService>(context);
-    restService.getSocialFeed();
+    //restService.getSocialFeed();
     
     return SafeArea(
         child: Container(
@@ -22,10 +22,10 @@ class SocialPage extends StatelessWidget {
                 child: ListView.builder(
                     padding: const EdgeInsets.only(bottom: 95),
                     shrinkWrap: true,
-                    itemCount: 5,
+                    itemCount: restService.getSocialFeedPosts.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return const PostContainer();
-                    }),
+                      return PostContainer(post: restService.getSocialFeedPosts[index]);
+                    })
               )
             ])));
   }

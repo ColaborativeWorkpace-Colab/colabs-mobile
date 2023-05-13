@@ -41,6 +41,7 @@ class ColabsApp extends StatelessWidget {
           RESTService restService = Provider.of<RESTService>(context);
 
           restService.setAuthenticator = auth;
+          restService.getSocialFeed();
 
           return MaterialApp(
               title: 'Colabs',
