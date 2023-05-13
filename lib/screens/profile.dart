@@ -1,3 +1,4 @@
+import 'package:colabs_mobile/components/profile_edit_form.dart';
 import 'package:colabs_mobile/controllers/layout_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -48,7 +49,14 @@ class ProfilePage extends StatelessWidget {
               icon: const Icon(Icons.logout_rounded))
         ]),
         floatingActionButton: FloatingActionButton(
-            onPressed: () {}, child: const FaIcon(FontAwesomeIcons.edit)),
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return ProfileEditForm();
+                  });
+            },
+            child: const FaIcon(FontAwesomeIcons.edit)),
         body: SafeArea(
             child: SingleChildScrollView(
                 child: Column(
@@ -76,10 +84,13 @@ class ProfilePage extends StatelessWidget {
               ]),
               //TODO: Get occupation & location
               const Padding(
-                  padding: EdgeInsets.only(top: 16, bottom: 8),
-                  child: Text('Occupation', style: TextStyle(fontSize: 24))),
+                  padding: EdgeInsets.only(top: 16),
+                  child: Text('Full Name', style: TextStyle(fontSize: 24))),
               const Padding(
-                  padding: EdgeInsets.only(left: 16, bottom: 16),
+                  padding: EdgeInsets.only(top: 8, bottom: 8),
+                  child: Text('Occupation', style: TextStyle(fontSize: 16))),
+              const Padding(
+                  padding: EdgeInsets.only(bottom: 16),
                   child: Text('Location', style: TextStyle(fontSize: 14))),
               Container(
                   alignment: Alignment.centerLeft,
