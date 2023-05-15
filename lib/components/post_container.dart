@@ -22,22 +22,39 @@ class PostContainer extends StatelessWidget {
             color: Colors.white, borderRadius: BorderRadius.circular(7)),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
             Widget>[
-          Row(children: <Widget>[
-            Container(
-                margin: const EdgeInsets.all(10),
-                child: const CircleAvatar(
-                    radius: 25, backgroundColor: Colors.black)),
-            Column(children: <Widget>[
-              Text(post.postOwnerId,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 13)),
-              //TODO: Get User occupation
-              Text(post.postOwnerId, style: const TextStyle(fontSize: 10)),
-              Text(post.timeStamp.toString(),
-                  style: const TextStyle(
-                      fontStyle: FontStyle.italic, fontSize: 10))
-            ])
-          ]),
+          Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Row(children: <Widget>[
+                  Container(
+                      margin: const EdgeInsets.all(10),
+                      child: const CircleAvatar(
+                          radius: 25, backgroundColor: Colors.black)),
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(post.postOwnerId,
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 13)),
+                        //TODO: Get User occupation
+                        Text(post.postOwnerId,
+                            style: const TextStyle(fontSize: 10)),
+                        Text(post.timeStamp.toString(),
+                            style: const TextStyle(
+                                fontStyle: FontStyle.italic, fontSize: 10))
+                      ])
+                ]),
+                (post.isDonatable)
+                    ? Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 20),
+                        child: ElevatedButton(
+                            onPressed: () {},
+                            style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(25))),
+                            child: const Text('Donate')))
+                    : const SizedBox()
+              ]),
           Container(
               margin: const EdgeInsets.all(10), child: Text(post.textContent)),
           Image(
@@ -81,7 +98,7 @@ class PostContainer extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey[100]!),
                     onPressed: () {
-                      //TODO: share a post
+                      //TODO: share a post for other social medias/sms/copying link to post package: flutter_share
                       showModalBottomSheet(
                           context: context,
                           builder: (BuildContext context) {
@@ -100,7 +117,8 @@ class PostContainer extends StatelessWidget {
                       showModalBottomSheet(
                           context: context,
                           builder: (BuildContext context) {
-                            return const ConnectionsGridView(title: 'Send to...');
+                            return const ConnectionsGridView(
+                                title: 'Send to...');
                           });
                     },
                     child: const Icon(Icons.send, color: Color(0xFF5521B5))))

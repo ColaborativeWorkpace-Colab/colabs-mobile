@@ -18,6 +18,7 @@ class ProjectsPage extends StatelessWidget {
               itemBuilder: (BuildContext context, int index) {
                 return ListTile(
                     onTap: () {
+                      // ignore: always_specify_types
                       Navigator.pushNamed(context, '/projectview', arguments: {"data": ''});
                     },
                     title: const Text('Project Name'),

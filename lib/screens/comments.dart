@@ -1,5 +1,6 @@
 import 'package:colabs_mobile/controllers/restservice.dart';
 import 'package:colabs_mobile/models/post.dart';
+import 'package:comment_tree/comment_tree.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -16,7 +17,30 @@ class Comments extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(title: const Text('Comments')),
         body: Stack(children: <Widget>[
-          //TODO: Display comments 
+          //TODO: Populate comments
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: CommentTreeWidget<Comment, Comment>(
+                Comment(
+                    content: 'Test Comment',
+                    avatar: 'Avatar',
+                    userName: 'User'),
+                const <Comment>[],
+                treeThemeData:
+                    TreeThemeData(lineColor: Colors.green[500]!, lineWidth: 3),
+                avatarRoot: (BuildContext context, Comment data) =>
+                    const PreferredSize(
+                        preferredSize: Size(50, 50), child: CircleAvatar()),
+                avatarChild: (BuildContext context, Comment data) =>
+                    const PreferredSize(
+                        preferredSize: Size(50, 50), child: CircleAvatar()),
+                contentChild: (BuildContext context, Comment data) {
+                  return const SizedBox();
+                },
+                contentRoot: (BuildContext context, Comment data) {
+                  return const SizedBox();
+                }),
+          ),
           Positioned(
               bottom: 1,
               child: Container(
@@ -33,14 +57,13 @@ class Comments extends StatelessWidget {
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 0, horizontal: 15),
                           suffixIcon: Container(
-                            margin: const EdgeInsets.only(top: 0),
-                            child: IconButton(
-                                icon: const Icon(Icons.send),
-                                onPressed: () {
-                                  restService.commentPostRequest(
-                                      post.postId, commentController.text);
-                                })
-                          )))))
+                              margin: const EdgeInsets.only(top: 0),
+                              child: IconButton(
+                                  icon: const Icon(Icons.send),
+                                  onPressed: () {
+                                    restService.commentPostRequest(
+                                        post.postId, commentController.text);
+                                  }))))))
         ]));
   }
 }

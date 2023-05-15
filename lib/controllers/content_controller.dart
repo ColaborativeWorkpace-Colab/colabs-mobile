@@ -6,6 +6,7 @@ class ContentController extends ChangeNotifier {
   final List<String> _tags = <String>[];
   final List<String> _taggedUsers = <String>[];
   bool _isPublic = false;
+  bool _isDonatable = false;
 
   void addAttachements(List<File> files) {
     _attachements.addAll(files);
@@ -55,8 +56,14 @@ class ContentController extends ChangeNotifier {
     notifyListeners();
   }
 
+  set setIsDonatable(bool value) {
+    _isDonatable = value;
+    notifyListeners();
+  }
+
   List<String> get getTags => _tags;
   List<String> get getTaggedUsers => _taggedUsers;
   List<File> get getAttachments => _attachements;
   bool get getIsPublic => _isPublic;
+  bool get getIsDonatable => _isDonatable;
 }

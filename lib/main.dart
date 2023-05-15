@@ -2,7 +2,6 @@ import 'package:colabs_mobile/controllers/authenticator.dart';
 import 'package:colabs_mobile/controllers/content_controller.dart';
 import 'package:colabs_mobile/controllers/layout_controller.dart';
 import 'package:colabs_mobile/controllers/restservice.dart';
-import 'package:colabs_mobile/screens/comments.dart';
 import 'package:colabs_mobile/screens/login.dart';
 import 'package:colabs_mobile/screens/home.dart';
 import 'package:colabs_mobile/screens/profile.dart';

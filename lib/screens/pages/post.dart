@@ -6,6 +6,7 @@ import 'package:colabs_mobile/utils/filter_tags.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:colabs_mobile/fonts/colabs_icons.dart';
 
 class PostPage extends StatelessWidget {
   PostPage({super.key});
@@ -41,6 +42,11 @@ class PostPage extends StatelessWidget {
                   color: Colors.blue, size: 20)
               : const FaIcon(FontAwesomeIcons.eyeSlash,
                   color: Colors.grey, size: 20),
+          const SizedBox(width: 20),
+          contentController.getIsDonatable
+              ? const Icon(ColabsIcons.donatable, color: Colors.green, size: 25)
+              : const Icon(ColabsIcons.undonatable,
+                  color: Colors.grey, size: 25),
           Container(
               margin: const EdgeInsets.only(right: 10),
               child: PopupMenuButton<String>(
@@ -50,32 +56,49 @@ class PostPage extends StatelessWidget {
                       case 'Clear':
                         contentController.clearInputs();
                         break;
-                      default:
+                      case 'Visibility':
                         contentController.setIsPublic =
                             !contentController.getIsPublic;
+                        break;
+                      case 'Donatable':
+                        contentController.setIsDonatable =
+                            !contentController.getIsDonatable;
+                        break;
                     }
                   },
                   itemBuilder: (BuildContext context) =>
                       <PopupMenuEntry<String>>[
                         PopupMenuItem<String>(
-                            value: contentController.getIsPublic.toString(),
+                            value: 'Visibility',
                             child: ListTile(
                                 title: (!contentController.getIsPublic)
-                                    ? Row(
-                                        children: const <Widget>[
-                                          FaIcon(FontAwesomeIcons.globe,
-                                              color: Colors.blue),
-                                          SizedBox(width: 15),
-                                          Text('Public'),
-                                        ],
-                                      )
-                                    : Row(
-                                        children: const <Widget>[
-                                          FaIcon(FontAwesomeIcons.eyeSlash),
-                                          SizedBox(width: 15),
-                                          Text('Only for you'),
-                                        ],
-                                      ))),
+                                    ? Row(children: const <Widget>[
+                                        FaIcon(FontAwesomeIcons.globe,
+                                            color: Colors.blue),
+                                        SizedBox(width: 15),
+                                        Text('Public')
+                                      ])
+                                    : Row(children: const <Widget>[
+                                        FaIcon(FontAwesomeIcons.eyeSlash),
+                                        SizedBox(width: 15),
+                                        Text('Only for you')
+                                      ]))),
+                        PopupMenuItem<String>(
+                            value: 'Donatable',
+                            child: ListTile(
+                                title: (!contentController.getIsDonatable)
+                                    ? Row(children: const <Widget>[
+                                        Icon(ColabsIcons.donatable,
+                                            color: Colors.green),
+                                        SizedBox(width: 15),
+                                        Text('Donatable')
+                                      ])
+                                    : Row(children: const <Widget>[
+                                        Icon(ColabsIcons.undonatable,
+                                            color: Colors.grey),
+                                        SizedBox(width: 15),
+                                        Text('Undonatable')
+                                      ]))),
                         PopupMenuItem<String>(
                             value: 'Clear',
                             child: Row(children: <Widget>[
@@ -97,10 +120,6 @@ class PostPage extends StatelessWidget {
                 margin: const EdgeInsets.symmetric(horizontal: 15),
                 child: TextFormField(
                     controller: postController,
-                    //FIXME: Uncomment if no solution exists
-                    // onSaved: (String? value) async {
-                    //   filterTags(value!, contentController);
-                    // },
                     minLines: 5,
                     maxLines: 15,
                     decoration: InputDecoration(
@@ -139,7 +158,8 @@ class PostPage extends StatelessWidget {
                               showModalBottomSheet(
                                   context: context,
                                   builder: (BuildContext context) {
-                                    return const ConnectionsGridView(title: 'Tag your connections');
+                                    return const ConnectionsGridView(
+                                        title: 'Tag your connections');
                                   });
                             },
                             child: const Icon(Icons.person_add_alt_rounded,

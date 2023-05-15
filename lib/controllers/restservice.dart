@@ -53,7 +53,8 @@ class RESTService extends ChangeNotifier {
             DateTime.parse(rawPost['createdAt']),
             rawPost['tags'],
             rawPost['likes'],
-            rawPost['comments']));
+            rawPost['comments'],
+            rawPost['donatable']));
     }
   }
 

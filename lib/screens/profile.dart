@@ -250,7 +250,6 @@ class ProfilePage extends StatelessWidget {
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        //TODO: Get Skills
                         const Text('Skills',
                             style: TextStyle(fontWeight: FontWeight.bold)),
                         IconButton(
