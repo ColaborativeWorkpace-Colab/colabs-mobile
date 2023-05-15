@@ -18,7 +18,7 @@ class RESTService extends ChangeNotifier {
     'g'
   ];
   final List<Post> _socialFeedPosts = <Post>[];
-
+  bool _isPosting = false;
   RESTService();
 
   Future<bool> getSocialFeed() async {
@@ -73,10 +73,10 @@ class RESTService extends ChangeNotifier {
           headers: <String, String>{'Content-Type': 'application/json'},
           body: json.encode(body));
 
-      if (response.statusCode == 200)
-        // ignore: curly_braces_in_flow_control_structures
+      if (response.statusCode == 200) {
+        _addPost(response);
         return Future<bool>.value(true);
-      else
+      } else
         // ignore: curly_braces_in_flow_control_structures
         return Future<bool>.value(false);
     } on Exception catch (error) {
@@ -104,8 +104,9 @@ class RESTService extends ChangeNotifier {
 
   Future<bool> commentPostRequest(String postId, String comment) async {
     try {
-      http.Response response = await http.put(Uri.http(
-          urlHost, '/api/v1/social/${authenticator!.getUserId}/$postId/comment'), 
+      http.Response response = await http.put(
+          Uri.http(urlHost,
+              '/api/v1/social/${authenticator!.getUserId}/$postId/comment'),
           headers: <String, String>{'Content-Type': 'application/json'},
           // ignore: always_specify_types
           body: json.encode({'comment': comment}));
@@ -122,10 +123,32 @@ class RESTService extends ChangeNotifier {
     }
   }
 
+  void _addPost(http.Response response) {
+    Map<String, dynamic> body = json.decode(response.body);
+    Map<String, dynamic> rawPost = body['post'];
+
+    _socialFeedPosts.insert(0, Post(
+        rawPost['_id'],
+        rawPost['userId'],
+        rawPost['textContent'],
+        rawPost['imageContent'],
+        DateTime.parse(rawPost['createdAt']),
+        rawPost['tags'],
+        rawPost['likes'],
+        rawPost['comments'],
+        rawPost['donatable']));
+  }
+
   set setAuthenticator(Authenticator value) {
     authenticator = value;
   }
 
+  set isPosting(bool value) {
+    _isPosting = value;
+    notifyListeners();
+  }
+
   List<String> get getUserConnections => _userConnections;
   List<Post> get getSocialFeedPosts => _socialFeedPosts;
+  bool get isPosting => _isPosting;
 }

@@ -26,7 +26,7 @@ class HomeScreen extends StatelessWidget {
               children: <Widget>[
                 const SocialPage(),
                 const MessagesPage(),
-                PostPage(),
+                PostPage(pageController: pageController),
                 const ProjectsPage(),
                 const JobsPage(),
               ]),
