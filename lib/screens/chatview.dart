@@ -1,9 +1,10 @@
+import 'package:colabs_mobile/models/chat.dart';
 import 'package:flutter/material.dart';
 
 class ChatView extends StatelessWidget {
-  final String chatId;
+  final Chat chat;
   final TextEditingController messageController = TextEditingController();
-  ChatView({super.key, required this.chatId});
+  ChatView({super.key, required this.chat});
 
   @override
   Widget build(BuildContext context) {
@@ -19,15 +20,19 @@ class ChatView extends StatelessWidget {
               const SizedBox(width: 10),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const <Widget>[
-                  Text('User'),
-                  SizedBox(height: 5),
-                  Text('Last seen', style: TextStyle(fontSize: 12))
-                ],
+                children: <Widget>[
+                  Text(chat.user),
+                  const SizedBox(height: 5),
+                  //TODO: get last seen status
+                  const Text('Last seen', style: TextStyle(fontSize: 12))
+                ]
               )
             ]),
             actions: <Widget>[
-              IconButton(onPressed: () {}, icon: const Icon(Icons.more_vert))
+              IconButton(onPressed: () {
+                //TODO: Report spam
+                //TODO: Block
+              }, icon: const Icon(Icons.more_vert))
             ]),
         body: Stack(children: <Widget>[
           Positioned(
@@ -49,8 +54,10 @@ class ChatView extends StatelessWidget {
                           suffixIcon: Container(
                             margin: const EdgeInsets.only(top: 0),
                             child: IconButton(
-                                icon: const Icon(Icons.send), onPressed: () {}),
-                          ))),
+                                icon: const Icon(Icons.send), onPressed: () {
+                                  //TODO: Send message to user
+                                })
+                          )))
                 ),
                 SizedBox(
                   width: 60,

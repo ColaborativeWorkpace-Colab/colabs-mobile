@@ -118,14 +118,33 @@ class PostPage extends StatelessWidget {
           child: Column(children: <Widget>[
             Container(
                 margin: const EdgeInsets.symmetric(horizontal: 15),
-                child: TextFormField(
-                    controller: postController,
-                    minLines: 5,
-                    maxLines: 15,
-                    decoration: InputDecoration(
-                        hintText: "What's on your mind?",
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10))))),
+                child: Stack(children: <Widget>[
+                  TextFormField(
+                      controller: postController,
+                      minLines: 5,
+                      maxLines: 15,
+                      decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.only(
+                              left: 10, right: 10, bottom: 70),
+                          hintText: "What's on your mind?",
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10)))),
+                  (contentController.getSelectedTags.isNotEmpty)
+                      ? Positioned(
+                          bottom: 1,
+                          child: Container(
+                              height: 30,
+                              padding: const EdgeInsets.all(5),
+                              width: screenWidth * .925,
+                              decoration: const BoxDecoration(
+                                  color: Color(0x805521B5),
+                                  borderRadius: BorderRadius.only(
+                                      bottomLeft: Radius.circular(10),
+                                      bottomRight: Radius.circular(10))),
+                              child: Text(contentController.getTags.join(' '))),
+                        )
+                      : const SizedBox()
+                ])),
             Container(
                 margin: const EdgeInsets.all(10),
                 child: Row(mainAxisAlignment: MainAxisAlignment.end, children: <
@@ -204,13 +223,13 @@ class PostPage extends StatelessWidget {
 
                             List<String>? filteredTags = filterTags(
                                 postController.text, contentController);
-
+                            //TODO: Show progress and failure report if it happens
                             restService.postContentRequest(<String, dynamic>{
                               'textContent': postController.text,
                               'imageContent':
                                   contentController.getAttachments.join(','),
                               'tags': (filteredTags != null)
-                                  ? filteredTags.join(',')
+                                  ? <String>[...filteredTags, ...contentController.getSelectedTags].join(',')
                                   : '',
                               'visibility':
                                   contentController.getIsPublic.toString(),
@@ -232,7 +251,7 @@ class PostPage extends StatelessWidget {
                     children: <Widget>[
                       Container(
                           margin: const EdgeInsets.all(15),
-                          child: const Text('Related Tags',
+                          child: const Text('Related Topics',
                               style: TextStyle(fontSize: 20))),
                       Expanded(
                           child: GridView.builder(
@@ -249,17 +268,30 @@ class PostPage extends StatelessWidget {
                                 List<String> tags = contentController.getTags;
 
                                 return OutlinedButton(
-                                  style: OutlinedButton.styleFrom(
-                                      backgroundColor:
-                                          //TODO: Implement switch when tag is used
-                                          (false)
-                                              ? const Color(0xFF5521B5)
-                                              : null,
-                                      side: const BorderSide(
-                                          color: Color(0xFF5521B5))),
-                                  child: Text(tags[index]),
-                                  onPressed: () {},
-                                );
+                                    style: OutlinedButton.styleFrom(
+                                        backgroundColor:
+                                            (contentController.getSelectedTags
+                                                    .contains(tags[index]))
+                                                ? const Color(0xFF5521B5)
+                                                : null,
+                                        side: const BorderSide(
+                                            color: Color(0xFF5521B5))),
+                                    child: Text(tags[index],
+                                        style: TextStyle(
+                                            color: (contentController
+                                                    .getSelectedTags
+                                                    .contains(tags[index]))
+                                                ? Colors.white
+                                                : const Color(0xFF5521B5))),
+                                    onPressed: () {
+                                      (!contentController.getSelectedTags
+                                              .contains(tags[index]))
+                                          ? contentController
+                                              .selectTag(tags[index])
+                                          : contentController
+                                              .unselectTag(tags[index]);
+                                      contentController.refresh();
+                                    });
                               }))
                     ])),
             const SizedBox(height: 110)

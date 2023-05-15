@@ -82,9 +82,6 @@ class HomeScreen extends StatelessWidget {
                         curve: Curves.easeInOut);
                     layoutController.setSearchFilter =
                         SearchFilter.values[page];
-                    if (page == 2 && pageController.page == 2) {
-                      //TODO: Submit post
-                    }
                   }))
         ]));
   }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 class ContentController extends ChangeNotifier {
   final List<File> _attachements = <File>[];
   final List<String> _tags = <String>[];
+  final List<String> _selectedTags = <String>[];
   final List<String> _taggedUsers = <String>[];
   bool _isPublic = false;
   bool _isDonatable = false;
@@ -27,6 +28,18 @@ class ContentController extends ChangeNotifier {
     }
   }
 
+  void selectTag(String tag) {
+    if (!_selectedTags.contains(tag)) {
+      _selectedTags.add(tag);
+      notifyListeners();
+    }
+  }
+
+  void unselectTag(String tag) {
+    _selectedTags.remove(tag);
+    notifyListeners();
+  }
+
   void tagUser(String value) {
     _taggedUsers.add(value);
     notifyListeners();
@@ -40,6 +53,7 @@ class ContentController extends ChangeNotifier {
   void clearInputs() {
     _taggedUsers.clear();
     _attachements.clear();
+    _selectedTags.clear();
     notifyListeners();
   }
 
@@ -49,6 +63,10 @@ class ContentController extends ChangeNotifier {
       if (!_tags.contains(element)) temp.add(element);
     }
     return temp;
+  }
+
+  void refresh() {
+    notifyListeners();
   }
 
   set setIsPublic(bool value) {
@@ -62,6 +80,7 @@ class ContentController extends ChangeNotifier {
   }
 
   List<String> get getTags => _tags;
+  List<String> get getSelectedTags => _selectedTags;
   List<String> get getTaggedUsers => _taggedUsers;
   List<File> get getAttachments => _attachements;
   bool get getIsPublic => _isPublic;

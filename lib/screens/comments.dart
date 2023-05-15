@@ -22,12 +22,17 @@ class Comments extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: CommentTreeWidget<Comment, Comment>(
                 Comment(
-                    content: 'Test Comment',
+                    content: post.textContent,
                     avatar: 'Avatar',
-                    userName: 'User'),
-                const <Comment>[],
+                    userName: post.postOwnerId),
+                <Comment>[...post.comments.map<Comment>((rawComment) => Comment(
+                  avatar: 'Avatar',
+                  //TODO: Get user names
+                  userName: 'Other user',
+                  content: 'Their comment'
+                ))],
                 treeThemeData:
-                    TreeThemeData(lineColor: Colors.green[500]!, lineWidth: 3),
+                    const TreeThemeData(lineWidth: 3),
                 avatarRoot: (BuildContext context, Comment data) =>
                     const PreferredSize(
                         preferredSize: Size(50, 50), child: CircleAvatar()),
@@ -39,7 +44,7 @@ class Comments extends StatelessWidget {
                 },
                 contentRoot: (BuildContext context, Comment data) {
                   return const SizedBox();
-                }),
+                })
           ),
           Positioned(
               bottom: 1,
