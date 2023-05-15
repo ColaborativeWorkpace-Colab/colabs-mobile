@@ -115,7 +115,7 @@ class ProfilePage extends StatelessWidget {
                   child: Padding(
                       padding: const EdgeInsets.all(0),
                       child: SizedBox(
-                          height: screenHeight * .39,
+                          height: screenHeight * .38,
                           child: GridView(
                               gridDelegate:
                                   const SliverGridDelegateWithFixedCrossAxisCount(
@@ -266,17 +266,16 @@ class ProfilePage extends StatelessWidget {
               Container(
                   padding: const EdgeInsets.all(16),
                   height: screenHeight * .3,
-                  child: Expanded(
-                      child: GridView.builder(
-                          shrinkWrap: true,
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                  mainAxisSpacing: 10,
-                                  crossAxisCount: 4,
-                                  childAspectRatio: 1.5),
-                          itemBuilder: (BuildContext context, int index) {
-                            return const CircleAvatar();
-                          })))
+                  child: GridView.builder(
+                      shrinkWrap: true,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              mainAxisSpacing: 10,
+                              crossAxisCount: 4,
+                              childAspectRatio: 1.5),
+                      itemBuilder: (BuildContext context, int index) {
+                        return const CircleAvatar();
+                      }))
               //TODO: Get skills
             ]))));
   }

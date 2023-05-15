@@ -38,6 +38,33 @@ class RESTService extends ChangeNotifier {
     }
   }
 
+  void _populateSocialFeed(String body) {
+    Map<String, dynamic> decodedJsonBody = json.decode(body);
+    List<dynamic> rawPosts = decodedJsonBody['posts'];
+
+    for (Map<String, dynamic> rawPost in rawPosts) {
+      if (!_postExists(rawPost['_id']))
+        // ignore: curly_braces_in_flow_control_structures
+        _socialFeedPosts.add(Post(
+            rawPost['_id'],
+            rawPost['userId'],
+            rawPost['textContent'],
+            rawPost['imageContent'],
+            DateTime.parse(rawPost['createdAt']),
+            rawPost['tags'],
+            rawPost['likes'],
+            rawPost['comments']));
+    }
+  }
+
+  bool _postExists(String postId) {
+    for (Post post in _socialFeedPosts) {
+      if (post.postId == postId) return true;
+    }
+
+    return false;
+  }
+
   Future<bool> postContentRequest(Map<String, dynamic> body) async {
     try {
       http.Response response = await http.post(
@@ -45,11 +72,11 @@ class RESTService extends ChangeNotifier {
           headers: <String, String>{'Content-Type': 'application/json'},
           body: json.encode(body));
 
-      // ignore: curly_braces_in_flow_control_structures
       if (response.statusCode == 200)
+        // ignore: curly_braces_in_flow_control_structures
         return Future<bool>.value(true);
-      // ignore: curly_braces_in_flow_control_structures
       else
+        // ignore: curly_braces_in_flow_control_structures
         return Future<bool>.value(false);
     } on Exception catch (error) {
       debugPrint(error.toString());
@@ -57,20 +84,40 @@ class RESTService extends ChangeNotifier {
     }
   }
 
-  void _populateSocialFeed(String body) {
-    Map<String, dynamic> decodedJsonBody = json.decode(body);
-    List<dynamic> rawPosts = decodedJsonBody['posts'];
+  Future<bool> likePostRequest(String postId) async {
+    try {
+      http.Response response = await http.put(Uri.http(
+          urlHost, '/api/v1/social/${authenticator!.getUserId}/$postId/like'));
 
-    for (Map<String, dynamic> rawPost in rawPosts) {
-      _socialFeedPosts.add(Post(
-          rawPost['_id'],
-          rawPost['userId'],
-          rawPost['textContent'],
-          rawPost['imageContent'],
-          DateTime.parse(rawPost['createdAt']),
-          rawPost['tags'],
-          rawPost['likes'],
-          rawPost['comments']));
+      if (response.statusCode == 200)
+        // ignore: curly_braces_in_flow_control_structures
+        return Future<bool>.value(true);
+      else
+        // ignore: curly_braces_in_flow_control_structures
+        return Future<bool>.value(false);
+    } on Exception catch (error) {
+      debugPrint(error.toString());
+      return Future<bool>.value(false);
+    }
+  }
+
+  Future<bool> commentPostRequest(String postId, String comment) async {
+    try {
+      http.Response response = await http.put(Uri.http(
+          urlHost, '/api/v1/social/${authenticator!.getUserId}/$postId/comment'), 
+          headers: <String, String>{'Content-Type': 'application/json'},
+          // ignore: always_specify_types
+          body: json.encode({'comment': comment}));
+
+      if (response.statusCode == 200)
+        // ignore: curly_braces_in_flow_control_structures
+        return Future<bool>.value(true);
+      else
+        // ignore: curly_braces_in_flow_control_structures
+        return Future<bool>.value(false);
+    } on Exception catch (error) {
+      debugPrint(error.toString());
+      return Future<bool>.value(false);
     }
   }
 

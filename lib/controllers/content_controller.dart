@@ -39,7 +39,6 @@ class ContentController extends ChangeNotifier {
   void clearInputs() {
     _taggedUsers.clear();
     _attachements.clear();
-    _tags.clear();
     notifyListeners();
   }
 

@@ -1,5 +1,9 @@
+import 'package:colabs_mobile/components/connections_grid_view.dart';
+import 'package:colabs_mobile/controllers/restservice.dart';
 import 'package:colabs_mobile/models/post.dart';
+import 'package:colabs_mobile/screens/comments.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class PostContainer extends StatelessWidget {
   final Post post;
@@ -7,16 +11,17 @@ class PostContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    RESTService restService = Provider.of<RESTService>(context);
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
 
     return Container(
-        height: screenHeight * .62,
         width: screenWidth * .95,
         margin: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
             color: Colors.white, borderRadius: BorderRadius.circular(7)),
-        child: Column(children: <Widget>[
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
+            Widget>[
           Row(children: <Widget>[
             Container(
                 margin: const EdgeInsets.all(10),
@@ -24,13 +29,17 @@ class PostContainer extends StatelessWidget {
                     radius: 25, backgroundColor: Colors.black)),
             Column(children: <Widget>[
               Text(post.postOwnerId,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-                  //TODO: Get User occupation
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 13)),
+              //TODO: Get User occupation
               Text(post.postOwnerId, style: const TextStyle(fontSize: 10)),
               Text(post.timeStamp.toString(),
-                  style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 10))
+                  style: const TextStyle(
+                      fontStyle: FontStyle.italic, fontSize: 10))
             ])
           ]),
+          Container(
+              margin: const EdgeInsets.all(10), child: Text(post.textContent)),
           Image(
               fit: BoxFit.cover,
               height: screenHeight * .4,
@@ -47,13 +56,9 @@ class PostContainer extends StatelessWidget {
                 child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey[100]!),
-                    onPressed: () {
-                      //TODO: Like a post
-                    },
-                    child: const Icon(
-                      Icons.thumb_up_alt_rounded,
-                      color: Color(0xFF5521B5),
-                    ))),
+                    onPressed: () => restService.likePostRequest(post.postId),
+                    child: const Icon(Icons.thumb_up_alt_rounded,
+                        color: Color(0xFF5521B5)))),
             SizedBox(
                 height: 50,
                 width: screenWidth * .25,
@@ -61,13 +66,14 @@ class PostContainer extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey[100]!),
                     onPressed: () {
-                      //TODO: Comment on a post
-                      Navigator.pushNamed(context, '/comments');
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute<Comments>(
+                              builder: (BuildContext context) =>
+                                  Comments(post: post)));
                     },
-                    child: const Icon(
-                      Icons.comment,
-                      color: Color(0xFF5521B5),
-                    ))),
+                    child:
+                        const Icon(Icons.comment, color: Color(0xFF5521B5)))),
             SizedBox(
                 height: 50,
                 width: screenWidth * .25,
@@ -82,10 +88,7 @@ class PostContainer extends StatelessWidget {
                             return Container(height: screenHeight * .5);
                           });
                     },
-                    child: const Icon(
-                      Icons.share,
-                      color: Color(0xFF5521B5),
-                    ))),
+                    child: const Icon(Icons.share, color: Color(0xFF5521B5)))),
             SizedBox(
                 height: 50,
                 width: screenWidth * .25,
@@ -97,13 +100,10 @@ class PostContainer extends StatelessWidget {
                       showModalBottomSheet(
                           context: context,
                           builder: (BuildContext context) {
-                            return Container(height: screenHeight * .5);
+                            return const ConnectionsGridView(title: 'Send to...');
                           });
                     },
-                    child: const Icon(
-                      Icons.send,
-                      color: Color(0xFF5521B5),
-                    )))
+                    child: const Icon(Icons.send, color: Color(0xFF5521B5))))
           ])
         ]));
   }

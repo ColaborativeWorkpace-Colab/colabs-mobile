@@ -35,61 +35,60 @@ class PostPage extends StatelessWidget {
               child: const CircleAvatar(radius: 25)),
           const Text('User')
         ]),
-        Row(
-          children: <Widget>[
-            contentController.getIsPublic
-                ? const FaIcon(FontAwesomeIcons.globe, color: Colors.blue)
-                : const FaIcon(FontAwesomeIcons.eyeSlash),
-            Container(
-                margin: const EdgeInsets.only(right: 10),
-                child: PopupMenuButton<String>(
-                    icon: const Icon(Icons.more_vert),
-                    onSelected: (String value) {
-                      switch (value) {
-                        case 'Clear':
-                          contentController.clearInputs();
-                          break;
-                        default:
-                          contentController.setIsPublic =
-                              !contentController.getIsPublic;
-                      }
-                    },
-                    itemBuilder: (BuildContext context) =>
-                        <PopupMenuEntry<String>>[
-                          PopupMenuItem<String>(
-                              value: contentController.getIsPublic.toString(),
-                              child: ListTile(
-                                  title: (!contentController.getIsPublic)
-                                      ? Row(
-                                          children: const <Widget>[
-                                            FaIcon(FontAwesomeIcons.globe,
-                                                color: Colors.blue),
-                                            SizedBox(width: 15),
-                                            Text('Public'),
-                                          ],
-                                        )
-                                      : Row(
-                                          children: const <Widget>[
-                                            FaIcon(FontAwesomeIcons.eyeSlash),
-                                            SizedBox(width: 15),
-                                            Text('Only for you'),
-                                          ],
-                                        ))),
-                          PopupMenuItem<String>(
-                              value: 'Clear',
-                              child: Row(children: <Widget>[
-                                Container(
-                                    margin: const EdgeInsets.symmetric(
-                                        horizontal: 15),
-                                    child: const FaIcon(
-                                        FontAwesomeIcons.trashCan,
-                                        color:
-                                            Color.fromARGB(255, 218, 102, 94))),
-                                const Text('Clear')
-                              ]))
-                        ]))
-          ]
-        )
+        Row(children: <Widget>[
+          contentController.getIsPublic
+              ? const FaIcon(FontAwesomeIcons.globe,
+                  color: Colors.blue, size: 20)
+              : const FaIcon(FontAwesomeIcons.eyeSlash,
+                  color: Colors.grey, size: 20),
+          Container(
+              margin: const EdgeInsets.only(right: 10),
+              child: PopupMenuButton<String>(
+                  icon: const Icon(Icons.more_vert),
+                  onSelected: (String value) {
+                    switch (value) {
+                      case 'Clear':
+                        contentController.clearInputs();
+                        break;
+                      default:
+                        contentController.setIsPublic =
+                            !contentController.getIsPublic;
+                    }
+                  },
+                  itemBuilder: (BuildContext context) =>
+                      <PopupMenuEntry<String>>[
+                        PopupMenuItem<String>(
+                            value: contentController.getIsPublic.toString(),
+                            child: ListTile(
+                                title: (!contentController.getIsPublic)
+                                    ? Row(
+                                        children: const <Widget>[
+                                          FaIcon(FontAwesomeIcons.globe,
+                                              color: Colors.blue),
+                                          SizedBox(width: 15),
+                                          Text('Public'),
+                                        ],
+                                      )
+                                    : Row(
+                                        children: const <Widget>[
+                                          FaIcon(FontAwesomeIcons.eyeSlash),
+                                          SizedBox(width: 15),
+                                          Text('Only for you'),
+                                        ],
+                                      ))),
+                        PopupMenuItem<String>(
+                            value: 'Clear',
+                            child: Row(children: <Widget>[
+                              Container(
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 15),
+                                  child: const FaIcon(FontAwesomeIcons.trashCan,
+                                      color:
+                                          Color.fromARGB(255, 218, 102, 94))),
+                              const Text('Clear')
+                            ]))
+                      ]))
+        ])
       ]),
       Form(
           key: formKey,
@@ -140,7 +139,7 @@ class PostPage extends StatelessWidget {
                               showModalBottomSheet(
                                   context: context,
                                   builder: (BuildContext context) {
-                                    return const ConnectionsGridView();
+                                    return const ConnectionsGridView(title: 'Tag your connections');
                                   });
                             },
                             child: const Icon(Icons.person_add_alt_rounded,
@@ -185,7 +184,7 @@ class PostPage extends StatelessWidget {
 
                             List<String>? filteredTags = filterTags(
                                 postController.text, contentController);
-                            
+
                             restService.postContentRequest(<String, dynamic>{
                               'textContent': postController.text,
                               'imageContent':

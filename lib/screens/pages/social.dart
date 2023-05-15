@@ -11,7 +11,6 @@ class SocialPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     RESTService restService = Provider.of<RESTService>(context);
-    //restService.getSocialFeed();
     
     return SafeArea(
         child: Container(

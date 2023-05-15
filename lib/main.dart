@@ -54,8 +54,7 @@ class ColabsApp extends StatelessWidget {
                 '/signup': (_) => SignupScreen(),
                 '/profile': (_) => const ProfilePage(),
                 '/settings': (_) => const SettingsPage(),
-                '/projectview': (_) => const ProjectView(),
-                '/comments': (_) => const Comments()
+                '/projectview': (_) => const ProjectView()
               });
         });
   }
