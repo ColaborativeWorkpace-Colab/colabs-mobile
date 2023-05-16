@@ -17,19 +17,8 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Authenticator authenticator = Provider.of<Authenticator>(context);
-    ChatController chatController = Provider.of<ChatController>(context);
     LayoutController layoutController = Provider.of<LayoutController>(context);
-    RESTService restService = Provider.of<RESTService>(context);
 
-    restService.setAuthenticator = authenticator;
-    chatController.setAuthenticator = authenticator;
-
-    if(authenticator.isUserAuthorized){
-      chatController.initSocket();
-      restService.getSocialFeed();
-    }
-    
     return Scaffold(
         resizeToAvoidBottomInset: false,
         body: Stack(children: <Widget>[

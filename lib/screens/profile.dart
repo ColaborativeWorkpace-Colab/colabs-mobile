@@ -45,6 +45,7 @@ class ProfilePage extends StatelessWidget {
                                     style: TextStyle(color: Colors.redAccent)),
                                 onPressed: () {
                                   chatController.disconnect();
+                                  layoutController.loggingOut();
                                   authenticator.setIsAuthorized = false;
                                   Navigator.popUntil(
                                       context, ModalRoute.withName('/login'));

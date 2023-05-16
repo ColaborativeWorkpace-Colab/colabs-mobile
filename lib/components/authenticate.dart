@@ -1,4 +1,7 @@
 import 'package:colabs_mobile/controllers/authenticator.dart';
+import 'package:colabs_mobile/controllers/chat_controller.dart';
+import 'package:colabs_mobile/controllers/restservice.dart';
+import 'package:colabs_mobile/utils/initialize_services.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -20,12 +23,12 @@ class Authenticate extends StatelessWidget {
                   backgroundColor: Colors.blue,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(5))),
-              onPressed: () async {
+              onPressed: () {
                 //FIXME: Revert to original
                 // authenticator.setAccessToken =
                 //     await authenticator.getGoogleToken();
-                authenticator.setIsAuthorized = true;
-                await Navigator.pushNamed(context, '/');
+                initServices(context);
+                Navigator.pushNamed(context, '/');
               },
               child: Row(children: const <Widget>[
                 Image(
@@ -47,7 +50,8 @@ class Authenticate extends StatelessWidget {
               onPressed: () async {
                 authenticator.setAccessToken =
                     await authenticator.getGithubToken();
-                    authenticator.setIsAuthorized = true;
+                initServices(context);
+                authenticator.setIsAuthorized = true;
               },
               child: Row(children: const <Widget>[
                 Image(image: AssetImage('assets/images/github.png')),

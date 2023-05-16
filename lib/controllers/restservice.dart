@@ -8,15 +8,7 @@ import 'package:http/http.dart' as http;
 class RESTService extends ChangeNotifier {
   final String urlHost = dotenv.env['DEV_URL']!;
   Authenticator? authenticator;
-  final List<String> _userConnections = <String>[
-    'a',
-    'b',
-    'c',
-    'd',
-    'e',
-    'f',
-    'g'
-  ];
+  final List<String> _userConnections = <String>[];
   final List<Post> _socialFeedPosts = <Post>[];
   bool _isPosting = false;
   RESTService();
@@ -127,16 +119,46 @@ class RESTService extends ChangeNotifier {
     Map<String, dynamic> body = json.decode(response.body);
     Map<String, dynamic> rawPost = body['post'];
 
-    _socialFeedPosts.insert(0, Post(
-        rawPost['_id'],
-        rawPost['userId'],
-        rawPost['textContent'],
-        rawPost['imageContent'],
-        DateTime.parse(rawPost['createdAt']),
-        rawPost['tags'],
-        rawPost['likes'],
-        rawPost['comments'],
-        rawPost['donatable']));
+    _socialFeedPosts.insert(
+        0,
+        Post(
+            rawPost['_id'],
+            rawPost['userId'],
+            rawPost['textContent'],
+            rawPost['imageContent'],
+            DateTime.parse(rawPost['createdAt']),
+            rawPost['tags'],
+            rawPost['likes'],
+            rawPost['comments'],
+            rawPost['donatable']));
+  }
+
+  Future<bool> getUserConnectionsRequest() async {
+    try {
+      http.Response response = await http.get(Uri.http(
+          urlHost, '/api/v1/social/connections/${authenticator!.getUserId}'));
+
+      if (response.statusCode == 200) {
+        _populateUserConnections(response.body);
+        return Future<bool>.value(true);
+      } else {
+        return Future<bool>.value(false);
+      }
+    } on Exception catch (error) {
+      debugPrint(error.toString());
+      return Future<bool>.value(false);
+    }
+  }
+
+  void _populateUserConnections(String body) {
+    Map<String, dynamic> decodedJsonBody = json.decode(body);
+    List<dynamic> connections = decodedJsonBody['connections'];
+
+    for (dynamic connection in connections) {
+      if(!_userConnections.contains(connection)){
+        _userConnections.add(connection);
+      }
+    }
   }
 
   set setAuthenticator(Authenticator value) {

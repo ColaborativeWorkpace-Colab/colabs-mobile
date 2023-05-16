@@ -1,5 +1,6 @@
 import 'package:colabs_mobile/components/post_container.dart';
 import 'package:colabs_mobile/components/navbar.dart';
+import 'package:colabs_mobile/controllers/authenticator.dart';
 import 'package:colabs_mobile/controllers/layout_controller.dart';
 import 'package:colabs_mobile/controllers/restservice.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,13 @@ class SocialPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     RESTService restService = Provider.of<RESTService>(context);
+    LayoutController layoutController = Provider.of<LayoutController>(context);
+    Authenticator authenticator = Provider.of<Authenticator>(context);
+
+    if (authenticator.isUserAuthorized) {
+      Future<void>.delayed(
+          const Duration(seconds: 1), () => layoutController.refresh());
+    }
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
 
