@@ -1,4 +1,5 @@
 import 'package:colabs_mobile/components/connections_grid_view.dart';
+import 'package:colabs_mobile/components/share_container.dart';
 import 'package:colabs_mobile/controllers/restservice.dart';
 import 'package:colabs_mobile/models/post.dart';
 import 'package:colabs_mobile/screens/comments.dart';
@@ -98,11 +99,11 @@ class PostContainer extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey[100]!),
                     onPressed: () {
-                      //TODO: share a post for other social medias/sms/copying link to post package: flutter_share
                       showModalBottomSheet(
                           context: context,
                           builder: (BuildContext context) {
-                            return Container(height: screenHeight * .5);
+                            //TODO: Get post link for sharing
+                            return ShareContainer(postLink: '');
                           });
                     },
                     child: const Icon(Icons.share, color: Color(0xFF5521B5)))),

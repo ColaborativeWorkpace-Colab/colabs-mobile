@@ -52,19 +52,22 @@ class SocialPage extends StatelessWidget {
                                         post: restService
                                             .getSocialFeedPosts[index]);
                               })))
-                  : Container(
-                      margin: EdgeInsets.only(top: screenHeight * .25),
-                      child: SizedBox(
-                          width: screenWidth * .7,
-                          child: Column(children: const <Widget>[
-                            Icon(Icons.photo_rounded,
-                                color: Colors.grey, size: 80),
-                            SizedBox(height: 20),
-                            Text(
-                              '''Your social feed is empty. Go to your profile and pick the topics that interest you.''',
-                              textAlign: TextAlign.center,
-                            )
-                          ])))
+                  : RefreshIndicator(
+                      onRefresh: () => restService.getSocialFeed(),
+                      child: Container(
+                          margin: EdgeInsets.only(top: screenHeight * .25),
+                          child: SizedBox(
+                              width: screenWidth * .7,
+                              child: Column(children: const <Widget>[
+                                Icon(Icons.photo_rounded,
+                                    color: Colors.grey, size: 80),
+                                SizedBox(height: 20),
+                                Text(
+                                  '''Your social feed is empty. Go to your profile and pick the topics that interest you.''',
+                                  textAlign: TextAlign.center,
+                                )
+                              ]))),
+                    )
             ])));
   }
 }

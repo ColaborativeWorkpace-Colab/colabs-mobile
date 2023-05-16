@@ -29,10 +29,23 @@ class ChatView extends StatelessWidget {
               )
             ]),
             actions: <Widget>[
-              IconButton(onPressed: () {
-                //TODO: Report spam
-                //TODO: Block
-              }, icon: const Icon(Icons.more_vert))
+              PopupMenuButton<String>(
+                  icon: const Icon(Icons.more_vert),
+                  onSelected: (String value) {
+                    //TODO: Report spam
+                    //TODO: Block
+                  },
+                  itemBuilder: (BuildContext context) =>
+                      <PopupMenuEntry<String>>[
+                        const PopupMenuItem<String>(
+                            value: 'Report Spam',
+                            child: ListTile(
+                                title: Text('Report Spam'))),
+                        const PopupMenuItem<String>(
+                            value: 'Block',
+                            child: ListTile(
+                                title: Text('Block')))
+                      ])
             ]),
         body: Stack(children: <Widget>[
           Positioned(
