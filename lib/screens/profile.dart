@@ -1,4 +1,6 @@
 import 'package:colabs_mobile/components/profile_edit_form.dart';
+import 'package:colabs_mobile/controllers/authenticator.dart';
+import 'package:colabs_mobile/controllers/chat_controller.dart';
 import 'package:colabs_mobile/controllers/layout_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -12,6 +14,8 @@ class ProfilePage extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     LayoutController layoutController = Provider.of<LayoutController>(context);
+    ChatController chatController = Provider.of<ChatController>(context);
+    Authenticator authenticator = Provider.of<Authenticator>(context);
 
     return Scaffold(
         appBar: AppBar(actions: <Widget>[
@@ -40,6 +44,8 @@ class ProfilePage extends StatelessWidget {
                                 child: const Text('Logout',
                                     style: TextStyle(color: Colors.redAccent)),
                                 onPressed: () {
+                                  chatController.disconnect();
+                                  authenticator.setIsAuthorized = false;
                                   Navigator.popUntil(
                                       context, ModalRoute.withName('/login'));
                                 })
@@ -56,7 +62,7 @@ class ProfilePage extends StatelessWidget {
                     return ProfileEditForm();
                   });
             },
-            child: const FaIcon(FontAwesomeIcons.edit)),
+            child: const FaIcon(FontAwesomeIcons.penToSquare)),
         body: SafeArea(
             child: SingleChildScrollView(
                 child: Column(

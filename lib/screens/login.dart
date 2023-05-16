@@ -60,7 +60,7 @@ class LoginScreen extends StatelessWidget {
                             );
                           },
                           child: const Text('Log In'))
-                    ]),
+                    ])
                   )),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -73,11 +73,11 @@ class LoginScreen extends StatelessWidget {
                       onTap: () {
                         Navigator.pushNamed(context, '/signup');
                       })
-                ],
+                ]
               ),
               const SizedBox(height: 50)
-            ]),
-          ),
+            ])
+          )
         ));
   }
 }

@@ -6,7 +6,6 @@ import 'package:oauth2_client/github_oauth2_client.dart';
 import 'package:oauth2_client/google_oauth2_client.dart';
 
 class Authenticator extends ChangeNotifier {
-  final bool _isAuthorized = false;
   final GitHubOAuth2Client githubClient = GitHubOAuth2Client(
       redirectUri: dotenv.env['GITHUB_CALLBACK_URL']!,
       customUriScheme: 'http');
@@ -15,6 +14,7 @@ class Authenticator extends ChangeNotifier {
       customUriScheme: 'http');
   AccessTokenResponse? _accessToken;
   bool _hasUserAgreed = false;
+  bool _isAuthorized = false;
   UserType _selectedUserType = UserType.freelancer;
   //TODO: Get UserId
   final String? _userId = '64344fc7fe1d1fa62a1fc423';
@@ -49,6 +49,10 @@ class Authenticator extends ChangeNotifier {
     notifyListeners();
   }
 
+  set setIsAuthorized(bool value){
+    _isAuthorized = value;
+  }
+  
   AccessTokenResponse? get getAccessToken => _accessToken;
   bool get isUserAuthorized => _isAuthorized;
   bool get hasUserAgreed => _hasUserAgreed;

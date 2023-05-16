@@ -30,21 +30,17 @@ class ColabsApp extends StatelessWidget {
     return MultiProvider(
         providers: <SingleChildWidget>[
           ChangeNotifierProvider<Authenticator>(create: (_) => Authenticator()),
+          ChangeNotifierProvider<ChatController>(
+              create: (_) => ChatController()),
           ChangeNotifierProvider<LayoutController>(
               create: (_) => LayoutController()),
           ChangeNotifierProvider<RESTService>(create: (_) => RESTService()),
           ChangeNotifierProvider<ContentController>(
-              create: (_) => ContentController()),
-              ChangeNotifierProvider<ChatController>(
-              create: (_) => ChatController()),
+              create: (_) => ContentController())
         ],
         builder: (BuildContext context, _) {
           Authenticator auth = Provider.of<Authenticator>(context);
-          RESTService restService = Provider.of<RESTService>(context);
-
-          restService.setAuthenticator = auth;
-          restService.getSocialFeed();
-
+          
           return MaterialApp(
               title: 'Colabs',
               theme: defaultTheme,

@@ -24,6 +24,7 @@ class Authenticate extends StatelessWidget {
                 //FIXME: Revert to original
                 // authenticator.setAccessToken =
                 //     await authenticator.getGoogleToken();
+                authenticator.setIsAuthorized = true;
                 await Navigator.pushNamed(context, '/');
               },
               child: Row(children: const <Widget>[
@@ -46,6 +47,7 @@ class Authenticate extends StatelessWidget {
               onPressed: () async {
                 authenticator.setAccessToken =
                     await authenticator.getGithubToken();
+                    authenticator.setIsAuthorized = true;
               },
               child: Row(children: const <Widget>[
                 Image(image: AssetImage('assets/images/github.png')),
