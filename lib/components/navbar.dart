@@ -1,4 +1,4 @@
-import 'package:colabs_mobile/controllers/layout_controller.dart';
+import 'package:colabs_mobile/types/search_filters.dart';
 import 'package:flutter/material.dart';
 
 class Navbar extends StatelessWidget {

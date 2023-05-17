@@ -17,7 +17,7 @@ class Authenticator extends ChangeNotifier {
   bool _isAuthorized = false;
   UserType _selectedUserType = UserType.freelancer;
   //TODO: Get UserId
-  final String? _userId = '64344fc7fe1d1fa62a1fc423';
+  final String _userId = '64344fc7fe1d1fa62a1fc423';
 
   //TODO: Get valid github scope
   Future<AccessTokenResponse> getGithubToken() async {

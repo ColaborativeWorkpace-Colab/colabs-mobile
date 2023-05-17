@@ -1,9 +1,10 @@
 import 'package:colabs_mobile/components/connections_grid_view.dart';
 import 'package:colabs_mobile/components/navbar.dart';
 import 'package:colabs_mobile/controllers/chat_controller.dart';
-import 'package:colabs_mobile/controllers/layout_controller.dart';
 import 'package:colabs_mobile/models/message.dart';
 import 'package:colabs_mobile/screens/chatview.dart';
+import 'package:colabs_mobile/types/connections_view_layout_options.dart';
+import 'package:colabs_mobile/types/search_filters.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -38,7 +39,7 @@ class MessagesPage extends StatelessWidget {
                                   side: BorderSide(
                                       color: Colors.grey, width: 0.5)),
                               leading: const CircleAvatar(radius: 27),
-                              title: Text(chatController.getChats[index].user),
+                              title: Text(chatController.getChats[index].receiver),
                               subtitle: Text(messages[0].messageText),
                               trailing: Column(children: <Widget>[
                                 const SizedBox(height: 10),
@@ -81,7 +82,7 @@ class MessagesPage extends StatelessWidget {
                             context: context,
                             builder: (BuildContext context) {
                               return const ConnectionsGridView(
-                                  title: 'Chat with...');
+                                  layoutOption: ConnectionsLayoutOptions.chat);
                             });
                       },
                       style: ElevatedButton.styleFrom(

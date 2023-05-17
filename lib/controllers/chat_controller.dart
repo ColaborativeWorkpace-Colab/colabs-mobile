@@ -37,6 +37,12 @@ class ChatController extends ChangeNotifier {
     super.dispose();
   }
 
+  void sendPrivateMessage(Map<String, dynamic> data) => 
+    socket!.emit('private-message', data);
+
+  void sendGroupMessage(Map<String, dynamic> data) =>
+      socket!.emit('group-message', data);
+
   set setAuthenticator(Authenticator value) {
     _authenticator = value;
   }

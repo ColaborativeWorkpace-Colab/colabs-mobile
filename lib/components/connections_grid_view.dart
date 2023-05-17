@@ -1,19 +1,18 @@
-import 'package:colabs_mobile/controllers/content_controller.dart';
 import 'package:colabs_mobile/controllers/restservice.dart';
+import 'package:colabs_mobile/types/connections_view_layout_options.dart';
+import 'package:colabs_mobile/utils/connection_view_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ConnectionsGridView extends StatelessWidget {
-  final String title;
-  const ConnectionsGridView({super.key, required this.title});
+  final ConnectionsLayoutOptions layoutOption;
+  const ConnectionsGridView({super.key, required this.layoutOption});
 
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     RESTService restService = Provider.of<RESTService>(context);
-    ContentController contentController =
-        Provider.of<ContentController>(context);
 
     return Container(
         margin: const EdgeInsets.all(10),
@@ -21,7 +20,7 @@ class ConnectionsGridView extends StatelessWidget {
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text(title, style: const TextStyle(fontSize: 17)),
+              Text(layoutOption.name, style: const TextStyle(fontSize: 17)),
               Container(
                   margin: const EdgeInsets.symmetric(vertical: 15),
                   height: 50,
@@ -52,27 +51,17 @@ class ConnectionsGridView extends StatelessWidget {
                       itemBuilder: (BuildContext context, int index) {
                         return Stack(children: <Widget>[
                           ElevatedButton(
-                              onPressed: () async {
-                                (!contentController.getTaggedUsers.contains(
-                                        restService.getUserConnections[index]))
-                                    ? contentController.tagUser(
-                                        restService.getUserConnections[index])
-                                    : contentController.untagUser(
-                                        restService.getUserConnections[index]);
-                              },
+                              onPressed: () => (layoutOption ==
+                                      ConnectionsLayoutOptions.tag)
+                                  ? tagUserConnection(context, index)
+                                  : chatWithConnection(context,
+                                      restService.getUserConnections[index]),
                               style: ElevatedButton.styleFrom(
                                   shape: const CircleBorder()),
                               child: const CircleAvatar(
                                   radius: 50, backgroundColor: Colors.black)),
-                          (contentController.getTaggedUsers.contains(
-                                  restService.getUserConnections[index]))
-                              ? const Positioned(
-                                  bottom: 1,
-                                  right: 5,
-                                  child: Icon(Icons.check_circle,
-                                      color: Colors.indigoAccent),
-                                )
-                              : const SizedBox()
+                          if (layoutOption == ConnectionsLayoutOptions.tag)
+                            toggleTaggedMark(context, index)
                         ]);
                       }))
             ]));

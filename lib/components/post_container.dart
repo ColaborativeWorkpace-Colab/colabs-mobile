@@ -3,6 +3,7 @@ import 'package:colabs_mobile/components/share_container.dart';
 import 'package:colabs_mobile/controllers/restservice.dart';
 import 'package:colabs_mobile/models/post.dart';
 import 'package:colabs_mobile/screens/comments.dart';
+import 'package:colabs_mobile/types/connections_view_layout_options.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -103,7 +104,7 @@ class PostContainer extends StatelessWidget {
                           context: context,
                           builder: (BuildContext context) {
                             //TODO: Get post link for sharing
-                            return ShareContainer(postLink: '');
+                            return const ShareContainer(postLink: '');
                           });
                     },
                     child: const Icon(Icons.share, color: Color(0xFF5521B5)))),
@@ -119,7 +120,7 @@ class PostContainer extends StatelessWidget {
                           context: context,
                           builder: (BuildContext context) {
                             return const ConnectionsGridView(
-                                title: 'Send to...');
+                                layoutOption: ConnectionsLayoutOptions.send);
                           });
                     },
                     child: const Icon(Icons.send, color: Color(0xFF5521B5))))

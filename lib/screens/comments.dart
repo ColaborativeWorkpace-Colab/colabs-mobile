@@ -25,6 +25,7 @@ class Comments extends StatelessWidget {
                     content: post.textContent,
                     avatar: 'Avatar',
                     userName: post.postOwnerId),
+                // ignore: always_specify_types
                 <Comment>[...post.comments.map<Comment>((rawComment) => Comment(
                   avatar: 'Avatar',
                   //TODO: Get user names

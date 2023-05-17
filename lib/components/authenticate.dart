@@ -1,6 +1,4 @@
 import 'package:colabs_mobile/controllers/authenticator.dart';
-import 'package:colabs_mobile/controllers/chat_controller.dart';
-import 'package:colabs_mobile/controllers/restservice.dart';
 import 'package:colabs_mobile/utils/initialize_services.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

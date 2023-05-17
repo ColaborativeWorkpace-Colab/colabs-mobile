@@ -1,13 +1,11 @@
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
-import 'package:colabs_mobile/controllers/authenticator.dart';
-import 'package:colabs_mobile/controllers/chat_controller.dart';
 import 'package:colabs_mobile/controllers/layout_controller.dart';
-import 'package:colabs_mobile/controllers/restservice.dart';
 import 'package:colabs_mobile/screens/pages/jobs.dart';
 import 'package:colabs_mobile/screens/pages/messages.dart';
 import 'package:colabs_mobile/screens/pages/post.dart';
 import 'package:colabs_mobile/screens/pages/projects.dart';
 import 'package:colabs_mobile/screens/pages/social.dart';
+import 'package:colabs_mobile/types/search_filters.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

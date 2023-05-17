@@ -1,8 +1,9 @@
 import 'package:colabs_mobile/models/message.dart';
 
 class Chat {
+  final String? chatId;
   final List<Message> messages;
-  final String user;
+  final String receiver;
 
-  Chat(this.user, this.messages);
+  Chat(this.receiver, this.messages, [this.chatId]);
 }

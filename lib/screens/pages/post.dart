@@ -2,6 +2,7 @@ import 'package:colabs_mobile/components/attachement_viewer.dart';
 import 'package:colabs_mobile/components/connections_grid_view.dart';
 import 'package:colabs_mobile/controllers/content_controller.dart';
 import 'package:colabs_mobile/controllers/restservice.dart';
+import 'package:colabs_mobile/types/connections_view_layout_options.dart';
 import 'package:colabs_mobile/utils/filter_tags.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -176,7 +177,7 @@ class PostPage extends StatelessWidget {
                               context: context,
                               builder: (BuildContext context) {
                                 return const ConnectionsGridView(
-                                    title: 'Tag your connections');
+                                    layoutOption: ConnectionsLayoutOptions.tag);
                               });
                         },
                         child: const Icon(Icons.person_add_alt_rounded,

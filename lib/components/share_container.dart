@@ -4,8 +4,8 @@ import 'package:social_share/social_share.dart';
 
 //TODO: Share to other social medias
 class ShareContainer extends StatelessWidget {
-  String postLink;
-  ShareContainer({
+  final String postLink;
+  const ShareContainer({
     super.key,
     required this.postLink
   });

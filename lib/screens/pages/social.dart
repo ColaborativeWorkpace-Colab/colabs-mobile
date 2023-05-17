@@ -3,6 +3,7 @@ import 'package:colabs_mobile/components/navbar.dart';
 import 'package:colabs_mobile/controllers/authenticator.dart';
 import 'package:colabs_mobile/controllers/layout_controller.dart';
 import 'package:colabs_mobile/controllers/restservice.dart';
+import 'package:colabs_mobile/types/search_filters.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -60,22 +61,40 @@ class SocialPage extends StatelessWidget {
                                         post: restService
                                             .getSocialFeedPosts[index]);
                               })))
-                  : RefreshIndicator(
-                      onRefresh: () => restService.getSocialFeed(),
-                      child: Container(
-                          margin: EdgeInsets.only(top: screenHeight * .25),
-                          child: SizedBox(
-                              width: screenWidth * .7,
-                              child: Column(children: const <Widget>[
-                                Icon(Icons.photo_rounded,
-                                    color: Colors.grey, size: 80),
-                                SizedBox(height: 20),
-                                Text(
-                                  '''Your social feed is empty. Go to your profile and pick the topics that interest you.''',
-                                  textAlign: TextAlign.center,
-                                )
-                              ]))),
-                    )
+                  : Container(
+                      margin: EdgeInsets.only(top: screenHeight * .25),
+                      child: SizedBox(
+                          width: screenWidth * .7,
+                          child: Column(children: <Widget>[
+                            const Icon(Icons.photo_rounded,
+                                color: Colors.grey, size: 80),
+                            Container(
+                              margin: const EdgeInsets.all(20),
+                              child: const Text(
+                                '''Your social feed is empty.''',
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            ElevatedButton(
+                                onPressed: () {
+                                  restService.isRefreshing = true;
+                                  restService
+                                      .getSocialFeed()
+                                      .timeout(const Duration(seconds: 10),
+                                          onTimeout: () =>
+                                              restService.isRefreshing = false)
+                                      .then((bool value) {
+                                    restService.isRefreshing = false;
+                                  });
+                                },
+                                child: (!restService.isRefreshing)
+                                    ? const Icon(Icons.refresh)
+                                    : const Padding(
+                                        padding: EdgeInsets.all(8.0),
+                                        child: CircularProgressIndicator(
+                                            color: Colors.white),
+                                      ))
+                          ])))
             ])));
   }
 }

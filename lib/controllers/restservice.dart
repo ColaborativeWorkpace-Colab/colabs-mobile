@@ -11,6 +11,7 @@ class RESTService extends ChangeNotifier {
   final List<String> _userConnections = <String>[];
   final List<Post> _socialFeedPosts = <Post>[];
   bool _isPosting = false;
+  bool _isRefreshing = false;
   RESTService();
 
   Future<bool> getSocialFeed() async {
@@ -27,7 +28,7 @@ class RESTService extends ChangeNotifier {
     } on Exception catch (error) {
       debugPrint(error.toString());
       return Future<bool>.value(false);
-    }
+    } 
   }
 
   void _populateSocialFeed(String body) {
@@ -155,7 +156,7 @@ class RESTService extends ChangeNotifier {
     List<dynamic> connections = decodedJsonBody['connections'];
 
     for (dynamic connection in connections) {
-      if(!_userConnections.contains(connection)){
+      if (!_userConnections.contains(connection)) {
         _userConnections.add(connection);
       }
     }
@@ -170,7 +171,13 @@ class RESTService extends ChangeNotifier {
     notifyListeners();
   }
 
+  set isRefreshing(bool value) {
+    _isRefreshing = value;
+    notifyListeners();
+  }
+
   List<String> get getUserConnections => _userConnections;
   List<Post> get getSocialFeedPosts => _socialFeedPosts;
   bool get isPosting => _isPosting;
+  bool get isRefreshing => _isRefreshing;
 }
