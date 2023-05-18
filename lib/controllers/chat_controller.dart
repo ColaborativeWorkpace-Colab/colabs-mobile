@@ -1,5 +1,6 @@
 import 'package:colabs_mobile/controllers/authenticator.dart';
 import 'package:colabs_mobile/models/chat.dart';
+import 'package:colabs_mobile/models/message.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 import 'package:flutter/material.dart';
@@ -71,8 +72,23 @@ class ChatController extends ChangeNotifier {
   void sendGroupMessage(Map<String, dynamic> data) =>
       socket!.emit('group-message', data);
 
+  void markAsRead(Chat chat) {
+    socket!.emit('mark-read', chat.chatId);
+    _markAllMessagesAsRead(chat);
+  }
+
+  void _markAllMessagesAsRead(Chat chat) {
+    for (Message message in chat.messages) {
+      message.isRead = true;
+    }
+  }
+
   void addChat(Chat chat) {
     _chats.add(chat);
+    notifyListeners();
+  }
+
+  void refresh() {
     notifyListeners();
   }
 

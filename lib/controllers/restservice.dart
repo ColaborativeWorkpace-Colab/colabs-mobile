@@ -7,6 +7,7 @@ import 'package:colabs_mobile/models/post.dart';
 import 'package:colabs_mobile/types/chat_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 
 class RESTService extends ChangeNotifier {

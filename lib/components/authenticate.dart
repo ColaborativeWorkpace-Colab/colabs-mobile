@@ -1,6 +1,7 @@
 import 'package:colabs_mobile/controllers/authenticator.dart';
 import 'package:colabs_mobile/utils/initialize_services.dart';
 import 'package:flutter/material.dart';
+import 'package:oauth2_client/access_token_response.dart';
 import 'package:provider/provider.dart';
 
 class Authenticate extends StatelessWidget {
@@ -45,18 +46,21 @@ class Authenticate extends StatelessWidget {
                   side: const BorderSide(color: Colors.black, width: 1),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(5))),
-              onPressed: () async {
-                authenticator.setAccessToken =
-                    await authenticator.getGithubToken();
-                initServices(context);
-                authenticator.setIsAuthorized = true;
+              onPressed: () {
+                authenticator
+                    .getGithubToken()
+                    .then((AccessTokenResponse token) {
+                  authenticator.setAccessToken = token;
+                  initServices(context);
+                  authenticator.setIsAuthorized = true;
+                });
               },
               child: Row(children: const <Widget>[
                 Image(image: AssetImage('assets/images/github.png')),
                 SizedBox(width: 50),
                 Text('Continue with Github',
                     style: TextStyle(color: Colors.black))
-              ])),
+              ]))
         ),
         const SizedBox(height: 30),
         Stack(children: <Widget>[

@@ -1,11 +1,14 @@
 import 'package:colabs_mobile/components/connections_grid_view.dart';
 import 'package:colabs_mobile/components/navbar.dart';
+import 'package:colabs_mobile/controllers/authenticator.dart';
 import 'package:colabs_mobile/controllers/chat_controller.dart';
 import 'package:colabs_mobile/models/message.dart';
 import 'package:colabs_mobile/screens/chatview.dart';
 import 'package:colabs_mobile/types/connections_view_layout_options.dart';
 import 'package:colabs_mobile/types/search_filters.dart';
+import 'package:colabs_mobile/utils/date_formatter.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class MessagesPage extends StatelessWidget {
@@ -16,6 +19,7 @@ class MessagesPage extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     ChatController chatController = Provider.of<ChatController>(context);
+    Authenticator authenticator = Provider.of<Authenticator>(context);
 
     return SafeArea(
         child: Column(children: <Widget>[
@@ -35,20 +39,46 @@ class MessagesPage extends StatelessWidget {
                           .toList();
                       return Material(
                           child: ListTile(
+                              contentPadding: const EdgeInsets.all(5),
                               shape: const RoundedRectangleBorder(
                                   side: BorderSide(
                                       color: Colors.grey, width: 0.5)),
                               leading: const CircleAvatar(radius: 27),
-                              title: Text(chatController.getChats[index].receiver),
-                              subtitle: Text(messages[0].messageText),
+                              title: Container(
+                                margin: const EdgeInsets.only(bottom: 15),
+                                child: Text(
+                                    chatController.getChats[index].receiver,
+                                    overflow: TextOverflow.fade,
+                                    style: const TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold)),
+                              ),
+                              subtitle: Text(messages[0].messageText,
+                                  overflow: TextOverflow.fade,
+                                  style: TextStyle(
+                                      fontWeight: (messages[0].isRead)
+                                          ? FontWeight.normal
+                                          : FontWeight.bold)),
                               trailing: Column(children: <Widget>[
                                 const SizedBox(height: 10),
-                                Text(messages[0].timeStamp.toString()),
-                                Icon((messages[0].isRead)
-                                    ? Icons.done
-                                    : Icons.done_all)
+                                Text(DateFormat(
+                                        formatDate(messages[0].timeStamp))
+                                    .format(messages[0].timeStamp)),
+                                (messages[0].senderId !=
+                                        authenticator.getUserId)
+                                    ? Icon((messages[0].isRead)
+                                        ? Icons.done_all
+                                        : Icons.done)
+                                    : const SizedBox()
                               ]),
                               onTap: () {
+                                if (messages[0].senderId ==
+                                    authenticator.getUserId) {
+                                  chatController.markAsRead(
+                                      chatController.getChats[index]);
+                                  chatController.refresh();
+                                }
+
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute<Widget>(

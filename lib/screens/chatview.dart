@@ -1,3 +1,4 @@
+import 'package:chat_bubbles/chat_bubbles.dart';
 import 'package:colabs_mobile/controllers/authenticator.dart';
 import 'package:colabs_mobile/controllers/chat_controller.dart';
 import 'package:colabs_mobile/models/chat.dart';
@@ -17,6 +18,7 @@ class ChatView extends StatelessWidget {
     ChatController chatController = Provider.of<ChatController>(context);
     Authenticator authenticator = Provider.of<Authenticator>(context);
     double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
         backgroundColor: Colors.grey[200]!,
@@ -29,7 +31,14 @@ class ChatView extends StatelessWidget {
               Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(chat.receiver),
+                    SizedBox(
+                      width: screenWidth * .5,
+                      child: Text(
+                        chat.receiver,
+                        style: const TextStyle(fontSize: 15),
+                        overflow: TextOverflow.fade,
+                      ),
+                    ),
                     const SizedBox(height: 5),
                     //TODO: get last seen status
                     const Text('Last seen', style: TextStyle(fontSize: 12))
@@ -57,6 +66,24 @@ class ChatView extends StatelessWidget {
                       ])
             ]),
         body: Stack(children: <Widget>[
+          Container(
+              margin: const EdgeInsets.symmetric(vertical: 10),
+              height: screenHeight * .9,
+              child: SingleChildScrollView(
+                child: Column(children: <Widget>[
+                  ...chat.messages.map((Message message) => BubbleNormal(
+                      textStyle: TextStyle(
+                          fontSize: 16,
+                          color: message.senderId == authenticator.getUserId
+                              ? Colors.black87
+                              : Colors.white),
+                      color: message.senderId == authenticator.getUserId
+                          ? Colors.white
+                          : const Color(0xFF5521B5),
+                      text: message.messageText,
+                      isSender: message.senderId == authenticator.getUserId)),
+                ])
+              )),
           Positioned(
               bottom: 1,
               child: Row(children: <Widget>[
@@ -89,7 +116,7 @@ class ChatView extends StatelessWidget {
                                         'timeStamp': timeStamp.toString(),
                                         'chatId': chat.chatId
                                       });
-                                      
+
                                       chat.messages.add(Message(
                                           messageId,
                                           authenticator.getUserId!,
@@ -97,9 +124,12 @@ class ChatView extends StatelessWidget {
                                           timeStamp,
                                           false));
 
-                                      if(chat.chatId == null) {
+                                      if (chat.chatId == null) {
                                         chatController.addChat(chat);
                                       }
+
+                                      messageController.clear();
+                                      chatController.refresh();
                                     }
                                     //TODO: Add attachements variable
                                     //TODO: Send also for group chats
