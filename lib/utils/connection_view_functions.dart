@@ -4,6 +4,7 @@ import 'package:colabs_mobile/controllers/restservice.dart';
 import 'package:colabs_mobile/models/chat.dart';
 import 'package:colabs_mobile/models/message.dart';
 import 'package:colabs_mobile/screens/chatview.dart';
+import 'package:colabs_mobile/types/chat_type.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -33,7 +34,7 @@ Widget toggleTaggedMark(BuildContext context, int index) {
 
 void chatWithConnection(BuildContext context, String receiverId) {
   ChatController chatController = Provider.of<ChatController>(context, listen:false);
-  Chat newChat = Chat(receiverId, <Message>[]);
+  Chat newChat = Chat(receiverId, <Message>[], ChatType.private);
 
   for (Chat chat in chatController.getChats) {
     if (chat.receiver == receiverId) {

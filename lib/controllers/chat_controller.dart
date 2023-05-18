@@ -28,6 +28,10 @@ class ChatController extends ChangeNotifier {
     socket!.onConnectError((err) => debugPrint(err));
     // ignore: always_specify_types
     socket!.onError((err) => debugPrint(err));
+    // ignore: always_specify_types
+    socket!.on('receive_chat_id', (data) => _linkChatId(data));
+    // ignore: always_specify_types
+    socket!.on('chat_error', (errorMessage) => removeChat());
   }
 
   void disconnect() {
@@ -37,11 +41,40 @@ class ChatController extends ChangeNotifier {
     super.dispose();
   }
 
-  void sendPrivateMessage(Map<String, dynamic> data) => 
-    socket!.emit('private-message', data);
+  // ignore: always_specify_types
+  void _linkChatId(data) {
+    Map<String, dynamic> mapData = data as Map<String, dynamic>;
+
+    for (Chat chat in _chats) {
+      if (chat.receiver == mapData['receiverId']) {
+        chat.chatId = mapData['chatId'];
+      }
+    }
+  }
+
+  void removeChat() {
+    Chat? toBeRemoved;
+
+    for (Chat chat in _chats) {
+      if (chat.chatId == null) {
+        toBeRemoved = chat;
+        break;
+      }
+    }
+
+    if (toBeRemoved != null) _chats.remove(toBeRemoved);
+  }
+
+  void sendPrivateMessage(Map<String, dynamic> data) =>
+      socket!.emit('private-message', data);
 
   void sendGroupMessage(Map<String, dynamic> data) =>
       socket!.emit('group-message', data);
+
+  void addChat(Chat chat) {
+    _chats.add(chat);
+    notifyListeners();
+  }
 
   set setAuthenticator(Authenticator value) {
     _authenticator = value;

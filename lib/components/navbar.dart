@@ -24,12 +24,16 @@ class Navbar extends StatelessWidget {
                           onPressed: () {
                             switch (searchFilter) {
                               case SearchFilter.social:
+                                //TODO: Go to explore page
                                 break;
                               case SearchFilter.message:
+                                //TODO: Search messages
                                 break;
                               case SearchFilter.project:
+                                //TODO: Search projects
                                 break;
                               case SearchFilter.job:
+                                //TODO: Search job
                                 break;
                               case SearchFilter.post:
                                 break;
@@ -48,9 +52,7 @@ class Navbar extends StatelessWidget {
                   },
                   style: ElevatedButton.styleFrom(shape: const CircleBorder()),
                   child: const CircleAvatar(
-                    radius: 20,
-                    backgroundColor: Colors.black,
-                  )))
+                      radius: 20, backgroundColor: Colors.black)))
         ]));
   }
 }

@@ -31,7 +31,9 @@ class ConnectionsGridView extends StatelessWidget {
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 0, horizontal: 15),
                           suffixIcon: IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                //TODO: When searching, auto filter while typing for user
+                              },
                               icon: const Icon(Icons.search_rounded)),
                           hintText: 'Search Connections',
                           border: const OutlineInputBorder(
