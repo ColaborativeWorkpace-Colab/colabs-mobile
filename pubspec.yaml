@@ -48,6 +48,7 @@ dependencies:
   flutter_chat_ui: ^1.6.6
   chat_bubbles: ^1.4.0
   intl: ^0.17.0
+  quiver: ^3.2.1
 
 dev_dependencies:
   flutter_test:

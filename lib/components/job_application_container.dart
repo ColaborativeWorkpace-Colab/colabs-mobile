@@ -1,4 +1,8 @@
+import 'package:colabs_mobile/controllers/job_controller.dart';
+import 'package:colabs_mobile/types/job_bid.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class JobApplicationContainer extends StatefulWidget {
   final ScrollController scrollController;
@@ -15,6 +19,8 @@ class _JobApplicationContainerState extends State<JobApplicationContainer>
   AnimationController? _controller;
   Animation<double>? _animation;
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  bool _isTransitioning = false;
+  bool _isExtended = false;
 
   @override
   void initState() {
@@ -31,19 +37,29 @@ class _JobApplicationContainerState extends State<JobApplicationContainer>
 
   Future<void> _toggleContainer() async {
     if (_animation!.status != AnimationStatus.completed) {
+      setState(() {
+        _isExtended = true;
+        _isTransitioning = true;
+      });
+      await widget.scrollController.animateTo(450,
+          duration: const Duration(seconds: 1), curve: Curves.easeInOutExpo);
       await _controller!.forward();
-      await widget.scrollController.animateTo(300,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.fastLinearToSlowEaseIn);
+      setState(() {
+        _isTransitioning = false;
+      });
     } else {
       await _controller!
           .animateBack(0, duration: const Duration(milliseconds: 500));
+      setState(() {
+        _isExtended = false;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    JobController jobController = Provider.of<JobController>(context);
 
     return Container(
         margin: const EdgeInsets.all(20),
@@ -58,11 +74,20 @@ class _JobApplicationContainerState extends State<JobApplicationContainer>
                     icon: const Icon(Icons.favorite_border_outlined,
                         color: Colors.red),
                     onPressed: () {}),
-                InkWell(
-                    child: const Text('Apply Now',
-                        style: TextStyle(color: Color(0xFF5521B5))),
-                    onTap: () => _toggleContainer()),
-                SizedBox(width: screenWidth * .1)
+                _isExtended
+                    ? const SizedBox()
+                    : ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20))),
+                        child: const Text('Apply Now',
+                            style: TextStyle(color: Colors.white)),
+                        onPressed: () => _toggleContainer()),
+                _isExtended
+                    ? IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () => _toggleContainer())
+                    : SizedBox(width: screenWidth * .1)
               ]),
           SizeTransition(
               sizeFactor: _animation!,
@@ -70,66 +95,118 @@ class _JobApplicationContainerState extends State<JobApplicationContainer>
               child: Form(
                   key: formKey,
                   child: Column(children: <Widget>[
-                    const Text('Project Bid'),
                     Container(
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 30, vertical: 20),
+                        alignment: Alignment.centerLeft,
+                        child: const Text('Project Bid',
+                            style: TextStyle(fontSize: 16))),
+                    Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 20),
+                        padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
                             border:
-                                Border.all(color: Colors.grey[700]!, width: 1)),
+                                Border.all(color: Colors.grey[400]!, width: 1)),
                         child: Column(children: <Widget>[
                           SizedBox(
                               height: 50,
-                              child: Row(children: <Widget>[
-                                SizedBox(
-                                    width: screenWidth * .4,
-                                    height: 50,
-                                    child: ListTile(
-                                        title: const Text('By Milestone',
-                                            style: TextStyle(fontSize: 13)),
-                                        leading: Radio<String>(
-                                            value: 'By Milestone',
-                                            groupValue: 'By Milestone',
-                                            onChanged: (String? value) {}))),
-                                SizedBox(
-                                    width: screenWidth * .38,
-                                    height: 50,
-                                    child: ListTile(
-                                        title: const Text('By Project',
-                                            style: TextStyle(fontSize: 13)),
-                                        leading: Radio<String?>(
-                                            value: 'By Project',
-                                            groupValue: 'By Project',
-                                            onChanged: (String? value) {})))
-                              ])),
-                          const Text(
-                              "Divide the project into smaller segments, called milestones. You'll be paid for milestones as they are completed and approved.")
+                              child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    SizedBox(
+                                        width: screenWidth * .35,
+                                        height: 50,
+                                        child: ListTile(
+                                            horizontalTitleGap: 1,
+                                            contentPadding: EdgeInsets.zero,
+                                            title: const Text('By Milestone',
+                                                style: TextStyle(fontSize: 12)),
+                                            leading: Radio<JobBid>(
+                                                value: jobController.getJobBid,
+                                                groupValue: JobBid.milestone,
+                                                onChanged: (JobBid? value) {
+                                                  jobController.setJobBid =
+                                                      JobBid.milestone;
+                                                }))),
+                                    SizedBox(
+                                        width: screenWidth * .3,
+                                        height: 50,
+                                        child: ListTile(
+                                            horizontalTitleGap: 1,
+                                            contentPadding: EdgeInsets.zero,
+                                            title: const Text('By Project',
+                                                style: TextStyle(fontSize: 12)),
+                                            leading: Radio<JobBid>(
+                                                value: jobController.getJobBid,
+                                                groupValue: JobBid.project,
+                                                onChanged: (JobBid? value) {
+                                                  jobController.setJobBid =
+                                                      JobBid.project;
+                                                })))
+                                  ])),
+                          Text(jobController.getJobBid.name)
                         ])),
                     Container(
-                        height: 50,
-                        width: screenWidth * .8,
-                        child: TextFormField()),
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 15),
+                        child: TextFormField(
+                            minLines: 1,
+                            maxLines: 5,
+                            decoration: InputDecoration(
+                                label: const Text('Cover Letter'),
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(20))))),
                     Row(children: <Widget>[
                       Container(
-                          height: 50,
-                          width: screenWidth * .4,
-                          child: TextFormField()),
+                          width: screenWidth * .37,
+                          margin: const EdgeInsets.symmetric(horizontal: 20),
+                          child: TextFormField(
+                              decoration: InputDecoration(
+                                  label: const Text('Hourly Rate'),
+                                  hintText: '50 ETB/hr',
+                                  border: OutlineInputBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(20))))),
                       Container(
-                          height: 50,
-                          width: screenWidth * .4,
-                          child: TextFormField())
+                          width: screenWidth * .35,
+                          margin: const EdgeInsets.symmetric(horizontal: 5),
+                          child: TextFormField(
+                              controller: TextEditingController(
+                                  text: (jobController.getJobDeadlineEstimate !=
+                                          null)
+                                      ? DateFormat('M-d-yyyy').format(
+                                          jobController.getJobDeadlineEstimate!)
+                                      : null),
+                              decoration: InputDecoration(
+                                  label: const Text('Deadline'),
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(20))),
+                              onTap: () async {
+                                FocusScope.of(context)
+                                    .requestFocus(FocusNode());
+                                jobController.setJobDeadlineEstimate =
+                                    await showDatePicker(
+                                  context: context,
+                                  initialDate:
+                                      jobController.getJobDeadlineEstimate ??
+                                          DateTime.now(),
+                                  firstDate: DateTime.now(),
+                                  lastDate: DateTime.now()
+                                      .add(const Duration(days: 365)),
+                                );
+                              }))
                     ]),
-                    const Text('Cover letter'),
                     Container(
-                      height: 50,
-                      width: screenWidth * .8,
-                      child: TextFormField(
-                        minLines: 5,
-                        maxLines: 5,
-                      ),
-                    ),
-                    ElevatedButton(
-                        onPressed: () {}, child: const Text('Submit Proposal'))
-                  ])))
+                      margin: const EdgeInsets.all(10),
+                      child: ElevatedButton(
+                          onPressed: () {},
+                          child: const Text('Submit Proposal')),
+                    )
+                  ]))),
+          _isTransitioning == true
+              ? const SizedBox(height: 400)
+              : const SizedBox()
         ]));
   }
 }
