@@ -1,20 +1,10 @@
+import 'package:colabs_mobile/models/job.dart';
 import 'package:flutter/material.dart';
 
 class JobContainer extends StatelessWidget {
-  final List<String>? requirements;
-  final String jobTitle;
-  final String? description;
-  final DateTime timeStamp;
-  final bool isVerified;
+  final Job job;
 
-  const JobContainer({
-    super.key,
-    required this.jobTitle,
-    required this.timeStamp,
-    this.requirements,
-    this.description,
-    this.isVerified = false,
-  });
+  const JobContainer({super.key, required this.job});
 
   @override
   Widget build(BuildContext context) {
@@ -32,10 +22,10 @@ class JobContainer extends StatelessWidget {
               Container(
                   margin: const EdgeInsets.all(15),
                   child: Text(
-                    jobTitle,
+                    job.jobTitle,
                     style: const TextStyle(fontSize: 25),
                   )),
-              (requirements != null)
+              (job.requirements.isNotEmpty)
                   ? Container(
                       margin: const EdgeInsets.symmetric(horizontal: 5),
                       height: 50,
@@ -43,20 +33,20 @@ class JobContainer extends StatelessWidget {
                       child: ListView.builder(
                           shrinkWrap: true,
                           scrollDirection: Axis.horizontal,
-                          itemCount: requirements!.length,
+                          itemCount: job.requirements.length,
                           itemBuilder: (BuildContext context, int index) {
                             return Container(
                                 margin:
                                     const EdgeInsets.symmetric(horizontal: 5),
-                                child: Chip(label: Text(requirements![index])));
+                                child: Chip(label: Text(job.requirements[index])));
                           }),
                     )
                   : const SizedBox(),
               const SizedBox(height: 10),
               Container(
                   margin: const EdgeInsets.only(left: 15),
-                  child: Text(description ?? '')),
-              (description != null)
+                  child: Text(job.description)),
+              (job.description.isNotEmpty)
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
@@ -64,6 +54,7 @@ class JobContainer extends StatelessWidget {
                             margin: const EdgeInsets.only(right: 10),
                             child: InkWell(
                                 onTap: () {
+                                  //TODO: Give more detail about the job
                                   showModalBottomSheet(
                                       context: context,
                                       builder: (BuildContext context) =>
@@ -79,10 +70,10 @@ class JobContainer extends StatelessWidget {
               Container(
                   margin: const EdgeInsets.only(left: 10),
                   child: Chip(
-                      backgroundColor: isVerified
+                      backgroundColor: job.isPaymentVerified
                           ? const Color(0xFF5521B5)
                           : Colors.grey[300],
-                      label: isVerified
+                      label: job.isPaymentVerified
                           ? SizedBox(
                               width: 150,
                               child: Row(children: const <Widget>[

@@ -1,6 +1,7 @@
 import 'package:colabs_mobile/controllers/authenticator.dart';
 import 'package:colabs_mobile/controllers/chat_controller.dart';
 import 'package:colabs_mobile/controllers/content_controller.dart';
+import 'package:colabs_mobile/controllers/job_controller.dart';
 import 'package:colabs_mobile/controllers/layout_controller.dart';
 import 'package:colabs_mobile/controllers/restservice.dart';
 import 'package:colabs_mobile/screens/login.dart';
@@ -36,7 +37,9 @@ class ColabsApp extends StatelessWidget {
               create: (_) => LayoutController()),
           ChangeNotifierProvider<RESTService>(create: (_) => RESTService()),
           ChangeNotifierProvider<ContentController>(
-              create: (_) => ContentController())
+              create: (_) => ContentController()),
+          ChangeNotifierProvider<JobController>(
+              create: (_) => JobController())
         ],
         builder: (BuildContext context, _) {
           Authenticator auth = Provider.of<Authenticator>(context);

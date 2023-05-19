@@ -1,5 +1,6 @@
 import 'package:colabs_mobile/controllers/authenticator.dart';
 import 'package:colabs_mobile/controllers/chat_controller.dart';
+import 'package:colabs_mobile/controllers/job_controller.dart';
 import 'package:colabs_mobile/controllers/restservice.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -10,10 +11,13 @@ void initServices(BuildContext context) {
   ChatController chatController =
       Provider.of<ChatController>(context, listen: false);
   RESTService restService = Provider.of<RESTService>(context, listen: false);
+  JobController jobController =
+      Provider.of<JobController>(context, listen: false);
 
   authenticator.setIsAuthorized = true;
   restService.setAuthenticator = authenticator;
   restService.setChatController = chatController;
+  restService.setJobController = jobController;
   chatController.setAuthenticator = authenticator;
 
   if (authenticator.isUserAuthorized) {
@@ -21,5 +25,6 @@ void initServices(BuildContext context) {
     restService.getSocialFeed();
     restService.getUserConnectionsRequest();
     restService.getMessages();
+    restService.getJobs();
   }
 }
