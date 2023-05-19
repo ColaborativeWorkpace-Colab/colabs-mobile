@@ -172,13 +172,13 @@ class RESTService extends ChangeNotifier {
     }
   }
 
-  Future<bool> getMessages() async {
+  Future<bool> getMessages({bool listen = false}) async {
     try {
       http.Response response = await http.get(
           Uri.http(urlHost, '/api/v1/messaging/${authenticator!.getUserId}'));
 
       if (response.statusCode == 200) {
-        _populateChats(response.body);
+        _populateChats(response.body, listen);
         return Future<bool>.value(true);
       } else {
         return Future<bool>.value(false);
@@ -189,7 +189,7 @@ class RESTService extends ChangeNotifier {
     }
   }
 
-  void _populateChats(String body) {
+  void _populateChats(String body, bool listen) {
     Map<String, dynamic> decodedJsonBody = json.decode(body);
     List<dynamic> chats = decodedJsonBody['messages'];
 
@@ -200,11 +200,13 @@ class RESTService extends ChangeNotifier {
 
       members.remove(authenticator!.getUserId);
 
-      chatController!.addChat(Chat(
-          members[0],
-          messages,
-          (chat['type'] == 'Private') ? ChatType.private : ChatType.group,
-          chat['_id']));
+      chatController!.addChat(
+          Chat(
+              members[0],
+              messages,
+              (chat['type'] == 'Private') ? ChatType.private : ChatType.group,
+              chat['_id']),
+          listen: listen);
     }
   }
 
@@ -226,13 +228,13 @@ class RESTService extends ChangeNotifier {
     return messages;
   }
 
-  Future<bool> getJobs() async {
+  Future<bool> getJobs({bool listen = false}) async {
     try {
       http.Response response = await http
           .get(Uri.http(urlHost, '/api/v1/jobs/${authenticator!.getUserId}'));
 
       if (response.statusCode == 200) {
-        _populateJobs(response.body);
+        _populateJobs(response.body, listen);
         return Future<bool>.value(true);
       } else {
         return Future<bool>.value(false);
@@ -243,7 +245,7 @@ class RESTService extends ChangeNotifier {
     }
   }
 
-  void _populateJobs(String body) {
+  void _populateJobs(String body, bool listen) {
     Map<String, dynamic> decodedJsonBody = json.decode(body);
     List<dynamic> jobs = decodedJsonBody['jobs'];
 
@@ -258,6 +260,7 @@ class RESTService extends ChangeNotifier {
           .toList();
       jobController!.addJob(
           Job(
+              job['_id'],
               job['title'],
               job['description'],
               mapStatusEnum(job['status']),
@@ -267,7 +270,7 @@ class RESTService extends ChangeNotifier {
               double.parse(job['earnings'].toString()),
               job['owner'],
               job['paymentVerified']),
-          listen: false);
+          listen: listen);
     }
   }
 

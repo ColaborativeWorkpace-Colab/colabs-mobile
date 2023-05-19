@@ -89,8 +89,9 @@ class SocialPage extends StatelessWidget {
                                 },
                                 child: (!restService.isRefreshing)
                                     ? const Icon(Icons.refresh)
-                                    : const Padding(
-                                        padding: EdgeInsets.all(8.0),
+                                    : const SizedBox(
+                                        width: 20,
+                                        height: 20,
                                         child: CircularProgressIndicator(
                                             color: Colors.white),
                                       ))

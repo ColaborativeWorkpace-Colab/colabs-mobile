@@ -1,4 +1,5 @@
 import 'package:colabs_mobile/models/job.dart';
+import 'package:colabs_mobile/screens/jobview.dart';
 import 'package:flutter/material.dart';
 
 class JobContainer extends StatelessWidget {
@@ -38,7 +39,8 @@ class JobContainer extends StatelessWidget {
                             return Container(
                                 margin:
                                     const EdgeInsets.symmetric(horizontal: 5),
-                                child: Chip(label: Text(job.requirements[index])));
+                                child:
+                                    Chip(label: Text(job.requirements[index])));
                           }),
                     )
                   : const SizedBox(),
@@ -55,10 +57,10 @@ class JobContainer extends StatelessWidget {
                             child: InkWell(
                                 onTap: () {
                                   //TODO: Give more detail about the job
-                                  showModalBottomSheet(
-                                      context: context,
-                                      builder: (BuildContext context) =>
-                                          Container(height: screenHeight * .5));
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute<JobView>(
+                                          builder: (BuildContext context) => JobView(job: job)));
                                 },
                                 child: const Text('More',
                                     style: TextStyle(
@@ -74,17 +76,28 @@ class JobContainer extends StatelessWidget {
                           ? const Color(0xFF5521B5)
                           : Colors.grey[300],
                       label: job.isPaymentVerified
-                          ? SizedBox(
-                              width: 150,
-                              child: Row(children: const <Widget>[
-                                Icon(
-                                  Icons.payment,
-                                  color: Colors.white,
-                                ),
-                                SizedBox(width: 10),
-                                Text('Payment Verified',
-                                    style: TextStyle(color: Colors.white)),
-                              ]))
+                          ? GestureDetector(
+                              onTap: () {
+                                showModalBottomSheet(
+                                    context: context,
+                                    builder: (BuildContext context) => SizedBox(
+                                        height: screenHeight * .5,
+                                        child: const Center(
+                                            child: Text(
+                                                'Payment Method Information'))));
+                              },
+                              child: SizedBox(
+                                  width: 150,
+                                  child: Row(children: const <Widget>[
+                                    Icon(
+                                      Icons.payment,
+                                      color: Colors.white,
+                                    ),
+                                    SizedBox(width: 10),
+                                    Text('Payment Verified',
+                                        style: TextStyle(color: Colors.white)),
+                                  ])),
+                            )
                           : SizedBox(
                               width: 170,
                               child: Row(children: const <Widget>[

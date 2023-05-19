@@ -1,6 +1,7 @@
 import 'package:colabs_mobile/types/job_status.dart';
 
 class Job {
+  final String jobId;
   final String jobTitle;
   final String description;
   final JobStatus status;
@@ -10,6 +11,6 @@ class Job {
   final double earnings;
   final String owner;
 
-  Job(this.jobTitle, this.description, this.status, this.workers,
+  Job(this.jobId, this.jobTitle, this.description, this.status, this.workers,
       this.requirements, this.earnings, this.owner, this.isPaymentVerified);
 }

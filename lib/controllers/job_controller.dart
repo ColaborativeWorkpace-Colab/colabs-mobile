@@ -7,8 +7,16 @@ class JobController extends ChangeNotifier {
   JobController();
 
   void addJob(Job value, {bool listen = true}) {
-    _jobs.add(value);
+    if(!_jobExists(value.jobId)) _jobs.add(value);
     if(listen) notifyListeners();
+  }
+
+  bool _jobExists(String jobId) {
+    for (Job job in _jobs) {
+      if (job.jobId == jobId) return true;
+    }
+
+    return false;
   }
 
   List<Job> get getJobs => _jobs;
