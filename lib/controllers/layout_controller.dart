@@ -6,11 +6,13 @@ class LayoutController extends ChangeNotifier {
   int _loginInitRefreshCount = 1;
   int _pageIndex = 0;
 
-  void refresh() {
+  void refresh(bool listen) {
     if (_loginInitRefreshCount != 0) {
       _loginInitRefreshCount--;
       notifyListeners();
     }
+
+    if (listen) notifyListeners();
   }
 
   void loggingOut() => _loginInitRefreshCount++;

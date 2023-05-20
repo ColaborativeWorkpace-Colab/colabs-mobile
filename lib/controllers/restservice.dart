@@ -7,6 +7,7 @@ import 'package:colabs_mobile/models/chat.dart';
 import 'package:colabs_mobile/models/job.dart';
 import 'package:colabs_mobile/models/message.dart';
 import 'package:colabs_mobile/models/post.dart';
+import 'package:colabs_mobile/models/post_comment.dart';
 import 'package:colabs_mobile/models/project.dart';
 import 'package:colabs_mobile/models/task.dart';
 import 'package:colabs_mobile/types/chat_type.dart';
@@ -53,8 +54,7 @@ class RESTService extends ChangeNotifier {
     List<dynamic> rawPosts = decodedJsonBody['posts'];
 
     for (Map<String, dynamic> rawPost in rawPosts) {
-      if (!_postExists(rawPost['_id']))
-        // ignore: curly_braces_in_flow_control_structures
+      if (!_postExists(rawPost['_id'])) {
         _socialFeedPosts.add(Post(
             rawPost['_id'],
             rawPost['userId'],
@@ -63,8 +63,9 @@ class RESTService extends ChangeNotifier {
             DateTime.parse(rawPost['createdAt']),
             rawPost['tags'],
             rawPost['likes'],
-            rawPost['comments'],
+            _populatePostComments(rawPost['comments']),
             rawPost['donatable']));
+      }
     }
   }
 
@@ -74,6 +75,16 @@ class RESTService extends ChangeNotifier {
     }
 
     return false;
+  }
+
+  List<PostComment> _populatePostComments(List<dynamic> rawComments) {
+    List<PostComment> comments = <PostComment>[];
+
+    for (Map<String, dynamic> rawComment in rawComments) {
+      comments.add(PostComment(rawComment['userId'], rawComment['comment']));
+    }
+
+    return comments;
   }
 
   Future<bool> postContentRequest(Map<String, dynamic> body) async {
@@ -348,10 +359,11 @@ class RESTService extends ChangeNotifier {
           // ignore: always_specify_types
           .map((assignee) => assignee as String)
           .toList();
-      temp.add(Task(rawTask['id'], rawTask['title'], rawTask['description'],
-          mapTaskStatusEnum(rawTask['status']), assignees,
-          //FIXME: Deadline date time parse bug
-              ));
+      temp.add(Task(
+        rawTask['id'], rawTask['title'], rawTask['description'],
+        mapTaskStatusEnum(rawTask['status']), assignees,
+        //FIXME: Deadline date time parse bug
+      ));
     }
 
     return temp;
