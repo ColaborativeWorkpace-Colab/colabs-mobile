@@ -10,6 +10,7 @@ class Post {
   final List<String> tags;
   final List<PostComment> comments;
   final bool isDonatable;
+  final List<String> misc = <String>[];
 
   Post(this.postId, this.postOwnerId, this.textContent, this.imageContentUrl,
       this.timeStamp, this.tags, this.likes, this.comments, this.isDonatable);

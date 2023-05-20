@@ -53,7 +53,6 @@ class RESTService extends ChangeNotifier {
     Map<String, dynamic> decodedJsonBody = json.decode(body);
     List<dynamic> rawPosts = decodedJsonBody['posts'];
 
-
     for (Map<String, dynamic> rawPost in rawPosts) {
       List<String> tags = (rawPost['tags'] as List<dynamic>)
           // ignore: always_specify_types
@@ -301,14 +300,42 @@ class RESTService extends ChangeNotifier {
     }
   }
 
-  Future<bool> getProfileInfoRequest({bool listen = false}) async {
+  Future<dynamic> getProfileInfoRequest(
+      {String? userId, bool listen = false}) async {
     try {
-      http.Response response = await http.get(
-          Uri.http(urlHost, '/api/v1/profile/${authenticator!.getUserId}'));
+      http.Response response = await http.get(Uri.http(urlHost,
+          '/api/v1/profile/${(userId == null) ? authenticator!.getUserId : userId}'));
 
       if (response.statusCode == 200) {
-        _loadProfileInfo(response.body);
-        _populateUserConnections(response.body);
+        if (userId == null) {
+          _loadProfileInfo(response.body);
+          _populateUserConnections(response.body);
+
+          return Future<bool>.value(true);
+        } else {
+          return Future<Map<String, dynamic>>.value(
+              // ignore: avoid_dynamic_calls
+              json.decode(response.body)['profile']);
+        }
+      } else {
+        return Future<bool>.value(false);
+      }
+    } on Exception catch (error) {
+      debugPrint(error.toString());
+      return Future<bool>.value(false);
+    }
+  }
+
+  Future<bool> editProfileRequest(Map<String, dynamic> body,
+      {bool listen = false}) async {
+    try {
+      http.Response response = await http.put(
+          Uri.http(urlHost, '/api/v1/profile/${authenticator!.getUserId}'),
+          headers: <String, String>{'Content-Type': 'application/json'},
+          // ignore: always_specify_types
+          body: json.encode({'data': body}));
+
+      if (response.statusCode == 200) {
         return Future<bool>.value(true);
       } else {
         return Future<bool>.value(false);
@@ -317,6 +344,15 @@ class RESTService extends ChangeNotifier {
       debugPrint(error.toString());
       return Future<bool>.value(false);
     }
+  }
+
+  void updateProfileInfo(Map<String, dynamic> updatedInfo) {
+    _profileInfo['firstName'] = updatedInfo['firstName'];
+    _profileInfo['lastName'] = updatedInfo['lastName'];
+    _profileInfo['bio'] = updatedInfo['bio'];
+    _profileInfo['occupation'] = updatedInfo['occupation'];
+    _profileInfo['location'] = updatedInfo['location'];
+    notifyListeners();
   }
 
   void _loadProfileInfo(String body) {
@@ -365,11 +401,9 @@ class RESTService extends ChangeNotifier {
           // ignore: always_specify_types
           .map((assignee) => assignee as String)
           .toList();
-      temp.add(Task(
-        rawTask['id'], rawTask['title'], rawTask['description'],
-        mapTaskStatusEnum(rawTask['status']), assignees,
-        //FIXME: Deadline date time parse bug
-      ));
+      temp.add(Task(rawTask['id'], rawTask['title'], rawTask['description'],
+          mapTaskStatusEnum(rawTask['status']), assignees,
+          deadline: DateTime.parse(rawTask['deadline'])));
     }
 
     return temp;

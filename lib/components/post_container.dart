@@ -9,9 +9,12 @@ import 'package:colabs_mobile/types/connections_view_layout_options.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+// ignore: must_be_immutable
 class PostContainer extends StatelessWidget {
+  String? postOwner;
+  String? postOwnerOccupation;
   final Post post;
-  const PostContainer({super.key, required this.post});
+  PostContainer({super.key, required this.post});
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +23,28 @@ class PostContainer extends StatelessWidget {
     LayoutController layoutController = Provider.of<LayoutController>(context);
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
+
+    if (post.postOwnerId == authenticator.getUserId) {
+      postOwner =
+          '${restService.getProfileInfo['firstName']} ${restService.getProfileInfo['lastName']}';
+      postOwnerOccupation = restService.getProfileInfo['occupation'];
+    } else {
+      if (post.misc.isEmpty) {
+        restService
+            .getProfileInfoRequest(userId: post.postOwnerId)
+            // ignore: always_specify_types
+            .then((value) {
+          if (value is Map<String, dynamic>) {
+            post.misc.add('${value['firstName']} ${value['lastName']}');
+            post.misc.add(value['occupation']);
+            layoutController.refresh(true);
+          }
+        });
+      } else {
+        postOwner = post.misc[0];
+        postOwnerOccupation = post.misc[1];
+      }
+    }
 
     return Container(
         width: screenWidth * .95,
@@ -39,11 +64,10 @@ class PostContainer extends StatelessWidget {
                   Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text(post.postOwnerId,
+                        Text(postOwner ?? '',
                             style: const TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 13)),
-                        //TODO: Get User occupation
-                        Text(post.postOwnerId,
+                        Text(postOwnerOccupation ?? '',
                             style: const TextStyle(fontSize: 10)),
                         Text(post.timeStamp.toString(),
                             style: const TextStyle(
@@ -95,7 +119,6 @@ class PostContainer extends StatelessWidget {
                 child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey[100]!),
-                    //TODO: Unlike post
                     onPressed: () {
                       restService
                           .likePostRequest(post.postId)
@@ -152,12 +175,14 @@ class PostContainer extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey[100]!),
                     onPressed: () {
-                      //TODO: Send a post in private message
                       showModalBottomSheet(
                           context: context,
                           builder: (BuildContext context) {
                             return ConnectionsGridView(
-                                layoutOption: ConnectionsLayoutOptions.send, shareLink: Uri.http(restService.urlHost, '/share/${post.postId}').toString());
+                                layoutOption: ConnectionsLayoutOptions.send,
+                                shareLink: Uri.http(restService.urlHost,
+                                        '/share/${post.postId}')
+                                    .toString());
                           });
                     },
                     child: const Icon(Icons.send, color: Color(0xFF5521B5))))
