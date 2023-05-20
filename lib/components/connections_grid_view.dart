@@ -39,7 +39,6 @@ class ConnectionsGridView extends StatelessWidget {
                           border: const OutlineInputBorder(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(45)))))),
-              //TODO: get user connections
               SizedBox(
                   height: screenHeight * .27,
                   child: GridView.builder(

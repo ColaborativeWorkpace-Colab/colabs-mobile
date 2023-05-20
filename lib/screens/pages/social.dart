@@ -32,7 +32,7 @@ class SocialPage extends StatelessWidget {
                       restService.isPosting)
                   ? Expanded(
                       child: RefreshIndicator(
-                          onRefresh: () => restService.getSocialFeed(),
+                          onRefresh: () => restService.getSocialFeedRequest(),
                           child: ListView.builder(
                               padding: const EdgeInsets.only(bottom: 95),
                               shrinkWrap: true,
@@ -79,7 +79,7 @@ class SocialPage extends StatelessWidget {
                                 onPressed: () {
                                   restService.isRefreshing = true;
                                   restService
-                                      .getSocialFeed()
+                                      .getSocialFeedRequest()
                                       .timeout(const Duration(seconds: 10),
                                           onTimeout: () =>
                                               restService.isRefreshing = false)

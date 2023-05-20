@@ -56,7 +56,6 @@ class JobContainer extends StatelessWidget {
                             margin: const EdgeInsets.only(right: 10),
                             child: InkWell(
                                 onTap: () {
-                                  //TODO: Give more detail about the job
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute<JobView>(

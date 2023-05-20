@@ -2,6 +2,8 @@ import 'package:colabs_mobile/components/profile_edit_form.dart';
 import 'package:colabs_mobile/controllers/authenticator.dart';
 import 'package:colabs_mobile/controllers/chat_controller.dart';
 import 'package:colabs_mobile/controllers/layout_controller.dart';
+import 'package:colabs_mobile/controllers/project_controller.dart';
+import 'package:colabs_mobile/controllers/restservice.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +18,9 @@ class ProfilePage extends StatelessWidget {
     LayoutController layoutController = Provider.of<LayoutController>(context);
     ChatController chatController = Provider.of<ChatController>(context);
     Authenticator authenticator = Provider.of<Authenticator>(context);
+    RESTService restService = Provider.of<RESTService>(context);
+    ProjectController projectController =
+        Provider.of<ProjectController>(context);
 
     return Scaffold(
         appBar: AppBar(actions: <Widget>[
@@ -60,7 +65,9 @@ class ProfilePage extends StatelessWidget {
               showDialog(
                   context: context,
                   builder: (BuildContext context) {
-                    return ProfileEditForm();
+                    return ProfileEditForm(
+                      profileInfo: restService.getProfileInfo,
+                    );
                   });
             },
             child: const FaIcon(FontAwesomeIcons.penToSquare)),
@@ -89,16 +96,19 @@ class ProfilePage extends StatelessWidget {
                           backgroundColor: Colors.black,
                         )))
               ]),
-              //TODO: Get occupation & location
-              const Padding(
-                  padding: EdgeInsets.only(top: 16),
-                  child: Text('Full Name', style: TextStyle(fontSize: 24))),
-              const Padding(
-                  padding: EdgeInsets.only(top: 8, bottom: 8),
-                  child: Text('Occupation', style: TextStyle(fontSize: 16))),
-              const Padding(
-                  padding: EdgeInsets.only(bottom: 16),
-                  child: Text('Location', style: TextStyle(fontSize: 14))),
+              Padding(
+                  padding: const EdgeInsets.only(top: 16),
+                  child: Text(
+                      '${restService.getProfileInfo['firstName']} ${restService.getProfileInfo['lastName']}',
+                      style: const TextStyle(fontSize: 24))),
+              Padding(
+                  padding: const EdgeInsets.only(top: 8, bottom: 8),
+                  child: Text(restService.getProfileInfo['occupation'],
+                      style: const TextStyle(fontSize: 16))),
+              Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: Text(restService.getProfileInfo['location'],
+                      style: const TextStyle(fontSize: 14))),
               Container(
                   alignment: Alignment.centerLeft,
                   padding: const EdgeInsets.all(16),
@@ -107,11 +117,9 @@ class ProfilePage extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         fontSize: 20,
                       ))),
-              //TODO: Get User bio info
               Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                      'I am a software developer with 5 years of experience. I am proficient in various programming languages such as Python, Java, and C++. I am also experienced in front-end development using technologies like React and Flutter.',
+                  child: Text(restService.getProfileInfo['bio'],
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.grey[600],
@@ -131,7 +139,6 @@ class ProfilePage extends StatelessWidget {
                                       mainAxisSpacing: 1,
                                       crossAxisSpacing: 1),
                               children: <Widget>[
-                                //TODO: Get Connections
                                 GridTile(
                                     header: Container(
                                       alignment: Alignment.topCenter,
@@ -145,7 +152,9 @@ class ProfilePage extends StatelessWidget {
                                     footer: Container(
                                       margin: const EdgeInsets.only(bottom: 10),
                                       alignment: Alignment.bottomCenter,
-                                      child: Text('500+',
+                                      child: Text(
+                                          restService.getUserConnections.length
+                                              .toString(),
                                           style: TextStyle(
                                             fontSize: 18,
                                             color: Colors.grey[700],
@@ -161,7 +170,6 @@ class ProfilePage extends StatelessWidget {
                                           height: 50),
                                       onPressed: () {},
                                     )),
-                                //TODO: Get Projects
                                 GridTile(
                                     header: Container(
                                       alignment: Alignment.topCenter,
@@ -175,7 +183,9 @@ class ProfilePage extends StatelessWidget {
                                     footer: Container(
                                       margin: const EdgeInsets.only(bottom: 10),
                                       alignment: Alignment.bottomCenter,
-                                      child: Text('25',
+                                      child: Text(
+                                          projectController.getProjects.length
+                                              .toString(),
                                           style: TextStyle(
                                             fontSize: 18,
                                             color: Colors.grey[700],
@@ -191,7 +201,6 @@ class ProfilePage extends StatelessWidget {
                                           height: 50),
                                       onPressed: () {},
                                     )),
-                                //TODO: Get Reviews
                                 GridTile(
                                     header: Container(
                                       alignment: Alignment.topCenter,
@@ -205,7 +214,11 @@ class ProfilePage extends StatelessWidget {
                                     footer: Container(
                                       margin: const EdgeInsets.only(bottom: 10),
                                       alignment: Alignment.bottomCenter,
-                                      child: Text('4.9',
+                                      child: Text(
+                                          (restService.getProfileInfo['reviews']
+                                                  as List<dynamic>)
+                                              .length
+                                              .toString(),
                                           style: TextStyle(
                                             fontSize: 18,
                                             color: Colors.grey[700],
@@ -221,7 +234,6 @@ class ProfilePage extends StatelessWidget {
                                           height: 50),
                                       onPressed: () {},
                                     )),
-                                //TODO: Get Jobs
                                 GridTile(
                                     header: Container(
                                         alignment: Alignment.topCenter,
@@ -234,7 +246,11 @@ class ProfilePage extends StatelessWidget {
                                     footer: Container(
                                       margin: const EdgeInsets.only(bottom: 10),
                                       alignment: Alignment.bottomCenter,
-                                      child: Text('50',
+                                      child: Text(
+                                          (restService.getProfileInfo['jobs']
+                                                  as List<dynamic>)
+                                              .length
+                                              .toString(),
                                           style: TextStyle(
                                             fontSize: 18,
                                             color: Colors.grey[700],
@@ -264,7 +280,8 @@ class ProfilePage extends StatelessWidget {
                               showModalBottomSheet(
                                   context: context,
                                   builder: (BuildContext context) {
-                                    return Container();
+                                    return const Center(
+                                        child: Text('Acquire Skills'));
                                   });
                             },
                             icon: const Icon(Icons.add))
@@ -272,17 +289,31 @@ class ProfilePage extends StatelessWidget {
               Container(
                   padding: const EdgeInsets.all(16),
                   height: screenHeight * .3,
-                  child: GridView.builder(
-                      shrinkWrap: true,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                              mainAxisSpacing: 10,
-                              crossAxisCount: 4,
-                              childAspectRatio: 1.5),
-                      itemBuilder: (BuildContext context, int index) {
-                        return const CircleAvatar();
-                      }))
-              //TODO: Get skills
+                  child: (restService.getProfileInfo['skills'] as List<dynamic>)
+                          .isNotEmpty
+                      ? GridView.builder(
+                          shrinkWrap: true,
+                          itemCount: (restService.getProfileInfo['skills']
+                                  as List<dynamic>)
+                              .length,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                  mainAxisSpacing: 10,
+                                  crossAxisCount: 4,
+                                  childAspectRatio: 1.5),
+                          itemBuilder: (BuildContext context, int index) {
+                            return const CircleAvatar();
+                          })
+                      : Column(children: const <Widget>[
+                          Image(
+                              width: 80,
+                              height: 80,
+                              image: AssetImage('assets/images/skills.png')),
+                          SizedBox(height: 20),
+                          Text(
+                              '''You don't have any skills yet. Acquiring skills will make you more elgibile for employers when viewing your profile.''',
+                              textAlign: TextAlign.center)
+                        ]))
             ]))));
   }
 }

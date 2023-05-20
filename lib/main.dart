@@ -3,12 +3,12 @@ import 'package:colabs_mobile/controllers/chat_controller.dart';
 import 'package:colabs_mobile/controllers/content_controller.dart';
 import 'package:colabs_mobile/controllers/job_controller.dart';
 import 'package:colabs_mobile/controllers/layout_controller.dart';
+import 'package:colabs_mobile/controllers/project_controller.dart';
 import 'package:colabs_mobile/controllers/restservice.dart';
 import 'package:colabs_mobile/screens/login.dart';
 import 'package:colabs_mobile/screens/home.dart';
 import 'package:colabs_mobile/screens/profile.dart';
 import 'package:colabs_mobile/screens/settings.dart';
-import 'package:colabs_mobile/screens/projectview.dart';
 import 'package:colabs_mobile/screens/signup.dart';
 import 'package:colabs_mobile/themes/default_theme.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +39,8 @@ class ColabsApp extends StatelessWidget {
           ChangeNotifierProvider<ContentController>(
               create: (_) => ContentController()),
           ChangeNotifierProvider<JobController>(
-              create: (_) => JobController())
+              create: (_) => JobController()),
+          ChangeNotifierProvider<ProjectController>(create: (_) => ProjectController())
         ],
         builder: (BuildContext context, _) {
           Authenticator auth = Provider.of<Authenticator>(context);
@@ -55,7 +56,6 @@ class ColabsApp extends StatelessWidget {
                 '/signup': (_) => SignupScreen(),
                 '/profile': (_) => const ProfilePage(),
                 '/settings': (_) => const SettingsPage(),
-                '/projectview': (_) => const ProjectView()
               });
         });
   }

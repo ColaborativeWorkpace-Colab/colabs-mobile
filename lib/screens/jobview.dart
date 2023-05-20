@@ -70,9 +70,8 @@ class JobView extends StatelessWidget {
               Container(
                   width: screenWidth,
                   margin: const EdgeInsets.only(left: 20, bottom: 15),
-                  //TODO: Make a horizontal carousel view for requirements
                   child: Column(
-                    children: [
+                    children: <Widget>[
                       SizedBox(
                         height: 200,
                         child: PageView.builder(

@@ -83,7 +83,7 @@ class ChatController extends ChangeNotifier {
     }
   }
 
-  void addChat(Chat chat, {bool listen = false}) {
+  void addChat(Chat chat, bool listen) {
     if(!_chatExists(chat.chatId!)) _chats.add(chat);
     if (listen) notifyListeners();
   }

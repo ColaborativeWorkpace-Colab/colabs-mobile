@@ -2,12 +2,16 @@ import 'dart:convert';
 import 'package:colabs_mobile/controllers/authenticator.dart';
 import 'package:colabs_mobile/controllers/chat_controller.dart';
 import 'package:colabs_mobile/controllers/job_controller.dart';
+import 'package:colabs_mobile/controllers/project_controller.dart';
 import 'package:colabs_mobile/models/chat.dart';
 import 'package:colabs_mobile/models/job.dart';
 import 'package:colabs_mobile/models/message.dart';
 import 'package:colabs_mobile/models/post.dart';
+import 'package:colabs_mobile/models/project.dart';
+import 'package:colabs_mobile/models/task.dart';
 import 'package:colabs_mobile/types/chat_type.dart';
 import 'package:colabs_mobile/types/job_status.dart';
+import 'package:colabs_mobile/types/task_status.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 // ignore: depend_on_referenced_packages
@@ -18,13 +22,16 @@ class RESTService extends ChangeNotifier {
   Authenticator? authenticator;
   ChatController? chatController;
   JobController? jobController;
+  ProjectController? projectController;
   final List<String> _userConnections = <String>[];
   final List<Post> _socialFeedPosts = <Post>[];
+  // ignore: always_specify_types
+  Map<String, dynamic> _profileInfo = {};
   bool _isPosting = false;
   bool _isRefreshing = false;
   RESTService();
 
-  Future<bool> getSocialFeed() async {
+  Future<bool> getSocialFeedRequest() async {
     try {
       http.Response response = await http
           .get(Uri.http(urlHost, '/api/v1/social/${authenticator!.getUserId}'));
@@ -161,9 +168,12 @@ class RESTService extends ChangeNotifier {
     }
   }
 
-  void _populateUserConnections(String body) {
+  void _populateUserConnections(String body, {bool initial = true}) {
     Map<String, dynamic> decodedJsonBody = json.decode(body);
-    List<dynamic> connections = decodedJsonBody['connections'];
+    List<dynamic> connections = initial
+        // ignore: avoid_dynamic_calls
+        ? decodedJsonBody['profile']['connections']
+        : decodedJsonBody['connections'];
 
     for (dynamic connection in connections) {
       if (!_userConnections.contains(connection)) {
@@ -172,7 +182,7 @@ class RESTService extends ChangeNotifier {
     }
   }
 
-  Future<bool> getMessages({bool listen = false}) async {
+  Future<bool> getMessagesRequest({bool listen = false}) async {
     try {
       http.Response response = await http.get(
           Uri.http(urlHost, '/api/v1/messaging/${authenticator!.getUserId}'));
@@ -206,7 +216,7 @@ class RESTService extends ChangeNotifier {
               messages,
               (chat['type'] == 'Private') ? ChatType.private : ChatType.group,
               chat['_id']),
-          listen: listen);
+          listen);
     }
   }
 
@@ -228,7 +238,7 @@ class RESTService extends ChangeNotifier {
     return messages;
   }
 
-  Future<bool> getJobs({bool listen = false}) async {
+  Future<bool> getJobsRequest({bool listen = false}) async {
     try {
       http.Response response = await http
           .get(Uri.http(urlHost, '/api/v1/jobs/${authenticator!.getUserId}'));
@@ -263,15 +273,88 @@ class RESTService extends ChangeNotifier {
               job['_id'],
               job['title'],
               job['description'],
-              mapStatusEnum(job['status']),
+              mapJobStatusEnum(job['status']),
               workers,
               requirements,
               // ignore: always_specify_types
               double.parse(job['earnings'].toString()),
               job['owner'],
               job['paymentVerified']),
-          listen: listen);
+          listen);
     }
+  }
+
+  Future<bool> getProfileInfoRequest({bool listen = false}) async {
+    try {
+      http.Response response = await http.get(
+          Uri.http(urlHost, '/api/v1/profile/${authenticator!.getUserId}'));
+
+      if (response.statusCode == 200) {
+        _loadProfileInfo(response.body);
+        _populateUserConnections(response.body);
+        return Future<bool>.value(true);
+      } else {
+        return Future<bool>.value(false);
+      }
+    } on Exception catch (error) {
+      debugPrint(error.toString());
+      return Future<bool>.value(false);
+    }
+  }
+
+  void _loadProfileInfo(String body) {
+    Map<String, dynamic> decodedJsonBody = json.decode(body);
+    _profileInfo = decodedJsonBody['profile'];
+  }
+
+  Future<bool> getProjectsRequest({bool listen = false}) async {
+    try {
+      http.Response response = await http.get(Uri.http(
+          urlHost, '/api/v1/workspaces/dashboard/${authenticator!.getUserId}'));
+
+      if (response.statusCode == 200) {
+        _populateProjects(response.body, listen);
+        return Future<bool>.value(true);
+      } else {
+        return Future<bool>.value(false);
+      }
+    } on Exception catch (error) {
+      debugPrint(error.toString());
+      return Future<bool>.value(false);
+    }
+  }
+
+  void _populateProjects(String body, bool listen) {
+    Map<String, dynamic> decodedJsonBody = json.decode(body);
+    List<dynamic> rawProjects = decodedJsonBody['projects'];
+
+    for (Map<String, dynamic> rawProject in rawProjects) {
+      List<Task> tasks = _populateTasks(rawProject['tasks']);
+      List<String> files = (rawProject['files'] as List<dynamic>)
+          // ignore: always_specify_types
+          .map((file) => file as String)
+          .toList();
+
+      projectController!.addProject(
+          Project(rawProject['_id'], rawProject['name'], tasks, files), listen);
+    }
+  }
+
+  List<Task> _populateTasks(List<dynamic> rawTasks) {
+    List<Task> temp = <Task>[];
+
+    for (Map<String, dynamic> rawTask in rawTasks) {
+      List<String> assignees = (rawTask['assignees'] as List<dynamic>)
+          // ignore: always_specify_types
+          .map((assignee) => assignee as String)
+          .toList();
+      temp.add(Task(rawTask['id'], rawTask['title'], rawTask['description'],
+          mapTaskStatusEnum(rawTask['status']), assignees,
+          //FIXME: Deadline date time parse bug
+              ));
+    }
+
+    return temp;
   }
 
   set setAuthenticator(Authenticator value) {
@@ -286,6 +369,10 @@ class RESTService extends ChangeNotifier {
     jobController = value;
   }
 
+  set setProjectController(ProjectController value) {
+    projectController = value;
+  }
+
   set isPosting(bool value) {
     _isPosting = value;
     notifyListeners();
@@ -298,6 +385,7 @@ class RESTService extends ChangeNotifier {
 
   List<String> get getUserConnections => _userConnections;
   List<Post> get getSocialFeedPosts => _socialFeedPosts;
+  Map<String, dynamic> get getProfileInfo => _profileInfo;
   bool get isPosting => _isPosting;
   bool get isRefreshing => _isRefreshing;
 }

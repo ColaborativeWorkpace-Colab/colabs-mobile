@@ -22,7 +22,7 @@ class JobsPage extends StatelessWidget {
       (jobController.getJobs.isNotEmpty)
           ? Expanded(
               child: RefreshIndicator(
-              onRefresh: () => restService.getJobs(listen: true),
+              onRefresh: () => restService.getJobsRequest(listen: true),
               child: ListView.builder(
                   padding: const EdgeInsets.only(bottom: 95),
                   itemCount: jobController.getJobs.length,
@@ -47,7 +47,7 @@ class JobsPage extends StatelessWidget {
                         onPressed: () {
                           restService.isRefreshing = true;
                           restService
-                              .getJobs()
+                              .getJobsRequest()
                               .timeout(const Duration(seconds: 10),
                                   onTimeout: () =>
                                       restService.isRefreshing = false)

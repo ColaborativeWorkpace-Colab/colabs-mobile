@@ -17,7 +17,7 @@ extension JobStatusExtension on JobStatus {
   }
 }
 
-JobStatus mapStatusEnum(String value) {
+JobStatus mapJobStatusEnum(String value) {
   switch (value) {
     case 'Pending':
       return JobStatus.pending;

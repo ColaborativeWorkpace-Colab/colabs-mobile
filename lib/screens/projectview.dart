@@ -1,7 +1,9 @@
+import 'package:colabs_mobile/models/project.dart';
 import 'package:flutter/material.dart';
 
 class ProjectView extends StatelessWidget {
-  const ProjectView({super.key});
+  final Project project;
+  const ProjectView({super.key, required this.project});
 
   @override
   Widget build(BuildContext context) {

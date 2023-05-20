@@ -125,11 +125,10 @@ class ChatView extends StatelessWidget {
                                           false));
 
                                       if (chat.chatId == null) {
-                                        chatController.addChat(chat);
+                                        chatController.addChat(chat, true);
                                       }
 
                                       messageController.clear();
-                                      chatController.refresh();
                                     }
                                     //TODO: Add attachements variable
                                     //TODO: Send also for group chats

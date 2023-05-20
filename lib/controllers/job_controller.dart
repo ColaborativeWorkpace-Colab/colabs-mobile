@@ -9,7 +9,7 @@ class JobController extends ChangeNotifier {
 
   JobController();
 
-  void addJob(Job value, {bool listen = true}) {
+  void addJob(Job value, bool listen) {
     if (!_jobExists(value.jobId)) _jobs.add(value);
     if (listen) notifyListeners();
   }

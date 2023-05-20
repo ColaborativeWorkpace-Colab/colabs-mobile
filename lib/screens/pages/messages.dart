@@ -32,67 +32,68 @@ class MessagesPage extends StatelessWidget {
           child: Stack(children: <Widget>[
             chatController.getChats.isNotEmpty
                 ? RefreshIndicator(
-                  onRefresh: () => restService.getMessages(listen: true),
-                  child: ListView.builder(
-                      padding: const EdgeInsets.only(bottom: 95),
-                      shrinkWrap: true,
-                      itemCount: chatController.getChats.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        List<Message> messages = chatController
-                            .getChats[index].messages.reversed
-                            .toList();
-                        return Material(
-                            child: ListTile(
-                                contentPadding: const EdgeInsets.all(5),
-                                shape: const RoundedRectangleBorder(
-                                    side: BorderSide(
-                                        color: Colors.grey, width: 0.5)),
-                                leading: const CircleAvatar(radius: 27),
-                                title: Container(
-                                  margin: const EdgeInsets.only(bottom: 15),
-                                  child: Text(
-                                      chatController.getChats[index].receiver,
+                    onRefresh: () =>
+                        restService.getMessagesRequest(listen: true),
+                    child: ListView.builder(
+                        padding: const EdgeInsets.only(bottom: 95),
+                        shrinkWrap: true,
+                        itemCount: chatController.getChats.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          List<Message> messages = chatController
+                              .getChats[index].messages.reversed
+                              .toList();
+                          return Material(
+                              child: ListTile(
+                                  contentPadding: const EdgeInsets.all(5),
+                                  shape: const RoundedRectangleBorder(
+                                      side: BorderSide(
+                                          color: Colors.grey, width: 0.5)),
+                                  leading: const CircleAvatar(radius: 27),
+                                  title: Container(
+                                    margin: const EdgeInsets.only(bottom: 15),
+                                    child: Text(
+                                        chatController.getChats[index].receiver,
+                                        overflow: TextOverflow.fade,
+                                        style: const TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold)),
+                                  ),
+                                  subtitle: Text(messages[0].messageText,
                                       overflow: TextOverflow.fade,
-                                      style: const TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold)),
-                                ),
-                                subtitle: Text(messages[0].messageText,
-                                    overflow: TextOverflow.fade,
-                                    style: TextStyle(
-                                        fontWeight: (messages[0].isRead)
-                                            ? FontWeight.normal
-                                            : FontWeight.bold)),
-                                trailing: Column(children: <Widget>[
-                                  const SizedBox(height: 10),
-                                  Text(DateFormat(
-                                          formatDate(messages[0].timeStamp))
-                                      .format(messages[0].timeStamp)),
-                                  (messages[0].senderId !=
-                                          authenticator.getUserId)
-                                      ? Icon((messages[0].isRead)
-                                          ? Icons.done_all
-                                          : Icons.done)
-                                      : const SizedBox()
-                                ]),
-                                onTap: () {
-                                  if (messages[0].senderId ==
-                                      authenticator.getUserId) {
-                                    chatController.markAsRead(
-                                        chatController.getChats[index]);
-                                    chatController.refresh();
-                                  }
-                
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute<Widget>(
-                                          builder: (BuildContext context) =>
-                                              ChatView(
-                                                  chat: chatController
-                                                      .getChats[index])));
-                                }));
-                      }),
-                )
+                                      style: TextStyle(
+                                          fontWeight: (messages[0].isRead)
+                                              ? FontWeight.normal
+                                              : FontWeight.bold)),
+                                  trailing: Column(children: <Widget>[
+                                    const SizedBox(height: 10),
+                                    Text(DateFormat(
+                                            formatDate(messages[0].timeStamp))
+                                        .format(messages[0].timeStamp)),
+                                    (messages[0].senderId !=
+                                            authenticator.getUserId)
+                                        ? Icon((messages[0].isRead)
+                                            ? Icons.done_all
+                                            : Icons.done)
+                                        : const SizedBox()
+                                  ]),
+                                  onTap: () {
+                                    if (messages[0].senderId ==
+                                        authenticator.getUserId) {
+                                      chatController.markAsRead(
+                                          chatController.getChats[index]);
+                                      chatController.refresh();
+                                    }
+
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute<Widget>(
+                                            builder: (BuildContext context) =>
+                                                ChatView(
+                                                    chat: chatController
+                                                        .getChats[index])));
+                                  }));
+                        }),
+                  )
                 : Positioned(
                     top: screenHeight * .25,
                     left: screenWidth * .15,
@@ -109,7 +110,7 @@ class MessagesPage extends StatelessWidget {
                               onPressed: () {
                                 restService.isRefreshing = true;
                                 restService
-                                    .getMessages()
+                                    .getMessagesRequest()
                                     .timeout(const Duration(seconds: 10),
                                         onTimeout: () =>
                                             restService.isRefreshing = false)
