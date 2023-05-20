@@ -7,6 +7,7 @@ List<String>? filterTags(String value, ContentController contentController) {
   if (hashtagMatches.isNotEmpty) {
     List<String> hashtags =
         hashtagMatches.map<String>((Match match) => match.group(0)!).toList();
+    hashtags.removeWhere((String tag) => tag == "");
     contentController.addTags(hashtags);
 
     return hashtags;

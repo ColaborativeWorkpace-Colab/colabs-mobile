@@ -51,3 +51,15 @@ void chatWithConnection(BuildContext context, String receiverId) {
       MaterialPageRoute<ChatView>(
           builder: (BuildContext context) => ChatView(chat: newChat)));
 }
+
+Chat getChat(BuildContext context, String receiverId){
+  ChatController chatController =
+      Provider.of<ChatController>(context, listen: false);
+  for (Chat chat in chatController.getChats) {
+    if (chat.receiver == receiverId) {
+      return chat;
+    }
+  }
+
+  return Chat(receiverId, <Message>[], ChatType.private);
+}

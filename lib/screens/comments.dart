@@ -93,34 +93,42 @@ class Comments extends StatelessWidget {
             Positioned(
                 bottom: -1,
                 child: Container(
-                  color: const Color.fromARGB(255, 238, 238, 238),
-                  child: Container(
-                      height: 50,
-                      width: screenWidth * .95,
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 5),
-                      child: TextField(
-                          controller: commentController,
-                          decoration: InputDecoration(
-                              border: const OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10))),
-                              contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 0, horizontal: 15),
-                              suffixIcon: Container(
-                                  margin: const EdgeInsets.only(top: 0),
-                                  child: IconButton(
-                                      icon: const Icon(Icons.send),
-                                      onPressed: () {
-                                        restService.commentPostRequest(
-                                            post.postId,
-                                            commentController.text);
-                                        post.comments.add(PostComment(
-                                            authenticator.getUserId!,
-                                            commentController.text));
-                                        layoutController.refresh(true);
-                                      }))))),
-                ))
+                    color: const Color.fromARGB(255, 238, 238, 238),
+                    child: Container(
+                        height: 50,
+                        width: screenWidth * .95,
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 5),
+                        child: TextField(
+                            controller: commentController,
+                            decoration: InputDecoration(
+                                border: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10))),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 0, horizontal: 15),
+                                suffixIcon: Container(
+                                    margin: const EdgeInsets.only(top: 0),
+                                    child: IconButton(
+                                        icon: const Icon(Icons.send),
+                                        onPressed: () {
+                                          restService
+                                              .commentPostRequest(post.postId,
+                                                  commentController.text)
+                                              .then((bool requestSuccessful) {
+                                            if (requestSuccessful) {
+                                              post.comments.add(PostComment(
+                                                  authenticator.getUserId!,
+                                                  commentController.text));
+                                              layoutController.refresh(true);
+                                            } else {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(const SnackBar(
+                                                      content: Text(
+                                                          'Request Failed')));
+                                            }
+                                          });
+                                        })))))))
           ]),
         ));
   }

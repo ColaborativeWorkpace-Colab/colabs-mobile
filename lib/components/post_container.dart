@@ -1,5 +1,7 @@
 import 'package:colabs_mobile/components/connections_grid_view.dart';
 import 'package:colabs_mobile/components/share_container.dart';
+import 'package:colabs_mobile/controllers/authenticator.dart';
+import 'package:colabs_mobile/controllers/layout_controller.dart';
 import 'package:colabs_mobile/controllers/restservice.dart';
 import 'package:colabs_mobile/models/post.dart';
 import 'package:colabs_mobile/screens/comments.dart';
@@ -14,6 +16,8 @@ class PostContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     RESTService restService = Provider.of<RESTService>(context);
+    Authenticator authenticator = Provider.of<Authenticator>(context);
+    LayoutController layoutController = Provider.of<LayoutController>(context);
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
 
@@ -63,7 +67,23 @@ class PostContainer extends StatelessWidget {
               fit: BoxFit.cover,
               height: screenHeight * .4,
               image: const AssetImage('assets/images/placeholder.png')),
-          const SizedBox(height: 30),
+          Container(
+              margin: const EdgeInsets.all(10),
+              height: 20,
+              child: Text(
+                  '${post.likes.length} Likes  ${post.comments.length} Comments')),
+          post.tags.isNotEmpty
+              ? Row(children: <Widget>[
+                  ...post.tags.map<Widget>((String tag) => Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 5),
+                      child: InkWell(
+                          child: Text(tag,
+                              style: const TextStyle(color: Colors.blue)),
+                          onTap: () {
+                            //TODO: Explore Topic
+                          })))
+                ])
+              : const SizedBox(),
           Container(
               margin: const EdgeInsets.all(10),
               child: const Divider(
@@ -75,9 +95,27 @@ class PostContainer extends StatelessWidget {
                 child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey[100]!),
-                    onPressed: () => restService.likePostRequest(post.postId),
-                    child: const Icon(Icons.thumb_up_alt_rounded,
-                        color: Color(0xFF5521B5)))),
+                    //TODO: Unlike post
+                    onPressed: () {
+                      restService
+                          .likePostRequest(post.postId)
+                          .then((bool requestSuccessful) {
+                        if (requestSuccessful) {
+                          post.likes.contains(authenticator.getUserId)
+                              ? post.likes.remove(authenticator.getUserId)
+                              : post.likes.add(authenticator.getUserId);
+                          layoutController.refresh(true);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Request Failed')));
+                        }
+                      });
+                    },
+                    child: post.likes.contains(authenticator.getUserId)
+                        ? const Icon(Icons.thumb_up_alt_rounded,
+                            color: Color(0xFF5521B5))
+                        : const Icon(Icons.thumb_up_alt_outlined,
+                            color: Color(0xFF5521B5)))),
             SizedBox(
                 height: 50,
                 width: screenWidth * .25,
@@ -103,8 +141,7 @@ class PostContainer extends StatelessWidget {
                       showModalBottomSheet(
                           context: context,
                           builder: (BuildContext context) {
-                            //TODO: Get post link for sharing
-                            return const ShareContainer(postLink: '');
+                            return ShareContainer(postId: post.postId);
                           });
                     },
                     child: const Icon(Icons.share, color: Color(0xFF5521B5)))),
@@ -119,8 +156,8 @@ class PostContainer extends StatelessWidget {
                       showModalBottomSheet(
                           context: context,
                           builder: (BuildContext context) {
-                            return const ConnectionsGridView(
-                                layoutOption: ConnectionsLayoutOptions.send);
+                            return ConnectionsGridView(
+                                layoutOption: ConnectionsLayoutOptions.send, shareLink: Uri.http(restService.urlHost, '/share/${post.postId}').toString());
                           });
                     },
                     child: const Icon(Icons.send, color: Color(0xFF5521B5))))

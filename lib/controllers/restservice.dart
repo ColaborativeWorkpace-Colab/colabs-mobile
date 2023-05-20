@@ -53,7 +53,13 @@ class RESTService extends ChangeNotifier {
     Map<String, dynamic> decodedJsonBody = json.decode(body);
     List<dynamic> rawPosts = decodedJsonBody['posts'];
 
+
     for (Map<String, dynamic> rawPost in rawPosts) {
+      List<String> tags = (rawPost['tags'] as List<dynamic>)
+          // ignore: always_specify_types
+          .map((tag) => tag as String)
+          .toList();
+
       if (!_postExists(rawPost['_id'])) {
         _socialFeedPosts.add(Post(
             rawPost['_id'],
@@ -61,7 +67,7 @@ class RESTService extends ChangeNotifier {
             rawPost['textContent'],
             rawPost['imageContent'],
             DateTime.parse(rawPost['createdAt']),
-            rawPost['tags'],
+            tags,
             rawPost['likes'],
             _populatePostComments(rawPost['comments']),
             rawPost['donatable']));

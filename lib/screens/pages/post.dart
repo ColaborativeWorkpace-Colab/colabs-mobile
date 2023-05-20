@@ -246,8 +246,14 @@ class PostPage extends StatelessWidget {
                           'taggedUsers':
                               contentController.getTaggedUsers.join(',')
                         }).timeout(const Duration(seconds: 15), onTimeout: () {
-                          //TODO: warn user of request failure
-                          //ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Something went wrong')));
+                          pageController
+                              .animateToPage(2,
+                                  duration: const Duration(milliseconds: 350),
+                                  curve: Curves.easeInOut)
+                              .whenComplete(() => ScaffoldMessenger.of(context)
+                                  .showSnackBar(const SnackBar(
+                                      content: Text('Something went wrong'))));
+
                           return Future<bool>.value(false);
                         }).whenComplete(() {
                           restService.isPosting = false;
