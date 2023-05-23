@@ -49,6 +49,8 @@ dependencies:
   chat_bubbles: ^1.4.0
   intl: ^0.17.0
   quiver: ^3.2.1
+  fl_chart: ^0.62.0
+  flutter_treeview: ^1.0.7+1
 
 dev_dependencies:
   flutter_test:

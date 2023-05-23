@@ -29,32 +29,35 @@ class ProjectsPage extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 95),
                       itemCount: projectController.getProjects.length,
                       itemBuilder: (BuildContext context, int index) {
-                        return ListTile(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute<ProjectView>(
-                                      builder: (BuildContext context) =>
-                                          ProjectView(
-                                              project: projectController
-                                                  .getProjects[index])));
-                            },
-                            title: Text(projectController
-                                .getProjects[index].projectName),
-                            trailing: PopupMenuButton<String>(
-                                icon: const Icon(Icons.more_vert),
-                                itemBuilder: (BuildContext context) =>
-                                    <PopupMenuEntry<String>>[
-                                      const PopupMenuItem<String>(
-                                          value: 'Option 1',
-                                          child: Text('Option 1')),
-                                      const PopupMenuItem<String>(
-                                          value: 'Delete',
-                                          child: Text('Delete')),
-                                      const PopupMenuItem<String>(
-                                          value: 'Option 1',
-                                          child: Text('Option 1'))
-                                    ]));
+                        return Container(
+                            margin: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                boxShadow: const <BoxShadow>[
+                                  BoxShadow(
+                                      color: Colors.black12,
+                                      spreadRadius: 2,
+                                      blurRadius: 3)
+                                ],
+                                color: Colors.white),
+                            child: ListTile(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute<ProjectView>(
+                                          builder: (BuildContext context) =>
+                                              ProjectView(project: projectController.getProjects[index])));
+                                },
+                                title: Text(projectController
+                                    .getProjects[index].projectName),
+                                trailing: PopupMenuButton<String>(
+                                    icon: const Icon(Icons.more_vert),
+                                    itemBuilder: (BuildContext context) =>
+                                        <PopupMenuEntry<String>>[
+                                          const PopupMenuItem<String>(
+                                              value: 'Delete',
+                                              child: Text('Delete'))
+                                        ])));
                       })))
           : Container(
               margin: EdgeInsets.only(top: screenHeight * .25),
@@ -65,9 +68,8 @@ class ProjectsPage extends StatelessWidget {
                     Container(
                         margin: const EdgeInsets.all(20),
                         child: const Text(
-                          '''You currently do not have any projects.''',
-                          textAlign: TextAlign.center,
-                        )),
+                            '''You currently do not have any projects.''',
+                            textAlign: TextAlign.center)),
                     ElevatedButton(
                         onPressed: () {
                           restService.isRefreshing = true;
@@ -86,8 +88,7 @@ class ProjectsPage extends StatelessWidget {
                                 width: 20,
                                 height: 20,
                                 child: CircularProgressIndicator(
-                                    color: Colors.white),
-                              ))
+                                    color: Colors.white)))
                   ])))
     ]));
   }

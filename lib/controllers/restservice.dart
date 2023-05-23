@@ -30,6 +30,7 @@ class RESTService extends ChangeNotifier {
   Map<String, dynamic> _profileInfo = {};
   bool _isPosting = false;
   bool _isRefreshing = false;
+
   RESTService();
 
   Future<bool> getSocialFeedRequest() async {
@@ -110,6 +111,17 @@ class RESTService extends ChangeNotifier {
       return Future<bool>.value(false);
     }
   }
+
+  // Future<bool> uploadFile() async {
+  //   var request = http.MultipartRequest("POST", uri)
+  //     ..fields['id'] = body['id'].toString()
+  //     ..fields['deviceid'] = body['deviceid'] as String
+  //     ..fields['startdest'] = body['startdest'] as String
+  //     ..files.add(http.MultipartFile.fromBytes(
+  //         'customer_picture', await image.readAsBytes(),
+  //         filename:
+  //             '${body['customer_name']}-${DateTime.now().toString().replaceAll(' ', '').replaceAll('.', '').replaceAll(':', '')}.jpg'));
+  // }
 
   Future<bool> likePostRequest(String postId) async {
     try {

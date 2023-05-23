@@ -244,15 +244,17 @@ class PostPage extends StatelessWidget {
                           'visibility':
                               contentController.getIsPublic.toString(),
                           'taggedUsers':
-                              contentController.getTaggedUsers.join(',')
-                        }).timeout(const Duration(seconds: 15), onTimeout: () {
+                              contentController.getTaggedUsers.join(',')})
+                        .timeout(const Duration(seconds: 15), onTimeout: () {
                           pageController
                               .animateToPage(2,
                                   duration: const Duration(milliseconds: 350),
                                   curve: Curves.easeInOut)
-                              .whenComplete(() => ScaffoldMessenger.of(context)
-                                  .showSnackBar(const SnackBar(
-                                      content: Text('Something went wrong'))));
+                              .whenComplete(() {
+                                // ScaffoldMessenger.of(context)
+                                //   .showSnackBar(const SnackBar(
+                                //       content: Text('Something went wrong')))
+                              });
 
                           return Future<bool>.value(false);
                         }).whenComplete(() {
