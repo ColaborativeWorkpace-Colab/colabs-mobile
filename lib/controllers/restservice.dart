@@ -315,6 +315,24 @@ class RESTService extends ChangeNotifier {
     }
   }
 
+  Future<bool> applyJobRequest(String jobId, Map<String, dynamic> body) async {
+    try {
+      http.Response response = await http.post(
+          Uri.http(urlHost, '/api/v1/jobs/$jobId/apply'),
+          headers: <String, String>{'Content-Type': 'application/json'},
+          body: json.encode(body));
+
+      if (response.statusCode == 200) {
+        return Future<bool>.value(true);
+      } else{
+        return Future<bool>.value(false);
+      }
+    } on Exception catch (error) {
+      debugPrint(error.toString());
+      return Future<bool>.value(false);
+    }
+  }
+
   Future<dynamic> getProfileInfoRequest(
       {String? userId, bool listen = false}) async {
     try {

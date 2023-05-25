@@ -118,7 +118,7 @@ class JobView extends StatelessWidget {
                           : const SizedBox()
                     ],
                   )),
-              JobApplicationContainer(scrollController: pageScrollController),
+              JobApplicationContainer(job: job, scrollController: pageScrollController),
               const SizedBox(height: 35)
             ])));
   }

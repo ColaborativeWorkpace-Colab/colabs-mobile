@@ -1,12 +1,17 @@
+import 'package:colabs_mobile/controllers/authenticator.dart';
 import 'package:colabs_mobile/controllers/job_controller.dart';
+import 'package:colabs_mobile/controllers/restservice.dart';
+import 'package:colabs_mobile/models/job.dart';
 import 'package:colabs_mobile/types/job_bid.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class JobApplicationContainer extends StatefulWidget {
+  final Job job;
   final ScrollController scrollController;
-  const JobApplicationContainer({super.key, required this.scrollController});
+  const JobApplicationContainer(
+      {super.key, required this.job, required this.scrollController});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -16,6 +21,8 @@ class JobApplicationContainer extends StatefulWidget {
 
 class _JobApplicationContainerState extends State<JobApplicationContainer>
     with TickerProviderStateMixin {
+  final TextEditingController payRateController = TextEditingController();
+  final TextEditingController coverLetterController = TextEditingController();
   AnimationController? _controller;
   Animation<double>? _animation;
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -60,6 +67,8 @@ class _JobApplicationContainerState extends State<JobApplicationContainer>
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     JobController jobController = Provider.of<JobController>(context);
+    RESTService restService = Provider.of<RESTService>(context);
+    Authenticator authenticator = Provider.of<Authenticator>(context);
 
     return Container(
         margin: const EdgeInsets.all(20),
@@ -151,6 +160,11 @@ class _JobApplicationContainerState extends State<JobApplicationContainer>
                         margin: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 15),
                         child: TextFormField(
+                            controller: coverLetterController,
+                            validator: (String? value) =>
+                                value == null || value.isEmpty
+                                    ? 'Empty Field'
+                                    : null,
                             minLines: 1,
                             maxLines: 5,
                             decoration: InputDecoration(
@@ -162,9 +176,15 @@ class _JobApplicationContainerState extends State<JobApplicationContainer>
                           width: screenWidth * .37,
                           margin: const EdgeInsets.symmetric(horizontal: 20),
                           child: TextFormField(
+                              controller: payRateController,
+                              validator: (String? value) =>
+                                  value == null || value.isEmpty
+                                      ? 'Empty field'
+                                      : null,
+                              keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                   label: const Text('Hourly Rate'),
-                                  hintText: '50 ETB/hr',
+                                  suffixText: 'ETB/hr',
                                   border: OutlineInputBorder(
                                       borderRadius:
                                           BorderRadius.circular(20))))),
@@ -172,6 +192,10 @@ class _JobApplicationContainerState extends State<JobApplicationContainer>
                           width: screenWidth * .35,
                           margin: const EdgeInsets.symmetric(horizontal: 5),
                           child: TextFormField(
+                              validator: (String? value) =>
+                                  value == null || value.isEmpty
+                                      ? 'Empty field'
+                                      : null,
                               controller: TextEditingController(
                                   text: (jobController.getJobDeadlineEstimate !=
                                           null)
@@ -198,11 +222,29 @@ class _JobApplicationContainerState extends State<JobApplicationContainer>
                               }))
                     ]),
                     Container(
-                      margin: const EdgeInsets.all(10),
-                      child: ElevatedButton(
-                          onPressed: () {},
-                          child: const Text('Submit Proposal')),
-                    )
+                        margin: const EdgeInsets.all(10),
+                        child: ElevatedButton(
+                            onPressed: () {
+                              bool isValid = formKey.currentState!.validate();
+
+                              if (!isValid) return;
+                              formKey.currentState!.save();
+
+                              // ignore: always_specify_types
+                              restService.applyJobRequest(widget.job.jobId, {
+                                'workerId': authenticator.getUserId,
+                                'estimatedDeadline': jobController
+                                    .getJobDeadlineEstimate
+                                    .toString(),
+                                'payRate': payRateController.text,
+                                'coverLetter': coverLetterController.text,
+                                'workBid': (jobController.getJobBid ==
+                                        JobBid.milestone)
+                                    ? 'By Milestone'
+                                    : 'By Project'
+                              });
+                            },
+                            child: const Text('Submit Proposal')))
                   ]))),
           _isTransitioning == true
               ? const SizedBox(height: 400)
