@@ -31,14 +31,8 @@ class ProjectView extends StatelessWidget {
               Expanded(
                   child: TabBarView(children: <Widget>[
                 ProjectOverviewTab(tasks: project.tasks),
-                //TODO: Add graph of commits
-                //TODO: Add Listview of commits
-                //TODO: Add task list
 
                 VersionTab(files: project.files),
-
-                //TODO: Add tree view of versions
-                //TODO: Add file view
 
                 const TeamTab()
               ]))

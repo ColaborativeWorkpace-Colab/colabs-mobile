@@ -1,3 +1,5 @@
+import 'package:colabs_mobile/components/connections_grid_view.dart';
+import 'package:colabs_mobile/types/connections_view_layout_options.dart';
 import 'package:flutter/material.dart';
 
 class TeamTab extends StatelessWidget {
@@ -28,7 +30,14 @@ class TeamTab extends StatelessWidget {
             bottom: 30,
             right: 15,
             child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  showModalBottomSheet(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return const ConnectionsGridView(
+                            layoutOption: ConnectionsLayoutOptions.add);
+                      });
+                },
                 style: ElevatedButton.styleFrom(
                     shape: const CircleBorder(),
                     padding: const EdgeInsets.all(15)),

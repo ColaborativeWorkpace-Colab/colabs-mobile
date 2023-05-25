@@ -1,8 +1,11 @@
+import 'package:colabs_mobile/controllers/layout_controller.dart';
 import 'package:flutter/material.dart';
 
 class ProjectVersionListView extends StatefulWidget {
   final List<String> files;
-  const ProjectVersionListView({super.key, required this.files});
+  final LayoutController layoutController;
+  const ProjectVersionListView(
+      {super.key, required this.files, required this.layoutController});
 
   @override
   ProjectVersionListViewState createState() => ProjectVersionListViewState();
@@ -24,27 +27,14 @@ class ProjectVersionListViewState extends State<ProjectVersionListView> {
     Future<void>(() async {
       for (int i = 0; i < widget.files.length; i++) {
         await Future<void>.delayed(const Duration(milliseconds: 80), () {
-          _listItems.add(SizedBox(
-              height: 50,
-              width: 65,
-              child: Row(children: <Widget>[
-                (widget.files.length - 1 == i)
-                    ? CustomPaint(
-                        painter: _SemiCirclePainter(const Color(0xff5521B5)),
-                        child: const CircleAvatar(radius: 20))
-                    : const CircleAvatar(
-                        radius: 15,
-                      ),
-                (widget.files.length - 1 != i)
-                    ? const Icon(Icons.arrow_right)
-                    : const SizedBox()
-              ])));
+          _listItems.add(const SizedBox());
           _listKey.currentState?.insertItem(_listItems.length - 1);
         });
       }
     }).whenComplete(() {
       if (scrollController.hasClients == true) {
-        scrollController.animateTo(widget.files.length * 65,
+        scrollController.animateTo(
+            widget.layoutController.getSelectedVersionIndex! * 65,
             duration: const Duration(milliseconds: 100),
             curve: Curves.easeInExpo);
       }
@@ -75,16 +65,35 @@ class ProjectVersionListViewState extends State<ProjectVersionListView> {
                         .drive(Tween<Offset>(
                             begin: const Offset(1, 0),
                             end: const Offset(0, 0))),
-                child: _listItems[index]);
+                child: GestureDetector(
+                  onTap: () {
+                    widget.layoutController.setSelectedVersionIndex(index);
+                  },
+                  child: SizedBox(
+                      height: 50,
+                      width: 65,
+                      child: Row(children: <Widget>[
+                        (widget.layoutController.getSelectedVersionIndex ==
+                                index)
+                            ? CustomPaint(
+                                painter:
+                                    SemiCirclePainter(const Color(0xff5521B5)),
+                                child: const CircleAvatar(radius: 20))
+                            : const CircleAvatar(radius: 15),
+                        (widget.files.length - 1 != index)
+                            ? const Icon(Icons.arrow_right)
+                            : const SizedBox()
+                      ])),
+                ));
           }),
     );
   }
 }
 
-class _SemiCirclePainter extends CustomPainter {
+class SemiCirclePainter extends CustomPainter {
   final Color color;
 
-  _SemiCirclePainter(this.color);
+  SemiCirclePainter(this.color);
 
   @override
   void paint(Canvas canvas, Size size) {

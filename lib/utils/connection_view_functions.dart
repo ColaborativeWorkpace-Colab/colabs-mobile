@@ -9,8 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 void tagUserConnection(BuildContext context, int index) {
-  RESTService restService = Provider.of<RESTService>(context);
-  ContentController contentController = Provider.of<ContentController>(context);
+  RESTService restService = Provider.of<RESTService>(context, listen: false);
+  ContentController contentController =
+      Provider.of<ContentController>(context, listen: false);
 
   (!contentController.getTaggedUsers
           .contains(restService.getUserConnections[index]))
@@ -20,7 +21,7 @@ void tagUserConnection(BuildContext context, int index) {
 
 Widget toggleTaggedMark(BuildContext context, int index) {
   ContentController contentController = Provider.of<ContentController>(context);
-  RESTService restService = Provider.of<RESTService>(context);
+  RESTService restService = Provider.of<RESTService>(context, listen: false);
 
   return (contentController.getTaggedUsers
           .contains(restService.getUserConnections[index]))
@@ -33,7 +34,8 @@ Widget toggleTaggedMark(BuildContext context, int index) {
 }
 
 void chatWithConnection(BuildContext context, String receiverId) {
-  ChatController chatController = Provider.of<ChatController>(context, listen:false);
+  ChatController chatController =
+      Provider.of<ChatController>(context, listen: false);
   Chat newChat = Chat(receiverId, <Message>[], ChatType.private);
 
   for (Chat chat in chatController.getChats) {
@@ -52,7 +54,7 @@ void chatWithConnection(BuildContext context, String receiverId) {
           builder: (BuildContext context) => ChatView(chat: newChat)));
 }
 
-Chat getChat(BuildContext context, String receiverId){
+Chat getChat(BuildContext context, String receiverId) {
   ChatController chatController =
       Provider.of<ChatController>(context, listen: false);
   for (Chat chat in chatController.getChats) {

@@ -164,7 +164,10 @@ class RESTService extends ChangeNotifier {
   void _addPost(http.Response response) {
     Map<String, dynamic> body = json.decode(response.body);
     Map<String, dynamic> rawPost = body['post'];
-
+    List<String> tags = (rawPost['tags'] as List<dynamic>)
+        // ignore: always_specify_types
+        .map((requirement) => requirement as String)
+        .toList();
     _socialFeedPosts.insert(
         0,
         Post(
@@ -173,9 +176,9 @@ class RESTService extends ChangeNotifier {
             rawPost['textContent'],
             rawPost['imageContent'],
             DateTime.parse(rawPost['createdAt']),
-            rawPost['tags'],
+            tags,
             rawPost['likes'],
-            rawPost['comments'],
+            _populatePostComments(rawPost['comments']),
             rawPost['donatable']));
   }
 

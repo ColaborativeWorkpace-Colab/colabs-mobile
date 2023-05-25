@@ -5,6 +5,7 @@ class LayoutController extends ChangeNotifier {
   SearchFilter _currentSearchFilter = SearchFilter.social;
   int _loginInitRefreshCount = 1;
   int _pageIndex = 0;
+  int? _selectedVersionIndex;
 
   void refresh(bool listen) {
     if (_loginInitRefreshCount != 0) {
@@ -27,6 +28,12 @@ class LayoutController extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setSelectedVersionIndex(int value, {bool listen = true}) {
+    _selectedVersionIndex = value;
+    if(listen) notifyListeners();
+  }
+
   SearchFilter get getSearchFilter => _currentSearchFilter;
   int get getPageIndex => _pageIndex;
+  int? get getSelectedVersionIndex => _selectedVersionIndex;
 }
