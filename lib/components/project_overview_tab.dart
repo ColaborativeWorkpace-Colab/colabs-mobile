@@ -1,15 +1,20 @@
-import 'package:colabs_mobile/models/task.dart';
+import 'package:colabs_mobile/controllers/layout_controller.dart';
+import 'package:colabs_mobile/controllers/restservice.dart';
+import 'package:colabs_mobile/models/project.dart';
 import 'package:colabs_mobile/types/task_status.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class ProjectOverviewTab extends StatelessWidget {
-  final List<Task> tasks;
-  const ProjectOverviewTab({super.key, required this.tasks});
+  final Project project;
+  const ProjectOverviewTab({super.key, required this.project});
 
   @override
   Widget build(BuildContext context) {
+    RESTService restService = Provider.of<RESTService>(context);
+    LayoutController layoutController = Provider.of<LayoutController>(context);
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
 
@@ -114,20 +119,40 @@ class ProjectOverviewTab extends StatelessWidget {
                           DateFormat('M/dd/yyyy').format(DateTime.now()))));
             }),
             ListView.builder(
-                itemCount: tasks.length,
+                itemCount: project.tasks.length,
                 itemBuilder: (BuildContext context, int index) {
                   return Container(
                       margin: const EdgeInsets.symmetric(horizontal: 10),
                       child: ListTile(
                           leading: Checkbox(
-                              value:
-                                  tasks[index].status == TaskStatus.completed,
-                              onChanged: (bool? value) {
-                                //TODO: Implement task complete request
+                              value: project.tasks[index].status ==
+                                  TaskStatus.completed,
+                              onChanged: (bool? value) async {
+                                bool taskUpdated =
+                                    await restService.updateTaskStatusRequest(
+                                        project.projectId,
+                                        // ignore: always_specify_types
+                                        {
+                                      "taskId": project.tasks[index].taskId,
+                                      "status": value == true
+                                          ? TaskStatus.completed.name
+                                          : TaskStatus.queued.name
+                                    });
+                                if (taskUpdated) {
+                                  project.tasks[index].status = value == true
+                                      ? TaskStatus.completed
+                                      : TaskStatus.queued;
+                                  layoutController.refresh(true);
+                                }
                               }),
-                          title: Text(tasks[index].taskTitle),
-                          subtitle: tasks[index].description.isNotEmpty
-                              ? Text(tasks[index].description)
+                          title: Text(project.tasks[index].taskTitle,
+                              style: TextStyle(
+                                  decoration: project.tasks[index].status ==
+                                          TaskStatus.completed
+                                      ? TextDecoration.lineThrough
+                                      : TextDecoration.none)),
+                          subtitle: project.tasks[index].description.isNotEmpty
+                              ? Text(project.tasks[index].description)
                               : null));
                 })
           ]))

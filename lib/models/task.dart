@@ -6,7 +6,7 @@ class Task {
   final String description;
   final List<String> assignees;
   final DateTime? deadline;
-  final TaskStatus status;
+  TaskStatus status;
 
   Task(this.taskId, this.taskTitle, this.description, this.status, this.assignees, {this.deadline});
 }

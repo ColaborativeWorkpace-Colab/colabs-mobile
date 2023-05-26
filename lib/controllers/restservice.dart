@@ -324,7 +324,27 @@ class RESTService extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         return Future<bool>.value(true);
-      } else{
+      } else {
+        return Future<bool>.value(false);
+      }
+    } on Exception catch (error) {
+      debugPrint(error.toString());
+      return Future<bool>.value(false);
+    }
+  }
+
+  Future<bool> updateTaskStatusRequest(
+      String projectId, Map<String, dynamic> body) async {
+    try {
+      http.Response response = await http.put(
+          Uri.http(urlHost,
+              '/api/v1/workspaces/projects/$projectId/updateTaskStatus'),
+          headers: <String, String>{'Content-Type': 'application/json'},
+          body: json.encode(body));
+
+      if (response.statusCode == 200) {
+        return Future<bool>.value(true);
+      } else {
         return Future<bool>.value(false);
       }
     } on Exception catch (error) {

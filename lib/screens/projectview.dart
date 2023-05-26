@@ -30,7 +30,7 @@ class ProjectView extends StatelessWidget {
               ),
               Expanded(
                   child: TabBarView(children: <Widget>[
-                ProjectOverviewTab(tasks: project.tasks),
+                ProjectOverviewTab(project: project),
 
                 VersionTab(files: project.files),
 
