@@ -26,10 +26,11 @@ void initServices(BuildContext context) {
 
   if (authenticator.isUserAuthorized) {
     chatController.initSocket();
-    restService.getProfileInfoRequest();
+    restService.getProfileInfoRequest().whenComplete(() => restService.getLastSeenRequest());
     restService.getSocialFeedRequest();
     restService.getMessagesRequest();
     restService.getProjectsRequest();
     restService.getJobsRequest();
+    restService.getLastSeenRequest();
   }
 }

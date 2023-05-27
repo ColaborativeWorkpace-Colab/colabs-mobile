@@ -4,6 +4,7 @@ import 'package:colabs_mobile/controllers/authenticator.dart';
 import 'package:colabs_mobile/controllers/chat_controller.dart';
 import 'package:colabs_mobile/controllers/restservice.dart';
 import 'package:colabs_mobile/models/message.dart';
+import 'package:colabs_mobile/models/user.dart';
 import 'package:colabs_mobile/screens/chatview.dart';
 import 'package:colabs_mobile/types/connections_view_layout_options.dart';
 import 'package:colabs_mobile/types/search_filters.dart';
@@ -39,6 +40,8 @@ class MessagesPage extends StatelessWidget {
                         shrinkWrap: true,
                         itemCount: chatController.getChats.length,
                         itemBuilder: (BuildContext context, int index) {
+                          User? user = restService.getUserInfo(
+                              chatController.getChats[index].receiver);
                           List<Message> messages = chatController
                               .getChats[index].messages.reversed
                               .toList();
@@ -52,7 +55,7 @@ class MessagesPage extends StatelessWidget {
                                   title: Container(
                                     margin: const EdgeInsets.only(bottom: 15),
                                     child: Text(
-                                        chatController.getChats[index].receiver,
+                                        (user != null) ? user.userName! : '',
                                         overflow: TextOverflow.fade,
                                         style: const TextStyle(
                                             fontSize: 15,
@@ -90,7 +93,8 @@ class MessagesPage extends StatelessWidget {
                                             builder: (BuildContext context) =>
                                                 ChatView(
                                                     chat: chatController
-                                                        .getChats[index])));
+                                                        .getChats[index],
+                                                    user: user)));
                                   }));
                         }),
                   )

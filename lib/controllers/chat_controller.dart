@@ -33,14 +33,15 @@ class ChatController extends ChangeNotifier {
     socket!.on('receive_chat_id', (data) => _linkChatId(data));
     // ignore: always_specify_types
     socket!.on('chat_error', (errorMessage) => removeChat());
+    // ignore: always_specify_types
+    socket!.on('is_not_online', (timeStamp) {
+      socket!.disconnect();
+      socket!.dispose();
+    });
   }
 
-  void disconnect() {
-    socket!.emit('disconnect-user', _authenticator!.getUserId);
-    socket!.disconnect();
-    socket!.dispose();
-    super.dispose();
-  }
+  void disconnect() =>
+      socket!.emit('disconnect-user', _authenticator!.getUserId);
 
   // ignore: always_specify_types
   void _linkChatId(data) {
@@ -84,7 +85,7 @@ class ChatController extends ChangeNotifier {
   }
 
   void addChat(Chat chat, bool listen) {
-    if(!_chatExists(chat.chatId!)) _chats.add(chat);
+    if (!_chatExists(chat.chatId!)) _chats.add(chat);
     if (listen) notifyListeners();
   }
 

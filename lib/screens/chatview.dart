@@ -2,14 +2,16 @@ import 'package:chat_bubbles/chat_bubbles.dart';
 import 'package:colabs_mobile/controllers/authenticator.dart';
 import 'package:colabs_mobile/models/chat.dart';
 import 'package:colabs_mobile/models/message.dart';
+import 'package:colabs_mobile/models/user.dart';
 import 'package:colabs_mobile/utils/send_private_message.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ChatView extends StatelessWidget {
   final Chat chat;
+  final User? user;
   final TextEditingController messageController = TextEditingController();
-  ChatView({super.key, required this.chat});
+  ChatView({super.key, required this.chat, this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -31,14 +33,17 @@ class ChatView extends StatelessWidget {
                     SizedBox(
                       width: screenWidth * .5,
                       child: Text(
-                        chat.receiver,
+                        user!.userName!,
                         style: const TextStyle(fontSize: 15),
                         overflow: TextOverflow.fade,
                       ),
                     ),
                     const SizedBox(height: 5),
-                    //TODO: get last seen status
-                    const Text('Last seen', style: TextStyle(fontSize: 12))
+                    Text(
+                        (user != null)
+                            ? user!.lastSeen.toString()
+                            : 'Last Seen Recently',
+                        style: const TextStyle(fontSize: 12))
                   ])
             ]),
             actions: <Widget>[

@@ -59,13 +59,13 @@ class ConnectionsGridView extends StatelessWidget {
                             }
                             if (layoutOption == ConnectionsLayoutOptions.chat) {
                               chatWithConnection(context,
-                                  restService.getUserConnections[index]);
+                                  restService.getUserConnections[index].userId);
                             }
                             if (layoutOption == ConnectionsLayoutOptions.send) {
                               sendPrivateMessage(
                                   context,
                                   getChat(context,
-                                      restService.getUserConnections[index]),
+                                      restService.getUserConnections[index].userId),
                                   message: shareLink);
                               Navigator.pop(context);
                             }

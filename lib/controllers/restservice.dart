@@ -10,6 +10,7 @@ import 'package:colabs_mobile/models/post.dart';
 import 'package:colabs_mobile/models/post_comment.dart';
 import 'package:colabs_mobile/models/project.dart';
 import 'package:colabs_mobile/models/task.dart';
+import 'package:colabs_mobile/models/user.dart';
 import 'package:colabs_mobile/types/chat_type.dart';
 import 'package:colabs_mobile/types/job_status.dart';
 import 'package:colabs_mobile/types/task_status.dart';
@@ -24,7 +25,7 @@ class RESTService extends ChangeNotifier {
   ChatController? chatController;
   JobController? jobController;
   ProjectController? projectController;
-  final List<String> _userConnections = <String>[];
+  final List<User> _userConnections = <User>[];
   final List<Post> _socialFeedPosts = <Post>[];
   // ignore: always_specify_types
   Map<String, dynamic> _profileInfo = {};
@@ -208,7 +209,7 @@ class RESTService extends ChangeNotifier {
 
     for (dynamic connection in connections) {
       if (!_userConnections.contains(connection)) {
-        _userConnections.add(connection);
+        _userConnections.add(User(connection));
       }
     }
   }
@@ -227,6 +228,45 @@ class RESTService extends ChangeNotifier {
     } on Exception catch (error) {
       debugPrint(error.toString());
       return Future<bool>.value(false);
+    }
+  }
+
+  Future<bool> getLastSeenRequest({bool listen = false}) async {
+    try {
+      String userIds = '';
+      for (User user in _userConnections) {
+        userIds += '${user.userId},';
+      }
+      http.Response response = await http.post(
+          // ignore: always_specify_types
+          body: json.encode({'userIds': userIds}),
+          headers: <String, String>{'Content-Type': 'application/json'},
+          Uri.http(urlHost, '/api/v1/messaging/lastSeen'));
+
+      if (response.statusCode == 200) {
+        _populateUserSeenStatus(response.body);
+        //_populateChats(response.body, listen);
+        return Future<bool>.value(true);
+      } else {
+        return Future<bool>.value(false);
+      }
+    } on Exception catch (error) {
+      debugPrint(error.toString());
+      return Future<bool>.value(false);
+    }
+  }
+
+  void _populateUserSeenStatus(String body) {
+    List<dynamic> data = json.decode(body);
+
+    for (Map<String, dynamic> userStatus in data) {
+      for (User user in _userConnections) {
+        if (user.userId == userStatus['userId']) {
+          user.userName = userStatus['userName'];
+          user.isOnline = userStatus['isOnline'];
+          user.lastSeen = DateTime.parse(userStatus['lastSeen']);
+        }
+      }
     }
   }
 
@@ -405,6 +445,8 @@ class RESTService extends ChangeNotifier {
     _profileInfo['bio'] = updatedInfo['bio'];
     _profileInfo['occupation'] = updatedInfo['occupation'];
     _profileInfo['location'] = updatedInfo['location'];
+    _profileInfo['isOnline'] = updatedInfo['isOnline'];
+    _profileInfo['lastSeen'] = updatedInfo['lastSeen'];
     notifyListeners();
   }
 
@@ -462,6 +504,14 @@ class RESTService extends ChangeNotifier {
     return temp;
   }
 
+  User? getUserInfo(String userId) {
+    for (User connection in _userConnections) {
+      if (connection.userId == userId) return connection;
+    }
+
+    return null;
+  }
+
   set setAuthenticator(Authenticator value) {
     authenticator = value;
   }
@@ -488,7 +538,7 @@ class RESTService extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<String> get getUserConnections => _userConnections;
+  List<User> get getUserConnections => _userConnections;
   List<Post> get getSocialFeedPosts => _socialFeedPosts;
   Map<String, dynamic> get getProfileInfo => _profileInfo;
   bool get isPosting => _isPosting;
