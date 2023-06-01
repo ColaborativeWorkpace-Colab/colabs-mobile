@@ -23,24 +23,43 @@ class ConnectionsGridView extends StatelessWidget {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
             Widget>[
           Text(layoutOption.name, style: const TextStyle(fontSize: 17)),
-          Container(
-              margin: const EdgeInsets.symmetric(vertical: 15),
-              height: 50,
-              width: screenWidth * .95,
-              child: TextField(
-                  style: const TextStyle(fontSize: 15),
-                  decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(
-                          vertical: 0, horizontal: 15),
-                      suffixIcon: IconButton(
-                          onPressed: () {
-                            //TODO: When searching, auto filter while typing for user
-                          },
-                          icon: const Icon(Icons.search_rounded)),
-                      hintText: 'Search Connections',
-                      border: const OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(45)))))),
+          Row(
+            children: <Widget>[
+              Container(
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                  height: 50,
+                  width: layoutOption == ConnectionsLayoutOptions.send ||
+                          layoutOption == ConnectionsLayoutOptions.add
+                      ? screenWidth * .72
+                      : screenWidth * .92,
+                  child: TextField(
+                      onChanged: (String value) {
+                        //TODO: When searching, auto filter while typing for user
+                      },
+                      style: const TextStyle(fontSize: 15),
+                      decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 0, horizontal: 15),
+                          suffixIcon: IconButton(
+                              onPressed: () {},
+                              icon: const Icon(Icons.search_rounded)),
+                          hintText: 'Search Connections',
+                          border: const OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(45)))))),
+              layoutOption == ConnectionsLayoutOptions.send ||
+                      layoutOption == ConnectionsLayoutOptions.add
+                  ? ElevatedButton(
+                      onPressed: () {
+                        //TODO: Add members or send message to group chat
+                      },
+                      child: layoutOption == ConnectionsLayoutOptions.add
+                          ? const Text('Add')
+                          : const Text('Send'))
+                  : const SizedBox()
+            ],
+          ),
           SizedBox(
               height: screenHeight * .27,
               child: GridView.builder(
@@ -53,6 +72,12 @@ class ConnectionsGridView extends StatelessWidget {
                   itemBuilder: (BuildContext context, int index) {
                     return Stack(children: <Widget>[
                       ElevatedButton(
+                          onLongPress: () {
+                            if (layoutOption == ConnectionsLayoutOptions.chat) {
+                              tagUserConnection(context, index);
+                              //TODO: Implement initiating group chat
+                            }
+                          },
                           onPressed: () {
                             if (layoutOption == ConnectionsLayoutOptions.tag) {
                               tagUserConnection(context, index);
@@ -64,10 +89,17 @@ class ConnectionsGridView extends StatelessWidget {
                             if (layoutOption == ConnectionsLayoutOptions.send) {
                               sendPrivateMessage(
                                   context,
-                                  getChat(context,
-                                      restService.getUserConnections[index].userId),
+                                  getChat(
+                                      context,
+                                      restService
+                                          .getUserConnections[index].userId),
                                   message: shareLink);
                               Navigator.pop(context);
+                            }
+
+                            if (layoutOption == ConnectionsLayoutOptions.add) {
+                              //TODO: Add teammates
+                              tagUserConnection(context, index);
                             }
                           },
                           style: ElevatedButton.styleFrom(

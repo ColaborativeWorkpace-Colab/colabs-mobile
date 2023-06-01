@@ -27,6 +27,7 @@ class RESTService extends ChangeNotifier {
   ProjectController? projectController;
   final List<User> _userConnections = <User>[];
   final List<Post> _socialFeedPosts = <Post>[];
+  final List<Post> _exploreFeedPosts = <Post>[];
   // ignore: always_specify_types
   Map<String, dynamic> _profileInfo = {};
   bool _isPosting = false;
@@ -40,7 +41,7 @@ class RESTService extends ChangeNotifier {
           .get(Uri.http(urlHost, '/api/v1/social/${authenticator!.getUserId}'));
 
       if (response.statusCode == 200) {
-        _populateSocialFeed(response.body);
+        _populateFeed(response.body, false);
         return Future<bool>.value(true);
       } else {
         return Future<bool>.value(false);
@@ -51,27 +52,32 @@ class RESTService extends ChangeNotifier {
     }
   }
 
-  void _populateSocialFeed(String body) {
+  void _populateFeed(String body, bool isExploring) {
     Map<String, dynamic> decodedJsonBody = json.decode(body);
     List<dynamic> rawPosts = decodedJsonBody['posts'];
-
+    
     for (Map<String, dynamic> rawPost in rawPosts) {
       List<String> tags = (rawPost['tags'] as List<dynamic>)
           // ignore: always_specify_types
           .map((tag) => tag as String)
           .toList();
+      Post post = Post(
+          rawPost['_id'],
+          rawPost['userId'],
+          rawPost['textContent'],
+          rawPost['imageContent'],
+          DateTime.parse(rawPost['createdAt']),
+          tags,
+          rawPost['likes'],
+          _populatePostComments(rawPost['comments']),
+          rawPost['donatable']);
 
-      if (!_postExists(rawPost['_id'])) {
-        _socialFeedPosts.add(Post(
-            rawPost['_id'],
-            rawPost['userId'],
-            rawPost['textContent'],
-            rawPost['imageContent'],
-            DateTime.parse(rawPost['createdAt']),
-            tags,
-            rawPost['likes'],
-            _populatePostComments(rawPost['comments']),
-            rawPost['donatable']));
+      if (isExploring) {
+        _exploreFeedPosts.add(post);
+      } else {
+        if (!_postExists(rawPost['_id'])) {
+          _socialFeedPosts.add(post);
+        }
       }
     }
   }
@@ -181,6 +187,25 @@ class RESTService extends ChangeNotifier {
             rawPost['likes'],
             _populatePostComments(rawPost['comments']),
             rawPost['donatable']));
+  }
+
+  Future<List<Post>> getPostData({String? postTag}) async {
+    try {
+      http.Response response =
+          await http.get(Uri.http(urlHost, '/api/v1/social/explore/$postTag'));
+
+      if (response.statusCode == 200) {
+        _populateFeed(response.body, true);
+        return Future<List<Post>>.value(_exploreFeedPosts);
+      } else {
+        // ignore: always_specify_types
+        return Future<List<Post>>.value([]);
+      }
+    } on Exception catch (error) {
+      debugPrint(error.toString());
+      // ignore: always_specify_types
+      return Future<List<Post>>.value([]);
+    }
   }
 
   Future<bool> getUserConnectionsRequest() async {
@@ -504,6 +529,8 @@ class RESTService extends ChangeNotifier {
     return temp;
   }
 
+  //TODO: Get request versions and project files & directories from server
+
   User? getUserInfo(String userId) {
     for (User connection in _userConnections) {
       if (connection.userId == userId) return connection;
@@ -540,6 +567,7 @@ class RESTService extends ChangeNotifier {
 
   List<User> get getUserConnections => _userConnections;
   List<Post> get getSocialFeedPosts => _socialFeedPosts;
+  List<Post> get getExploreFeedPosts => _exploreFeedPosts;
   Map<String, dynamic> get getProfileInfo => _profileInfo;
   bool get isPosting => _isPosting;
   bool get isRefreshing => _isRefreshing;

@@ -11,7 +11,10 @@ class JobContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-
+    //TODO: Show the status of the job
+    //TODO: Notify user if job request proposal was rejected
+    //TODO: When job is done, select files ready for approval from recruiter
+    //TODO: Send custom message for recruiter for payment
     return Container(
         margin: const EdgeInsets.all(10),
         decoration: BoxDecoration(boxShadow: const <BoxShadow>[
@@ -64,7 +67,7 @@ class JobContainer extends StatelessWidget {
                                 child: const Text('More',
                                     style: TextStyle(
                                         color: Color(0xFF5521B5),
-                                        fontWeight: FontWeight.bold))),
+                                        fontWeight: FontWeight.bold)))
                           )
                         ])
                   : const SizedBox(),
@@ -94,8 +97,8 @@ class JobContainer extends StatelessWidget {
                                     ),
                                     SizedBox(width: 10),
                                     Text('Payment Verified',
-                                        style: TextStyle(color: Colors.white)),
-                                  ])),
+                                        style: TextStyle(color: Colors.white))
+                                  ]))
                             )
                           : SizedBox(
                               width: 170,
@@ -103,7 +106,7 @@ class JobContainer extends StatelessWidget {
                                 Icon(Icons.payment, color: Colors.white),
                                 SizedBox(width: 10),
                                 Text('Payment Unverified',
-                                    style: TextStyle(color: Colors.white)),
+                                    style: TextStyle(color: Colors.white))
                               ]))))
             ]));
   }

@@ -5,6 +5,7 @@ import 'package:colabs_mobile/controllers/layout_controller.dart';
 import 'package:colabs_mobile/controllers/restservice.dart';
 import 'package:colabs_mobile/models/post.dart';
 import 'package:colabs_mobile/screens/comments.dart';
+import 'package:colabs_mobile/screens/explore.dart';
 import 'package:colabs_mobile/types/connections_view_layout_options.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -104,7 +105,13 @@ class PostContainer extends StatelessWidget {
                           child: Text(tag,
                               style: const TextStyle(color: Colors.blue)),
                           onTap: () {
-                            //TODO: Explore Topic
+                            restService.getPostData(postTag: tag).then(
+                                (List<Post> value) => Navigator.push(
+                                    context,
+                                    MaterialPageRoute<ExploreScreen>(
+                                        builder: (BuildContext context) =>
+                                            ExploreScreen(
+                                                title: tag, posts: value))));
                           })))
                 ])
               : const SizedBox(),

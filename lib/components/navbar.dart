@@ -1,3 +1,4 @@
+import 'package:colabs_mobile/screens/explore.dart';
 import 'package:colabs_mobile/types/search_filters.dart';
 import 'package:flutter/material.dart';
 
@@ -25,9 +26,11 @@ class Navbar extends StatelessWidget {
                             switch (searchFilter) {
                               case SearchFilter.social:
                                 //TODO: Go to explore page
+                                //TODO: Search Connections
                                 break;
                               case SearchFilter.message:
                                 //TODO: Search messages
+                                //TODO: Search Connections
                                 break;
                               case SearchFilter.project:
                                 //TODO: Search projects
