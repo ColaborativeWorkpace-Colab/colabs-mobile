@@ -1,5 +1,6 @@
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:colabs_mobile/controllers/layout_controller.dart';
+import 'package:colabs_mobile/controllers/restservice.dart';
 import 'package:colabs_mobile/screens/pages/jobs.dart';
 import 'package:colabs_mobile/screens/pages/messages.dart';
 import 'package:colabs_mobile/screens/pages/post.dart';
@@ -16,6 +17,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     LayoutController layoutController = Provider.of<LayoutController>(context);
+    RESTService restService = Provider.of<RESTService>(context);
 
     return Scaffold(
         resizeToAvoidBottomInset: false,
@@ -36,8 +38,8 @@ class HomeScreen extends StatelessWidget {
               child: AnimatedNotchBottomBar(
                   pageController: pageController,
                   showLabel: false,
-                  bottomBarItems: const <BottomBarItem>[
-                    BottomBarItem(
+                  bottomBarItems: <BottomBarItem>[
+                    const BottomBarItem(
                         inActiveItem:
                             Icon(Icons.home_outlined, color: Colors.blueGrey),
                         activeItem: Icon(
@@ -45,7 +47,7 @@ class HomeScreen extends StatelessWidget {
                           color: Color(0xFF5521B5),
                         ),
                         itemLabel: 'Social'),
-                    BottomBarItem(
+                    const BottomBarItem(
                         inActiveItem: Icon(Icons.message_outlined,
                             color: Colors.blueGrey),
                         activeItem: Icon(
@@ -53,7 +55,7 @@ class HomeScreen extends StatelessWidget {
                           color: Color(0xFF5521B5),
                         ),
                         itemLabel: 'Messages'),
-                    BottomBarItem(
+                    const BottomBarItem(
                         inActiveItem: Icon(Icons.add, color: Colors.blueGrey),
                         activeItem: Icon(
                           Icons.add,
@@ -61,19 +63,30 @@ class HomeScreen extends StatelessWidget {
                         ),
                         itemLabel: 'Post'),
                     BottomBarItem(
-                        inActiveItem:
-                            Icon(Icons.folder_outlined, color: Colors.blueGrey),
+                        inActiveItem: Icon(
+                            restService.getProfileInfo['isVerified'] ?? false
+                                ? Icons.folder_outlined
+                                : Icons.folder_off,
+                            color: Colors.blueGrey),
                         activeItem: Icon(
-                          Icons.folder,
-                          color: Color(0xFF5521B5),
+                          restService.getProfileInfo['isVerified'] ?? false
+                              ? Icons.folder
+                              : Icons.folder_off,
+                          color: const Color(0xFF5521B5)
                         ),
                         itemLabel: 'Projects'),
                     BottomBarItem(
                         inActiveItem:
-                            Icon(Icons.work_outline, color: Colors.blueGrey),
+                            Icon(
+                              restService.getProfileInfo['isVerified'] ?? false
+                                ? Icons.work_outline
+                                : Icons.work_off,
+                               color: Colors.blueGrey),
                         activeItem: Icon(
-                          Icons.work,
-                          color: Color(0xFF5521B5),
+                          restService.getProfileInfo['isVerified'] ?? false
+                              ? Icons.work
+                              : Icons.work_off,
+                          color: const Color(0xFF5521B5),
                         ),
                         itemLabel: 'Jobs'),
                   ],

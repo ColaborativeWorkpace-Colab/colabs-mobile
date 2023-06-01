@@ -1,8 +1,11 @@
+import 'dart:ui';
+
 import 'package:colabs_mobile/components/navbar.dart';
 import 'package:colabs_mobile/controllers/project_controller.dart';
 import 'package:colabs_mobile/controllers/restservice.dart';
 import 'package:colabs_mobile/screens/projectview.dart';
 import 'package:colabs_mobile/types/search_filters.dart';
+import 'package:colabs_mobile/utils/pop_up_verification_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -16,6 +19,8 @@ class ProjectsPage extends StatelessWidget {
     RESTService restService = Provider.of<RESTService>(context);
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
+
+    popUpVerificationAlert(context, restService.getProfileInfo['isVerified']);
 
     return SafeArea(
         child: Column(children: <Widget>[
@@ -46,7 +51,9 @@ class ProjectsPage extends StatelessWidget {
                                       context,
                                       MaterialPageRoute<ProjectView>(
                                           builder: (BuildContext context) =>
-                                              ProjectView(project: projectController.getProjects[index])));
+                                              ProjectView(
+                                                  project: projectController
+                                                      .getProjects[index])));
                                 },
                                 title: Text(projectController
                                     .getProjects[index].projectName),

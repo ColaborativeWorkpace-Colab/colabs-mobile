@@ -1,8 +1,11 @@
+import 'dart:ui';
+
 import 'package:colabs_mobile/components/job_container.dart';
 import 'package:colabs_mobile/components/navbar.dart';
 import 'package:colabs_mobile/controllers/job_controller.dart';
 import 'package:colabs_mobile/controllers/restservice.dart';
 import 'package:colabs_mobile/types/search_filters.dart';
+import 'package:colabs_mobile/utils/pop_up_verification_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -15,6 +18,8 @@ class JobsPage extends StatelessWidget {
     RESTService restService = Provider.of<RESTService>(context);
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+    
+    popUpVerificationAlert(context, restService.getProfileInfo['isVerified']);
 
     return SafeArea(
         child: Column(children: <Widget>[

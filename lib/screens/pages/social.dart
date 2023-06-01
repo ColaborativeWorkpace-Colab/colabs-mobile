@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:colabs_mobile/components/feed.dart';
 import 'package:colabs_mobile/components/post_container.dart';
 import 'package:colabs_mobile/components/navbar.dart';

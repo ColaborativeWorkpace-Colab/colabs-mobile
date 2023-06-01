@@ -10,6 +10,7 @@ class ProjectView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //TODO: Get file versions from server
     return Scaffold(
         appBar: AppBar(title: const Text('Project Details')),
         body: DefaultTabController(
@@ -26,7 +27,7 @@ class ProjectView extends StatelessWidget {
                   Tab(
                       child: Text('Teams',
                           style: TextStyle(color: Color(0xff5521B5)))),
-                ],
+                ]
               ),
               Expanded(
                   child: TabBarView(children: <Widget>[

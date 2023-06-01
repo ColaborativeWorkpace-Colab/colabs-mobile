@@ -55,7 +55,7 @@ class RESTService extends ChangeNotifier {
   void _populateFeed(String body, bool isExploring) {
     Map<String, dynamic> decodedJsonBody = json.decode(body);
     List<dynamic> rawPosts = decodedJsonBody['posts'];
-    
+
     for (Map<String, dynamic> rawPost in rawPosts) {
       List<String> tags = (rawPost['tags'] as List<dynamic>)
           // ignore: always_specify_types
@@ -530,6 +530,23 @@ class RESTService extends ChangeNotifier {
   }
 
   //TODO: Get request versions and project files & directories from server
+  Future<bool> getFileVersionsRequest(String projectId, String fileRef,
+      {bool listen = false}) async {
+    try {
+      http.Response response = await http.get(
+          Uri.http(urlHost, '/api/v1/workspaces/projects/$projectId/$fileRef'));
+
+      if (response.statusCode == 200) {
+        print(response.body);
+        return Future<bool>.value(true);
+      } else {
+        return Future<bool>.value(false);
+      }
+    } on Exception catch (error) {
+      debugPrint(error.toString());
+      return Future<bool>.value(false);
+    }
+  }
 
   User? getUserInfo(String userId) {
     for (User connection in _userConnections) {
