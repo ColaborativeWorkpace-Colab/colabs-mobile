@@ -3,6 +3,7 @@ import 'package:colabs_mobile/controllers/job_controller.dart';
 import 'package:colabs_mobile/controllers/restservice.dart';
 import 'package:colabs_mobile/models/job.dart';
 import 'package:colabs_mobile/types/job_bid.dart';
+import 'package:colabs_mobile/types/job_status.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -85,13 +86,22 @@ class _JobApplicationContainerState extends State<JobApplicationContainer>
                     onPressed: () {}),
                 _isExtended
                     ? const SizedBox()
-                    : ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20))),
-                        child: const Text('Apply Now',
-                            style: TextStyle(color: Colors.white)),
-                        onPressed: () => _toggleContainer()),
+                    : widget.job.status == JobStatus.pending
+                        ? Row(children: const <Widget>[
+                            SizedBox(
+                                width: 30,
+                                height: 30,
+                                child: CircularProgressIndicator()),
+                            SizedBox(width: 20),
+                            Text('Proposal Pending')
+                          ])
+                        : ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20))),
+                            child: const Text('Apply Now',
+                                style: TextStyle(color: Colors.white)),
+                            onPressed: () => _toggleContainer()),
                 _isExtended
                     ? IconButton(
                         icon: const Icon(Icons.close),
@@ -242,6 +252,11 @@ class _JobApplicationContainerState extends State<JobApplicationContainer>
                                         JobBid.milestone)
                                     ? 'By Milestone'
                                     : 'By Project'
+                              }).then((bool requestSuccess) {
+                                if (requestSuccess) {
+                                  widget.job.status = JobStatus.pending;
+                                }
+                                _toggleContainer();
                               });
                             },
                             child: const Text('Submit Proposal')))

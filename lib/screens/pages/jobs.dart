@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:colabs_mobile/components/job_container.dart';
 import 'package:colabs_mobile/components/navbar.dart';
 import 'package:colabs_mobile/controllers/job_controller.dart';

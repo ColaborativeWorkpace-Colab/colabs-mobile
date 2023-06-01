@@ -4,7 +4,7 @@ class Job {
   final String jobId;
   final String jobTitle;
   final String description;
-  final JobStatus status;
+  JobStatus status;
   final List<String> workers;
   final List<String> requirements;
   final bool isPaymentVerified;

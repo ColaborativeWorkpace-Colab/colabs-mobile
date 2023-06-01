@@ -1,4 +1,3 @@
-import 'package:colabs_mobile/screens/explore.dart';
 import 'package:colabs_mobile/types/search_filters.dart';
 import 'package:flutter/material.dart';
 

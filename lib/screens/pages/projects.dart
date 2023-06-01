@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:colabs_mobile/components/navbar.dart';
 import 'package:colabs_mobile/controllers/project_controller.dart';
 import 'package:colabs_mobile/controllers/restservice.dart';
