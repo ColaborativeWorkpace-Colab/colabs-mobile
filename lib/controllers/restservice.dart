@@ -364,6 +364,10 @@ class RESTService extends ChangeNotifier {
           // ignore: always_specify_types
           .map((requirement) => requirement as String)
           .toList();
+      List<String> pendingWorkers = (job['pendingworkers'] as List<dynamic>)
+          // ignore: always_specify_types
+          .map((worker) => worker as String)
+          .toList();
       jobController!.addJob(
           Job(
               job['_id'],
@@ -375,7 +379,8 @@ class RESTService extends ChangeNotifier {
               // ignore: always_specify_types
               double.parse(job['earnings'].toString()),
               job['owner'],
-              job['paymentVerified']),
+              job['paymentVerified'],
+              pendingWorkers),
           listen);
     }
   }

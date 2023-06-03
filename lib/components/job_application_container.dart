@@ -1,5 +1,7 @@
+import 'package:colabs_mobile/components/version_tab.dart';
 import 'package:colabs_mobile/controllers/authenticator.dart';
 import 'package:colabs_mobile/controllers/job_controller.dart';
+import 'package:colabs_mobile/controllers/project_controller.dart';
 import 'package:colabs_mobile/controllers/restservice.dart';
 import 'package:colabs_mobile/models/job.dart';
 import 'package:colabs_mobile/types/job_bid.dart';
@@ -67,9 +69,83 @@ class _JobApplicationContainerState extends State<JobApplicationContainer>
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     JobController jobController = Provider.of<JobController>(context);
     RESTService restService = Provider.of<RESTService>(context);
     Authenticator authenticator = Provider.of<Authenticator>(context);
+    Widget changeJobStatusButton;
+
+    if (widget.job.pendingWorkers.contains(authenticator.getUserId)) {
+      changeJobStatusButton = Row(children: const <Widget>[
+        SizedBox(width: 30, height: 30, child: CircularProgressIndicator()),
+        SizedBox(width: 20),
+        Text('Proposal Pending')
+      ]);
+    } else if (widget.job.status == JobStatus.active) {
+      changeJobStatusButton = ElevatedButton(
+          style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20))),
+          child:
+              const Text('Complete Job', style: TextStyle(color: Colors.white)),
+          onPressed: () {
+            showModalBottomSheet(
+                context: context,
+                builder: (BuildContext context) {
+                  ProjectController projectController =
+                      Provider.of<ProjectController>(context);
+
+                  return SizedBox(
+                      height: screenHeight * .35,
+                      child: Column(children: <Widget>[
+                        Container(
+                            alignment: Alignment.centerLeft,
+                            padding: const EdgeInsets.all(8.0),
+                            child: const Text(
+                                'Select project for job completion',
+                                style: TextStyle(
+                                    color: Color(0xFF5521B5), fontSize: 18))),
+                        SizedBox(
+                          height: screenHeight * .23,
+                          child: ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: projectController.getProjects.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return ListTile(
+                                    leading: Checkbox(
+                                        onChanged: (bool? value) {},
+                                        value: false),
+                                    title: Text(projectController
+                                        .getProjects[index].projectName));
+                              }),
+                        ),
+                        ElevatedButton(
+                            onPressed: () {
+                              //TODO: Send request for job completion
+                            },
+                            child: const Text('Prepare Files'))
+                      ]));
+                });
+          });
+    } else if (widget.job.status == JobStatus.ready) {
+      changeJobStatusButton = Row(children: const <Widget>[
+        SizedBox(width: 20),
+        Text('Waiting for recruiter approval')
+      ]);
+    } else if (widget.job.status == JobStatus.completed) {
+      changeJobStatusButton = Row(children: const <Widget>[
+        Icon(Icons.check_circle, color: Colors.green),
+        SizedBox(width: 20),
+        Text('Job Completed')
+      ]);
+    } else {
+      changeJobStatusButton = ElevatedButton(
+          style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20))),
+          child: const Text('Apply Now', style: TextStyle(color: Colors.white)),
+          onPressed: () => _toggleContainer());
+    }
 
     return Container(
         margin: const EdgeInsets.all(20),
@@ -84,29 +160,14 @@ class _JobApplicationContainerState extends State<JobApplicationContainer>
                     icon: const Icon(Icons.favorite_border_outlined,
                         color: Colors.red),
                     onPressed: () {}),
+                changeJobStatusButton,
                 _isExtended
                     ? const SizedBox()
-                    : widget.job.status == JobStatus.pending
-                        ? Row(children: const <Widget>[
-                            SizedBox(
-                                width: 30,
-                                height: 30,
-                                child: CircularProgressIndicator()),
-                            SizedBox(width: 20),
-                            Text('Proposal Pending')
-                          ])
-                        : ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20))),
-                            child: const Text('Apply Now',
-                                style: TextStyle(color: Colors.white)),
-                            onPressed: () => _toggleContainer()),
-                _isExtended
-                    ? IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () => _toggleContainer())
-                    : SizedBox(width: screenWidth * .1)
+                    : _isExtended
+                        ? IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () => _toggleContainer())
+                        : SizedBox(width: screenWidth * .1)
               ]),
           SizeTransition(
               sizeFactor: _animation!,
@@ -254,7 +315,8 @@ class _JobApplicationContainerState extends State<JobApplicationContainer>
                                     : 'By Project'
                               }).then((bool requestSuccess) {
                                 if (requestSuccess) {
-                                  widget.job.status = JobStatus.pending;
+                                  widget.job.pendingWorkers
+                                      .add(authenticator.getUserId!);
                                 }
                                 _toggleContainer();
                               });

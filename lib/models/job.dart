@@ -10,7 +10,8 @@ class Job {
   final bool isPaymentVerified;
   final double earnings;
   final String owner;
+  final List<String> pendingWorkers;
 
   Job(this.jobId, this.jobTitle, this.description, this.status, this.workers,
-      this.requirements, this.earnings, this.owner, this.isPaymentVerified);
+      this.requirements, this.earnings, this.owner, this.isPaymentVerified, this.pendingWorkers);
 }

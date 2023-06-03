@@ -23,12 +23,30 @@ class JobContainer extends StatelessWidget {
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Container(
-                  margin: const EdgeInsets.all(15),
-                  child: Text(
-                    job.jobTitle,
-                    style: const TextStyle(fontSize: 25),
-                  )),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                      margin: const EdgeInsets.all(15),
+                      child: Text(
+                        job.jobTitle,
+                        style: const TextStyle(fontSize: 25),
+                      )),
+                  job.pendingWorkers.isNotEmpty
+                      ? Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 10),
+                          child: Row(
+                            children: <Widget>[
+                              const Icon(Icons.people, color: Colors.grey),
+                              const SizedBox(width: 5),
+                              Text(
+                                  '${job.pendingWorkers.length.toString()} Applying',
+                                  style: const TextStyle(color: Colors.grey)),
+                            ],
+                          ))
+                      : const SizedBox()
+                ],
+              ),
               (job.requirements.isNotEmpty)
                   ? Container(
                       margin: const EdgeInsets.symmetric(horizontal: 5),
@@ -56,19 +74,19 @@ class JobContainer extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
                           Container(
-                            margin: const EdgeInsets.only(right: 10),
-                            child: InkWell(
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute<JobView>(
-                                          builder: (BuildContext context) => JobView(job: job)));
-                                },
-                                child: const Text('More',
-                                    style: TextStyle(
-                                        color: Color(0xFF5521B5),
-                                        fontWeight: FontWeight.bold)))
-                          )
+                              margin: const EdgeInsets.only(right: 10),
+                              child: InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute<JobView>(
+                                            builder: (BuildContext context) =>
+                                                JobView(job: job)));
+                                  },
+                                  child: const Text('More',
+                                      style: TextStyle(
+                                          color: Color(0xFF5521B5),
+                                          fontWeight: FontWeight.bold))))
                         ])
                   : const SizedBox(),
               Container(
@@ -98,8 +116,7 @@ class JobContainer extends StatelessWidget {
                                     SizedBox(width: 10),
                                     Text('Payment Verified',
                                         style: TextStyle(color: Colors.white))
-                                  ]))
-                            )
+                                  ])))
                           : SizedBox(
                               width: 170,
                               child: Row(children: const <Widget>[
