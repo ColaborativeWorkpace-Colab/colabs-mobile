@@ -45,6 +45,9 @@ class ProjectsPage extends StatelessWidget {
                                 color: Colors.white),
                             child: ListTile(
                                 onTap: () {
+                                  restService.isFetching = true;
+                                  restService.getProjectFilesRequest(
+                                      projectController.getProjects[index].projectId);
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute<ProjectView>(

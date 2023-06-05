@@ -109,15 +109,31 @@ class ProjectOverviewTab extends StatelessWidget {
                   ])),
           Expanded(
               child: TabBarView(children: <Widget>[
-            ListView.builder(itemBuilder: (BuildContext context, int index) {
+            (!restService.isFetching) ? ListView.builder(
+              itemCount: restService.commits.length,
+              itemBuilder: (BuildContext context, int index) {
               return Container(
                   margin: const EdgeInsets.symmetric(horizontal: 10),
                   child: ListTile(
-                      title: const Text('Commiter'),
-                      subtitle: const Text('Commit Message'),
+                      // ignore: avoid_dynamic_calls
+                      title: Text(restService.commits[index]['commit']['committer']['name']),
+                      // ignore: avoid_dynamic_calls
+                      subtitle: Text(restService.commits[index]
+                              ['commit']['message']),
                       trailing: Text(
-                          DateFormat('M/dd/yyyy').format(DateTime.now()))));
-            }),
+                          DateFormat('M/dd/yyyy').format(
+                              // ignore: avoid_dynamic_calls
+                              DateTime.parse(restService.commits[index]['commit']['committer']
+                                  ['date'])))));
+            }) : Container(
+              margin: EdgeInsets.only(top: screenHeight * .25), 
+              child: Column(
+                children: const <Widget>[
+                  CircularProgressIndicator(),
+                  Text('Fetching Data')
+                ]
+              )
+            ),
             ListView.builder(
                 itemCount: project.tasks.length,
                 itemBuilder: (BuildContext context, int index) {

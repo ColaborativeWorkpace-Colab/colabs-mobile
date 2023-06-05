@@ -28,10 +28,12 @@ class RESTService extends ChangeNotifier {
   final List<User> _userConnections = <User>[];
   final List<Post> _socialFeedPosts = <Post>[];
   final List<Post> _exploreFeedPosts = <Post>[];
+  List<dynamic> commits = [];
   // ignore: always_specify_types
   Map<String, dynamic> _profileInfo = {};
   bool _isPosting = false;
   bool _isRefreshing = false;
+  bool _isFetching = false;
 
   RESTService();
 
@@ -508,13 +510,15 @@ class RESTService extends ChangeNotifier {
 
     for (Map<String, dynamic> rawProject in rawProjects) {
       List<Task> tasks = _populateTasks(rawProject['tasks']);
-      List<String> files = (rawProject['files'] as List<dynamic>)
+      List<String> members = (rawProject['members'] as List<dynamic>)
           // ignore: always_specify_types
-          .map((file) => file as String)
+          .map((member) => member as String)
           .toList();
 
       projectController!.addProject(
-          Project(rawProject['_id'], rawProject['name'], tasks, files), listen);
+          Project(rawProject['_id'], rawProject['name'], tasks,
+              rawProject['files'], members),
+          listen);
     }
   }
 
@@ -535,14 +539,42 @@ class RESTService extends ChangeNotifier {
   }
 
   //TODO: Get request versions and project files & directories from server
-  Future<bool> getFileVersionsRequest(String projectId, String fileRef,
+  Future<bool> getProjectFilesRequest(String projectId,
       {bool listen = false}) async {
     try {
-      http.Response response = await http.get(
-          Uri.http(urlHost, '/api/v1/workspaces/projects/$projectId/$fileRef'));
+      http.Response response = await http
+          .get(Uri.http(urlHost, '/api/v1/workspaces/projects/$projectId'));
 
       if (response.statusCode == 200) {
-        print(response.body);
+        Map<String, dynamic> rawJson = json.decode(response.body);
+        // ignore: avoid_dynamic_calls
+        commits.addAll(rawJson['commits']['data']);
+        _isFetching = false;
+        notifyListeners();
+        return Future<bool>.value(true);
+      } else {
+        _isFetching = false;
+        notifyListeners();
+        return Future<bool>.value(false);
+      }
+    } on Exception catch (error) {
+      debugPrint(error.toString());
+      _isFetching = false;
+      notifyListeners();
+      return Future<bool>.value(false);
+    }
+  }
+
+  Future<bool> addMembersRequest(
+      String projectId, Map<String, dynamic> body) async {
+    try {
+      http.Response response = await http.put(
+          Uri.http(
+              urlHost, '/api/v1/workspaces/projects/$projectId/addMembers'),
+          headers: <String, String>{'Content-Type': 'application/json'},
+          body: json.encode(body));
+
+      if (response.statusCode == 200) {
         return Future<bool>.value(true);
       } else {
         return Future<bool>.value(false);
@@ -587,10 +619,16 @@ class RESTService extends ChangeNotifier {
     notifyListeners();
   }
 
+  set isFetching(bool value) {
+    _isFetching = value;
+    notifyListeners();
+  }
+
   List<User> get getUserConnections => _userConnections;
   List<Post> get getSocialFeedPosts => _socialFeedPosts;
   List<Post> get getExploreFeedPosts => _exploreFeedPosts;
   Map<String, dynamic> get getProfileInfo => _profileInfo;
   bool get isPosting => _isPosting;
   bool get isRefreshing => _isRefreshing;
+  bool get isFetching => _isFetching;
 }

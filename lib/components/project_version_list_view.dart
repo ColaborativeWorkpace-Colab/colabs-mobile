@@ -2,7 +2,7 @@ import 'package:colabs_mobile/controllers/layout_controller.dart';
 import 'package:flutter/material.dart';
 
 class ProjectVersionListView extends StatefulWidget {
-  final List<String> files;
+  final List<dynamic> files;
   final LayoutController layoutController;
   const ProjectVersionListView(
       {super.key, required this.files, required this.layoutController});

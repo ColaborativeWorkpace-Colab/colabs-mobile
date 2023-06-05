@@ -5,7 +5,7 @@ import 'package:flutter_treeview/flutter_treeview.dart';
 import 'package:provider/provider.dart';
 
 class VersionTab extends StatelessWidget {
-  final List<String> files;
+  final List<dynamic> files;
   const VersionTab({super.key, required this.files});
 
   @override

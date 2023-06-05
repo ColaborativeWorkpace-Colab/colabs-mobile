@@ -30,7 +30,7 @@ class JobContainer extends StatelessWidget {
                       margin: const EdgeInsets.all(15),
                       child: Text(
                         job.jobTitle,
-                        style: const TextStyle(fontSize: 25),
+                        style: const TextStyle(fontSize: 25)
                       )),
                   job.pendingWorkers.isNotEmpty
                       ? Container(
@@ -41,11 +41,11 @@ class JobContainer extends StatelessWidget {
                               const SizedBox(width: 5),
                               Text(
                                   '${job.pendingWorkers.length.toString()} Applying',
-                                  style: const TextStyle(color: Colors.grey)),
-                            ],
+                                  style: const TextStyle(color: Colors.grey))
+                            ]
                           ))
                       : const SizedBox()
-                ],
+                ]
               ),
               (job.requirements.isNotEmpty)
                   ? Container(
