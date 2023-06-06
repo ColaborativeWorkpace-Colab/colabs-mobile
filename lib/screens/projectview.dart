@@ -39,10 +39,10 @@ class ProjectView extends StatelessWidget {
                 Expanded(
                     child: TabBarView(children: <Widget>[
                   ProjectOverviewTab(project: project),
-                  VersionTab(files: project.files),
+                  VersionTab(projectId: project.projectId, files: restService.trees['tree']),
                   TeamTab(project: project)
                 ]))
-              ]))),
+              ])))
     );
   }
 }

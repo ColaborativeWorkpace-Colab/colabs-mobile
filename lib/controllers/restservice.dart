@@ -28,7 +28,8 @@ class RESTService extends ChangeNotifier {
   final List<User> _userConnections = <User>[];
   final List<Post> _socialFeedPosts = <Post>[];
   final List<Post> _exploreFeedPosts = <Post>[];
-  List<dynamic> commits = [];
+  List<dynamic> commits = <dynamic>[];
+  Map<String, dynamic> trees = <String, dynamic>{};
   // ignore: always_specify_types
   Map<String, dynamic> _profileInfo = {};
   bool _isPosting = false;
@@ -549,6 +550,8 @@ class RESTService extends ChangeNotifier {
         Map<String, dynamic> rawJson = json.decode(response.body);
         // ignore: avoid_dynamic_calls
         commits.addAll(rawJson['commits']['data']);
+        // ignore: avoid_dynamic_calls
+        trees.addAll(rawJson['trees']['data']);
         _isFetching = false;
         notifyListeners();
         return Future<bool>.value(true);
@@ -562,6 +565,46 @@ class RESTService extends ChangeNotifier {
       _isFetching = false;
       notifyListeners();
       return Future<bool>.value(false);
+    }
+  }
+
+  Future<bool> getTrees(String projectId, String sha,
+      {bool needsReload = false}) async {
+    try {
+      http.Response response = await http.get(
+          Uri.http(urlHost, '/api/v1/workspaces/projects/$projectId/$sha'));
+
+      if (response.statusCode == 200) {
+        if (needsReload) {
+          Map<String, dynamic> rawJson = json.decode(response.body);
+          trees.clear();
+          trees.addAll(rawJson['trees']['data']);
+        } else {
+          _addTreeToBase(sha, response.body);
+        }
+
+        notifyListeners();
+        return Future<bool>.value(true);
+      } else {
+        return Future<bool>.value(false);
+      }
+    } on Exception catch (error) {
+      debugPrint(error.toString());
+
+      return Future<bool>.value(false);
+    }
+  }
+
+  void _addTreeToBase(String sha, String body) {
+    Map<String, dynamic> rawJson = json.decode(body);
+    // ignore: avoid_dynamic_calls
+    List<dynamic> tree = rawJson['trees']['data']['tree'];
+    for (dynamic element in trees['tree'] as List<dynamic>) {
+      // ignore: avoid_dynamic_calls
+      if (element['sha'] == sha) {
+        // ignore: avoid_dynamic_calls
+        element['children'] = tree;
+      }
     }
   }
 

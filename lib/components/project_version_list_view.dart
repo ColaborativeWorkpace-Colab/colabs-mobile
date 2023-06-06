@@ -1,11 +1,14 @@
 import 'package:colabs_mobile/controllers/layout_controller.dart';
+import 'package:colabs_mobile/controllers/restservice.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProjectVersionListView extends StatefulWidget {
+  final String projectId;
   final List<dynamic> files;
   final LayoutController layoutController;
   const ProjectVersionListView(
-      {super.key, required this.files, required this.layoutController});
+      {super.key, required this.projectId, required this.files, required this.layoutController});
 
   @override
   ProjectVersionListViewState createState() => ProjectVersionListViewState();
@@ -44,6 +47,7 @@ class ProjectVersionListViewState extends State<ProjectVersionListView> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    RESTService restService = Provider.of<RESTService>(context);
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 5),
@@ -68,6 +72,10 @@ class ProjectVersionListViewState extends State<ProjectVersionListView> {
                 child: GestureDetector(
                   onTap: () {
                     widget.layoutController.setSelectedVersionIndex(index);
+                    restService.getTrees(
+                      // ignore: avoid_dynamic_calls
+                      widget.projectId, widget.files[index]['sha'], needsReload: true
+                    );
                   },
                   child: SizedBox(
                       height: 50,

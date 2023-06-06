@@ -130,6 +130,7 @@ class ProjectOverviewTab extends StatelessWidget {
               child: Column(
                 children: const <Widget>[
                   CircularProgressIndicator(),
+                  SizedBox(height: 30),
                   Text('Fetching Data')
                 ]
               )
