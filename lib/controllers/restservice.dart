@@ -539,7 +539,6 @@ class RESTService extends ChangeNotifier {
     return temp;
   }
 
-  //TODO: Get request versions and project files & directories from server
   Future<bool> getProjectFilesRequest(String projectId,
       {bool listen = false}) async {
     try {
@@ -578,19 +577,23 @@ class RESTService extends ChangeNotifier {
         if (needsReload) {
           Map<String, dynamic> rawJson = json.decode(response.body);
           trees.clear();
+          // ignore: avoid_dynamic_calls
           trees.addAll(rawJson['trees']['data']);
         } else {
           _addTreeToBase(sha, response.body);
         }
-
+        _isFetching = false;
         notifyListeners();
         return Future<bool>.value(true);
       } else {
+        _isFetching = false;
+        notifyListeners();
         return Future<bool>.value(false);
       }
     } on Exception catch (error) {
       debugPrint(error.toString());
-
+      _isFetching = false;
+      notifyListeners();
       return Future<bool>.value(false);
     }
   }
@@ -599,11 +602,23 @@ class RESTService extends ChangeNotifier {
     Map<String, dynamic> rawJson = json.decode(body);
     // ignore: avoid_dynamic_calls
     List<dynamic> tree = rawJson['trees']['data']['tree'];
-    for (dynamic element in trees['tree'] as List<dynamic>) {
+    _recursiveInsert(sha, trees['tree'], tree);
+  }
+
+  void _recursiveInsert(
+      String sha, List<dynamic> baseTree, List<dynamic> newTree) {
+    for (dynamic element in baseTree) {
       // ignore: avoid_dynamic_calls
       if (element['sha'] == sha) {
         // ignore: avoid_dynamic_calls
-        element['children'] = tree;
+        element['children'] = newTree;
+        return;
+      }
+
+      // ignore: avoid_dynamic_calls
+      if (element['children'] != null) {
+        // ignore: avoid_dynamic_calls
+        _recursiveInsert(sha, element['children'], newTree);
       }
     }
   }

@@ -12,7 +12,6 @@ class ProjectView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //TODO: Get file versions from server
     RESTService restService = Provider.of<RESTService>(context);
 
     return WillPopScope(

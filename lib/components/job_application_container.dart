@@ -1,4 +1,3 @@
-import 'package:colabs_mobile/components/version_tab.dart';
 import 'package:colabs_mobile/controllers/authenticator.dart';
 import 'package:colabs_mobile/controllers/job_controller.dart';
 import 'package:colabs_mobile/controllers/project_controller.dart';
