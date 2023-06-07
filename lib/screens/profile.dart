@@ -99,15 +99,15 @@ class ProfilePage extends StatelessWidget {
               Padding(
                   padding: const EdgeInsets.only(top: 16),
                   child: Text(
-                      '${restService.getProfileInfo['firstName']} ${restService.getProfileInfo['lastName']}',
+                      '${restService.getProfileInfo['firstName'] ?? ''} ${restService.getProfileInfo['lastName'] ?? ''}',
                       style: const TextStyle(fontSize: 24))),
               Padding(
                   padding: const EdgeInsets.only(top: 8, bottom: 8),
-                  child: Text(restService.getProfileInfo['occupation'],
+                  child: Text(restService.getProfileInfo['occupation'] ?? '',
                       style: const TextStyle(fontSize: 16))),
               Padding(
                   padding: const EdgeInsets.only(bottom: 16),
-                  child: Text(restService.getProfileInfo['location'],
+                  child: Text(restService.getProfileInfo['location'] ?? '',
                       style: const TextStyle(fontSize: 14))),
               Container(
                   alignment: Alignment.centerLeft,
@@ -119,7 +119,7 @@ class ProfilePage extends StatelessWidget {
                       ))),
               Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(restService.getProfileInfo['bio'],
+                  child: Text(restService.getProfileInfo['bio'] ?? '',
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.grey[600],
@@ -215,10 +215,10 @@ class ProfilePage extends StatelessWidget {
                                       margin: const EdgeInsets.only(bottom: 10),
                                       alignment: Alignment.bottomCenter,
                                       child: Text(
-                                          (restService.getProfileInfo['reviews']
+                                          (restService.getProfileInfo['reviews'] != null) ? (restService.getProfileInfo['reviews']
                                                   as List<dynamic>)
                                               .length
-                                              .toString(),
+                                              .toString() : '',
                                           style: TextStyle(
                                             fontSize: 18,
                                             color: Colors.grey[700],
@@ -247,10 +247,10 @@ class ProfilePage extends StatelessWidget {
                                       margin: const EdgeInsets.only(bottom: 10),
                                       alignment: Alignment.bottomCenter,
                                       child: Text(
-                                          (restService.getProfileInfo['jobs']
+                                          (restService.getProfileInfo['jobs'] != null) ? (restService.getProfileInfo['jobs']
                                                   as List<dynamic>)
                                               .length
-                                              .toString(),
+                                              .toString() : '',
                                           style: TextStyle(
                                             fontSize: 18,
                                             color: Colors.grey[700],
@@ -289,7 +289,7 @@ class ProfilePage extends StatelessWidget {
               Container(
                   padding: const EdgeInsets.all(16),
                   height: screenHeight * .3,
-                  child: (restService.getProfileInfo['skills'] as List<dynamic>)
+                  child: (restService.getProfileInfo['skills'] != null ? restService.getProfileInfo['skills'] as List<dynamic> : <dynamic>[])
                           .isNotEmpty
                       ? GridView.builder(
                           shrinkWrap: true,

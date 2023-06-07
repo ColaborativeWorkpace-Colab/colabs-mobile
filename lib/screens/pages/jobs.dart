@@ -17,8 +17,11 @@ class JobsPage extends StatelessWidget {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     
-    popUpVerificationAlert(context, restService.getProfileInfo['isVerified']);
-
+    if (restService.getProfileInfo['isVerified'] != null &&
+        restService.getProfileInfo['isVerified']){
+      popUpVerificationAlert(context, true);
+    }
+      
     return SafeArea(
         child: Column(children: <Widget>[
       const Navbar(searchFilter: SearchFilter.job),

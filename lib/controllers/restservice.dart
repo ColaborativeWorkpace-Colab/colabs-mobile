@@ -28,6 +28,7 @@ class RESTService extends ChangeNotifier {
   final List<User> _userConnections = <User>[];
   final List<Post> _socialFeedPosts = <Post>[];
   final List<Post> _exploreFeedPosts = <Post>[];
+  final List<String> _queuedProjectFiles = <String>[];
   List<dynamic> commits = <dynamic>[];
   Map<String, dynamic> trees = <String, dynamic>{};
   // ignore: always_specify_types
@@ -406,6 +407,25 @@ class RESTService extends ChangeNotifier {
     }
   }
 
+  Future<bool> jobReadyRequest(String jobId, Map<String, dynamic> body) async {
+    try {
+      http.Response response = await http.put(
+          Uri.http(urlHost, '/api/v1/jobs/$jobId/ready'),
+          headers: <String, String>{'Content-Type': 'application/json'},
+          body: json.encode(body));
+
+      if (response.statusCode == 200) {
+        clearQueue();
+        return Future<bool>.value(true);
+      } else {
+        return Future<bool>.value(false);
+      }
+    } on Exception catch (error) {
+      debugPrint(error.toString());
+      return Future<bool>.value(false);
+    }
+  }
+
   Future<bool> updateTaskStatusRequest(
       String projectId, Map<String, dynamic> body) async {
     try {
@@ -651,6 +671,21 @@ class RESTService extends ChangeNotifier {
     return null;
   }
 
+  void queueProjectFiles(String projectId) {
+    _queuedProjectFiles.add(projectId);
+    notifyListeners();
+  }
+
+  void unqueueProjectFiles(String projectId) {
+    _queuedProjectFiles.remove(projectId);
+    notifyListeners();
+  }
+
+  void clearQueue() {
+    _queuedProjectFiles.clear();
+    notifyListeners();
+  }
+
   set setAuthenticator(Authenticator value) {
     authenticator = value;
   }
@@ -685,6 +720,7 @@ class RESTService extends ChangeNotifier {
   List<User> get getUserConnections => _userConnections;
   List<Post> get getSocialFeedPosts => _socialFeedPosts;
   List<Post> get getExploreFeedPosts => _exploreFeedPosts;
+  List<String> get getQueuedProjectFiles => _queuedProjectFiles;
   Map<String, dynamic> get getProfileInfo => _profileInfo;
   bool get isPosting => _isPosting;
   bool get isRefreshing => _isRefreshing;

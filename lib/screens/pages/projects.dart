@@ -18,7 +18,9 @@ class ProjectsPage extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
 
-    popUpVerificationAlert(context, restService.getProfileInfo['isVerified']);
+    if(restService.getProfileInfo['isVerified'] != null && restService.getProfileInfo['isVerified']){
+      popUpVerificationAlert(context, true);
+    }
 
     return SafeArea(
         child: Column(children: <Widget>[

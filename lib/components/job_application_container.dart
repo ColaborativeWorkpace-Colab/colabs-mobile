@@ -1,5 +1,6 @@
 import 'package:colabs_mobile/controllers/authenticator.dart';
 import 'package:colabs_mobile/controllers/job_controller.dart';
+import 'package:colabs_mobile/controllers/layout_controller.dart';
 import 'package:colabs_mobile/controllers/project_controller.dart';
 import 'package:colabs_mobile/controllers/restservice.dart';
 import 'package:colabs_mobile/models/job.dart';
@@ -71,9 +72,10 @@ class _JobApplicationContainerState extends State<JobApplicationContainer>
     double screenHeight = MediaQuery.of(context).size.height;
     JobController jobController = Provider.of<JobController>(context);
     RESTService restService = Provider.of<RESTService>(context);
+    LayoutController layoutController = Provider.of<LayoutController>(context);
     Authenticator authenticator = Provider.of<Authenticator>(context);
     Widget changeJobStatusButton;
-
+    //TODO: Store job when is being worked on in device
     if (widget.job.pendingWorkers.contains(authenticator.getUserId)) {
       changeJobStatusButton = Row(children: const <Widget>[
         SizedBox(width: 30, height: 30, child: CircularProgressIndicator()),
@@ -93,6 +95,7 @@ class _JobApplicationContainerState extends State<JobApplicationContainer>
                 builder: (BuildContext context) {
                   ProjectController projectController =
                       Provider.of<ProjectController>(context);
+                  restService = Provider.of<RESTService>(context);
 
                   return SizedBox(
                       height: screenHeight * .35,
@@ -112,15 +115,45 @@ class _JobApplicationContainerState extends State<JobApplicationContainer>
                               itemBuilder: (BuildContext context, int index) {
                                 return ListTile(
                                     leading: Checkbox(
-                                        onChanged: (bool? value) {},
-                                        value: false),
+                                        onChanged: (bool? checked) {
+                                          if (checked!) {
+                                            restService.queueProjectFiles(
+                                                projectController
+                                                    .getProjects[index]
+                                                    .projectId);
+                                          } else {
+                                            restService.unqueueProjectFiles(
+                                                projectController
+                                                    .getProjects[index]
+                                                    .projectId);
+                                          }
+                                        },
+                                        value: restService.getQueuedProjectFiles
+                                            .contains(projectController
+                                                .getProjects[index].projectId)),
                                     title: Text(projectController
                                         .getProjects[index].projectName));
                               }),
                         ),
                         ElevatedButton(
                             onPressed: () {
-                              //TODO: Send request for job completion
+                              //TODO: Send custom message for recruiter for payment
+                              // ignore: always_specify_types
+                              restService.jobReadyRequest(widget.job.jobId, {
+                                "projectShas":
+                                    restService.getQueuedProjectFiles.join(',')
+                              }).then((bool requestSuccessful) {
+                                if (!requestSuccessful) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          backgroundColor: Colors.deepOrange,
+                                          content: Text('Failed Request')));
+                                  return;
+                                }
+
+                                widget.job.status = JobStatus.ready;
+                                layoutController.refresh(true);
+                              }).whenComplete(() => Navigator.pop(context));
                             },
                             child: const Text('Prepare Files'))
                       ]));

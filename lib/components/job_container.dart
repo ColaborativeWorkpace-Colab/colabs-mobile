@@ -1,5 +1,6 @@
 import 'package:colabs_mobile/models/job.dart';
 import 'package:colabs_mobile/screens/jobview.dart';
+import 'package:colabs_mobile/types/job_status.dart';
 import 'package:flutter/material.dart';
 
 class JobContainer extends StatelessWidget {
@@ -11,10 +12,27 @@ class JobContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    //TODO: Show the status of the job
+    Widget jobStatusIndicator;
     //TODO: Notify user if job request proposal was rejected
-    //TODO: When job is done, select files ready for approval from recruiter
-    //TODO: Send custom message for recruiter for payment
+    
+    if (job.pendingWorkers.isNotEmpty) {
+      jobStatusIndicator = Container(
+          margin: const EdgeInsets.symmetric(horizontal: 10),
+          child: Row(children: <Widget>[
+            const Icon(Icons.people, color: Colors.grey),
+            const SizedBox(width: 5),
+            Text('${job.pendingWorkers.length.toString()} Applying',
+                style: const TextStyle(color: Colors.grey))
+          ]));
+    } else if (job.status == JobStatus.active ||
+        job.status == JobStatus.ready) {
+      jobStatusIndicator = Container(
+          margin: const EdgeInsets.symmetric(horizontal: 10),
+          child: const Text('Active', style: TextStyle(color: Colors.green)));
+    } else {
+      jobStatusIndicator = const SizedBox();
+    }
+
     return Container(
         margin: const EdgeInsets.all(10),
         decoration: BoxDecoration(boxShadow: const <BoxShadow>[
@@ -24,29 +42,14 @@ class JobContainer extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Container(
-                      margin: const EdgeInsets.all(15),
-                      child: Text(
-                        job.jobTitle,
-                        style: const TextStyle(fontSize: 25)
-                      )),
-                  job.pendingWorkers.isNotEmpty
-                      ? Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Row(
-                            children: <Widget>[
-                              const Icon(Icons.people, color: Colors.grey),
-                              const SizedBox(width: 5),
-                              Text(
-                                  '${job.pendingWorkers.length.toString()} Applying',
-                                  style: const TextStyle(color: Colors.grey))
-                            ]
-                          ))
-                      : const SizedBox()
-                ]
-              ),
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Container(
+                        margin: const EdgeInsets.all(15),
+                        child: Text(job.jobTitle,
+                            style: const TextStyle(fontSize: 25))),
+                    jobStatusIndicator
+                  ]),
               (job.requirements.isNotEmpty)
                   ? Container(
                       margin: const EdgeInsets.symmetric(horizontal: 5),
