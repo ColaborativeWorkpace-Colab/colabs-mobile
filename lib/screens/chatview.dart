@@ -1,4 +1,5 @@
 import 'package:chat_bubbles/chat_bubbles.dart';
+import 'package:colabs_mobile/components/attachement_viewer.dart';
 import 'package:colabs_mobile/controllers/authenticator.dart';
 import 'package:colabs_mobile/models/chat.dart';
 import 'package:colabs_mobile/models/message.dart';
@@ -74,61 +75,113 @@ class ChatView extends StatelessWidget {
               height: screenHeight * .9,
               child: SingleChildScrollView(
                   child: Column(children: <Widget>[
-                ...chat.messages.map((Message message) => BubbleNormal(
-                    textStyle: TextStyle(
-                        fontSize: 16,
+                ...chat.messages.map((Message message) {
+                  if (!message.messageText.contains('job_completed')) {
+                    return BubbleNormal(
+                        textStyle: TextStyle(
+                            fontSize: 16,
+                            color: message.senderId == authenticator.getUserId
+                                ? Colors.black87
+                                : Colors.white),
                         color: message.senderId == authenticator.getUserId
-                            ? Colors.black87
-                            : Colors.white),
-                    color: message.senderId == authenticator.getUserId
-                        ? Colors.white
-                        : const Color(0xFF5521B5),
-                    text: message.messageText,
-                    isSender: message.senderId == authenticator.getUserId)),
+                            ? Colors.white
+                            : const Color(0xFF5521B5),
+                        text: message.messageText,
+                        // ignore: always_specify_types
+                        isSender: message.senderId == authenticator.getUserId);
+                  } else {
+                    List<String> messageData =
+                        message.messageText.split(':')[1].split(',');
+
+                    return Container(
+                        padding: const EdgeInsets.all(10),
+                        margin: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                            color: const Color(0xFF5521B5),
+                            borderRadius: BorderRadius.circular(20)),
+                        // ignore: always_specify_types
+                        child: Column(children: [
+                          ListTile(
+                              leading: const Icon(Icons.check_circle_outline,
+                                  color: Colors.white),
+                              title: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                    '${messageData[1]} completed. Pay the workers to have full access of the project files.')
+                              ),
+                              subtitle: Row(
+                                children: <Widget>[
+                                  ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.white),
+                                      child: const Text('Pay Salary',
+                                          style: TextStyle(
+                                              color: Color(0xFF5521B5))),
+                                      onPressed: () {
+                                        //TODO: Differentiate between recruiter and worker
+                                        //TODO: Get project info
+                                        //TODO: if paid, disable button
+                                        //TODO: Open up chapa
+                                      }),
+                                  ElevatedButton(
+                                      child: const Text('View Files'),
+                                      onPressed: () {
+                                        showModalBottomSheet(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return Column(children: const <Widget>[
+                                                //TODO: Get project files 
+                                                //TODO: Only download when job is paid
+                                              ]);
+                                            });
+                                      })
+                                ]
+                              ))
+                        ]));
+                  }
+                })
               ]))),
           Positioned(
               bottom: 1,
               child: Container(
-                color: Colors.grey[200]!,
-                child: Row(children: <Widget>[
-                  Container(
-                      height: 50,
-                      width: screenWidth * .75,
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 5),
-                      child: TextField(
-                          controller: messageController,
-                          decoration: InputDecoration(
-                              border: const OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10))),
-                              contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 0, horizontal: 15),
-                              suffixIcon: Container(
-                                  margin: const EdgeInsets.only(top: 0),
-                                  child: IconButton(
-                                      icon: const Icon(Icons.send),
-                                      onPressed: () => sendPrivateMessage(
-                                          context, chat,
-                                          messageController: messageController)
-                                      //TODO: Add attachements variable
-                                      //TODO: Send also for group chats
-                                      ))))),
-                  SizedBox(
-                      width: 60,
-                      child: ElevatedButton(
-                          onPressed: () {
-                            showModalBottomSheet(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return Container(
-                                    height: 100,
-                                  );
-                                });
-                          },
-                          child: const Icon(Icons.attachment_rounded)))
-                ]),
-              ))
+                  color: Colors.grey[200]!,
+                  child: Row(children: <Widget>[
+                    Container(
+                        height: 50,
+                        width: screenWidth * .75,
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 5),
+                        child: TextField(
+                            controller: messageController,
+                            decoration: InputDecoration(
+                                border: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10))),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 0, horizontal: 15),
+                                suffixIcon: Container(
+                                    margin: const EdgeInsets.only(top: 0),
+                                    child: IconButton(
+                                        icon: const Icon(Icons.send),
+                                        onPressed: () => sendPrivateMessage(
+                                            context, chat,
+                                            messageController:
+                                                messageController)
+                                        //TODO: Add attachements variable
+                                        //TODO: Send also for group chats
+                                        ))))),
+                    SizedBox(
+                        width: 60,
+                        child: ElevatedButton(
+                            onPressed: () {
+                              showModalBottomSheet(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return const AttachementViewer();
+                                  });
+                            },
+                            child: const Icon(Icons.attachment_rounded)))
+                  ])))
         ]));
   }
 }

@@ -1,11 +1,12 @@
 import 'package:colabs_mobile/controllers/authenticator.dart';
 import 'package:colabs_mobile/controllers/job_controller.dart';
-import 'package:colabs_mobile/controllers/layout_controller.dart';
 import 'package:colabs_mobile/controllers/project_controller.dart';
 import 'package:colabs_mobile/controllers/restservice.dart';
 import 'package:colabs_mobile/models/job.dart';
 import 'package:colabs_mobile/types/job_bid.dart';
 import 'package:colabs_mobile/types/job_status.dart';
+import 'package:colabs_mobile/utils/connection_view_functions.dart';
+import 'package:colabs_mobile/utils/send_private_message.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -72,7 +73,6 @@ class _JobApplicationContainerState extends State<JobApplicationContainer>
     double screenHeight = MediaQuery.of(context).size.height;
     JobController jobController = Provider.of<JobController>(context);
     RESTService restService = Provider.of<RESTService>(context);
-    LayoutController layoutController = Provider.of<LayoutController>(context);
     Authenticator authenticator = Provider.of<Authenticator>(context);
     Widget changeJobStatusButton;
     //TODO: Store job when is being worked on in device
@@ -95,7 +95,8 @@ class _JobApplicationContainerState extends State<JobApplicationContainer>
                 builder: (BuildContext context) {
                   ProjectController projectController =
                       Provider.of<ProjectController>(context);
-                  restService = Provider.of<RESTService>(context);
+                  RESTService restServiceInModal =
+                      Provider.of<RESTService>(context);
 
                   return SizedBox(
                       height: screenHeight * .35,
@@ -117,18 +118,21 @@ class _JobApplicationContainerState extends State<JobApplicationContainer>
                                     leading: Checkbox(
                                         onChanged: (bool? checked) {
                                           if (checked!) {
-                                            restService.queueProjectFiles(
-                                                projectController
-                                                    .getProjects[index]
-                                                    .projectId);
+                                            restServiceInModal
+                                                .queueProjectFiles(
+                                                    projectController
+                                                        .getProjects[index]
+                                                        .projectId);
                                           } else {
-                                            restService.unqueueProjectFiles(
-                                                projectController
-                                                    .getProjects[index]
-                                                    .projectId);
+                                            restServiceInModal
+                                                .unqueueProjectFiles(
+                                                    projectController
+                                                        .getProjects[index]
+                                                        .projectId);
                                           }
                                         },
-                                        value: restService.getQueuedProjectFiles
+                                        value: restServiceInModal
+                                            .getQueuedProjectFiles
                                             .contains(projectController
                                                 .getProjects[index].projectId)),
                                     title: Text(projectController
@@ -138,10 +142,13 @@ class _JobApplicationContainerState extends State<JobApplicationContainer>
                         ElevatedButton(
                             onPressed: () {
                               //TODO: Send custom message for recruiter for payment
-                              // ignore: always_specify_types
-                              restService.jobReadyRequest(widget.job.jobId, {
-                                "projectShas":
-                                    restService.getQueuedProjectFiles.join(',')
+                              
+                              restServiceInModal.jobReadyRequest(
+                                  // ignore: always_specify_types
+                                  widget.job.jobId, {
+                                "projectShas": restServiceInModal
+                                    .getQueuedProjectFiles
+                                    .join(',')
                               }).then((bool requestSuccessful) {
                                 if (!requestSuccessful) {
                                   ScaffoldMessenger.of(context).showSnackBar(
@@ -152,8 +159,16 @@ class _JobApplicationContainerState extends State<JobApplicationContainer>
                                 }
 
                                 widget.job.status = JobStatus.ready;
-                                layoutController.refresh(true);
-                              }).whenComplete(() => Navigator.pop(context));
+                                restServiceInModal.clearQueue();
+                                Navigator.pop(context);
+                              }).whenComplete(() {
+                                chatWithConnection(context, widget.job.owner);
+                                sendPrivateMessage(
+                                    context, getChat(context, widget.job.owner),
+                                    message:
+                                        'job_completed:${widget.job.jobId},${widget.job.jobTitle}${restServiceInModal.getQueuedProjectFiles.join(',')}');
+                                
+                              });
                             },
                             child: const Text('Prepare Files'))
                       ]));

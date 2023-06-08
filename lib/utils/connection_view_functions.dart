@@ -38,7 +38,7 @@ Widget toggleTaggedMark(BuildContext context, int index) {
 void chatWithConnection(BuildContext context, String receiverId) {
   ChatController chatController =
       Provider.of<ChatController>(context, listen: false);
-  RESTService restService = Provider.of<RESTService>(context);
+  RESTService restService = Provider.of<RESTService>(context, listen: false);
   Chat newChat = Chat(receiverId, <Message>[], ChatType.private);
   User? user = restService.getUserInfo(receiverId);
 

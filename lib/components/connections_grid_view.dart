@@ -86,6 +86,7 @@ class ConnectionsGridView extends StatelessWidget {
 
                       if (layoutOption == ConnectionsLayoutOptions.send) {
                         //TODO: Send message to group chat
+                        
                       }
                     },
                     child: layoutOption == ConnectionsLayoutOptions.add

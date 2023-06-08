@@ -61,7 +61,12 @@ class MessagesPage extends StatelessWidget {
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold)),
                                   ),
-                                  subtitle: Text(messages[0].messageText,
+                                  subtitle: Text(
+                                      (messages[0]
+                                              .messageText
+                                              .contains('job_completed'))
+                                          ? 'Job Completed. Proceed to payment.'
+                                          : messages[0].messageText,
                                       overflow: TextOverflow.fade,
                                       style: TextStyle(
                                           fontWeight: (messages[0].isRead)

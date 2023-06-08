@@ -415,7 +415,6 @@ class RESTService extends ChangeNotifier {
           body: json.encode(body));
 
       if (response.statusCode == 200) {
-        clearQueue();
         return Future<bool>.value(true);
       } else {
         return Future<bool>.value(false);
