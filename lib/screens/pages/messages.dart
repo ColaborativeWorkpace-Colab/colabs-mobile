@@ -2,6 +2,7 @@ import 'package:colabs_mobile/components/connections_grid_view.dart';
 import 'package:colabs_mobile/components/navbar.dart';
 import 'package:colabs_mobile/controllers/authenticator.dart';
 import 'package:colabs_mobile/controllers/chat_controller.dart';
+import 'package:colabs_mobile/controllers/layout_controller.dart';
 import 'package:colabs_mobile/controllers/restservice.dart';
 import 'package:colabs_mobile/models/message.dart';
 import 'package:colabs_mobile/models/user.dart';
@@ -9,6 +10,7 @@ import 'package:colabs_mobile/screens/chatview.dart';
 import 'package:colabs_mobile/types/connections_view_layout_options.dart';
 import 'package:colabs_mobile/types/search_filters.dart';
 import 'package:colabs_mobile/utils/date_formatter.dart';
+import 'package:colabs_mobile/utils/initialize_services.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -22,6 +24,7 @@ class MessagesPage extends StatelessWidget {
     double screenWidth = MediaQuery.of(context).size.width;
     ChatController chatController = Provider.of<ChatController>(context);
     Authenticator authenticator = Provider.of<Authenticator>(context);
+    LayoutController layoutController = Provider.of<LayoutController>(context);
     RESTService restService = Provider.of<RESTService>(context);
 
     return SafeArea(
@@ -34,7 +37,8 @@ class MessagesPage extends StatelessWidget {
             chatController.getChats.isNotEmpty
                 ? RefreshIndicator(
                     onRefresh: () =>
-                        restService.getMessagesRequest(listen: true),
+                        initServices(context, reload: true)
+                        .whenComplete(() => layoutController.refresh(true)),
                     child: ListView.builder(
                         padding: const EdgeInsets.only(bottom: 95),
                         shrinkWrap: true,

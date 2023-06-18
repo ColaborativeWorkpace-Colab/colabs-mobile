@@ -4,14 +4,14 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:oauth2_client/access_token_response.dart';
 import 'package:oauth2_client/github_oauth2_client.dart';
 import 'package:oauth2_client/google_oauth2_client.dart';
+import 'package:oauth2_client/oauth2_helper.dart';
 
 class Authenticator extends ChangeNotifier {
   final GitHubOAuth2Client githubClient = GitHubOAuth2Client(
-      redirectUri: dotenv.env['GITHUB_CALLBACK_URL']!,
-      customUriScheme: 'http');
+      redirectUri: dotenv.env['GITHUB_CALLBACK_URL']!, customUriScheme: 'http');
+
   final GoogleOAuth2Client googleClient = GoogleOAuth2Client(
-      redirectUri: dotenv.env['GOOGLE_CALLBACK_URL']!,
-      customUriScheme: 'http');
+      redirectUri: dotenv.env['GOOGLE_CALLBACK_URL']!, customUriScheme: 'http');
   AccessTokenResponse? _accessToken;
   bool _hasUserAgreed = false;
   bool _isAuthorized = false;
@@ -31,7 +31,8 @@ class Authenticator extends ChangeNotifier {
     return googleClient.getTokenWithAuthCodeFlow(
         clientId: dotenv.env['GOOGLE_CLIENT_ID']!,
         clientSecret: dotenv.env['GOOGLE_CLIENT_SECRET']!,
-        scopes: <String>['profile']);
+        scopes: <String>['profile'],
+        afterAuthorizationCodeCb: (){});
   }
 
   set setAccessToken(AccessTokenResponse value) {
@@ -49,10 +50,10 @@ class Authenticator extends ChangeNotifier {
     notifyListeners();
   }
 
-  set setIsAuthorized(bool value){
+  set setIsAuthorized(bool value) {
     _isAuthorized = value;
   }
-  
+
   AccessTokenResponse? get getAccessToken => _accessToken;
   bool get isUserAuthorized => _isAuthorized;
   bool get hasUserAgreed => _hasUserAgreed;

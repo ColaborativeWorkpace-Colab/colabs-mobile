@@ -75,7 +75,7 @@ class _JobApplicationContainerState extends State<JobApplicationContainer>
     RESTService restService = Provider.of<RESTService>(context);
     Authenticator authenticator = Provider.of<Authenticator>(context);
     Widget changeJobStatusButton;
-    //TODO: Store job when is being worked on in device
+    //TODO: Store job when is being worked on in device (test backend)
     if (widget.job.pendingWorkers.contains(authenticator.getUserId)) {
       changeJobStatusButton = Row(children: const <Widget>[
         SizedBox(width: 30, height: 30, child: CircularProgressIndicator()),

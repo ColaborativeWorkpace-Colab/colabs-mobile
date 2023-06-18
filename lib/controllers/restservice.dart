@@ -389,6 +389,37 @@ class RESTService extends ChangeNotifier {
     }
   }
 
+  void _populateJobsFromProfile(List<dynamic> rawJobs, bool listen) {
+    for (Map<String, dynamic> job in rawJobs) {
+      List<String> workers = (job['workers'] as List<dynamic>)
+          // ignore: always_specify_types
+          .map((worker) => worker as String)
+          .toList();
+      List<String> requirements = (job['requirements'] as List<dynamic>)
+          // ignore: always_specify_types
+          .map((requirement) => requirement as String)
+          .toList();
+      List<String> pendingWorkers = (job['pendingworkers'] as List<dynamic>)
+          // ignore: always_specify_types
+          .map((worker) => worker as String)
+          .toList();
+      jobController!.addJob(
+          Job(
+              job['_id'],
+              job['title'],
+              job['description'],
+              mapJobStatusEnum(job['status']),
+              workers,
+              requirements,
+              // ignore: always_specify_types
+              double.parse(job['earnings'].toString()),
+              job['owner'],
+              job['paymentVerified'],
+              pendingWorkers),
+          listen);
+    }
+  }
+
   Future<bool> applyJobRequest(String jobId, Map<String, dynamic> body) async {
     try {
       http.Response response = await http.post(
@@ -505,8 +536,11 @@ class RESTService extends ChangeNotifier {
   void _loadProfileInfo(String body) {
     Map<String, dynamic> decodedJsonBody = json.decode(body);
     _profileInfo = decodedJsonBody['profile'];
+    _populateJobsFromProfile(_profileInfo['jobs'], false);
   }
-
+  
+  //TODO: Implement approve request for recruiter
+  
   Future<bool> getProjectsRequest({bool listen = false}) async {
     try {
       http.Response response = await http.get(Uri.http(

@@ -6,7 +6,7 @@ import 'package:colabs_mobile/controllers/restservice.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-void initServices(BuildContext context) {
+Future<bool> initServices(BuildContext context, {bool reload = false}) {
   Authenticator authenticator =
       Provider.of<Authenticator>(context, listen: false);
   ChatController chatController =
@@ -17,20 +17,27 @@ void initServices(BuildContext context) {
   ProjectController projectController =
       Provider.of<ProjectController>(context, listen: false);
 
-  authenticator.setIsAuthorized = true;
-  restService.setAuthenticator = authenticator;
-  restService.setChatController = chatController;
-  restService.setJobController = jobController;
-  restService.setProjectController = projectController;
-  chatController.setAuthenticator = authenticator;
+  if (!reload) {
+    authenticator.setIsAuthorized = true;
+    restService.setAuthenticator = authenticator;
+    restService.setChatController = chatController;
+    restService.setJobController = jobController;
+    restService.setProjectController = projectController;
+    chatController.setAuthenticator = authenticator;
+  }
 
   if (authenticator.isUserAuthorized) {
-    chatController.initSocket();
-    restService.getProfileInfoRequest().whenComplete(() => restService.getLastSeenRequest());
+    if (!reload) chatController.initSocket();
+
+    restService
+        .getProfileInfoRequest()
+        .whenComplete(() => restService.getLastSeenRequest());
     restService.getSocialFeedRequest();
     restService.getMessagesRequest();
     restService.getProjectsRequest();
     restService.getJobsRequest();
     restService.getLastSeenRequest();
   }
+  
+  return Future<bool>.value(true);
 }

@@ -1,6 +1,8 @@
 import 'package:colabs_mobile/components/post_container.dart';
+import 'package:colabs_mobile/controllers/layout_controller.dart';
 import 'package:colabs_mobile/controllers/restservice.dart';
 import 'package:colabs_mobile/models/post.dart';
+import 'package:colabs_mobile/utils/initialize_services.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -13,12 +15,13 @@ class Feed extends StatelessWidget {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     RESTService restService = Provider.of<RESTService>(context);
+    LayoutController layoutController = Provider.of<LayoutController>(context);
 
     return Expanded(
         child: RefreshIndicator(
             onRefresh: () => isExploring
                 ? restService.getPostData()
-                : restService.getSocialFeedRequest(),
+                : initServices(context, reload: true).whenComplete(() => layoutController.refresh(true)),
             child: ListView.builder(
                 padding: const EdgeInsets.only(bottom: 95),
                 shrinkWrap: true,

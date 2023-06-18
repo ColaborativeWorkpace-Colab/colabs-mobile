@@ -1,8 +1,10 @@
 import 'package:colabs_mobile/components/job_container.dart';
 import 'package:colabs_mobile/components/navbar.dart';
 import 'package:colabs_mobile/controllers/job_controller.dart';
+import 'package:colabs_mobile/controllers/layout_controller.dart';
 import 'package:colabs_mobile/controllers/restservice.dart';
 import 'package:colabs_mobile/types/search_filters.dart';
+import 'package:colabs_mobile/utils/initialize_services.dart';
 import 'package:colabs_mobile/utils/pop_up_verification_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +16,7 @@ class JobsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     JobController jobController = Provider.of<JobController>(context);
     RESTService restService = Provider.of<RESTService>(context);
+    LayoutController layoutController = Provider.of<LayoutController>(context);
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     
@@ -28,7 +31,8 @@ class JobsPage extends StatelessWidget {
       (jobController.getJobs.isNotEmpty)
           ? Expanded(
               child: RefreshIndicator(
-              onRefresh: () => restService.getJobsRequest(listen: true),
+              onRefresh: () => initServices(context, reload: true)
+                  .whenComplete(() => layoutController.refresh(true)),
               child: ListView.builder(
                   padding: const EdgeInsets.only(bottom: 95),
                   itemCount: jobController.getJobs.length,

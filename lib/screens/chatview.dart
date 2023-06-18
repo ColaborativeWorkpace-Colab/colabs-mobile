@@ -34,7 +34,7 @@ class ChatView extends StatelessWidget {
                     SizedBox(
                       width: screenWidth * .5,
                       child: Text(
-                        user!.userName!,
+                        user!.userName ?? '',
                         style: const TextStyle(fontSize: 15),
                         overflow: TextOverflow.fade,
                       ),
