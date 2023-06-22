@@ -1,5 +1,6 @@
 import 'package:colabs_mobile/controllers/authenticator.dart';
 import 'package:colabs_mobile/controllers/job_controller.dart';
+import 'package:colabs_mobile/controllers/layout_controller.dart';
 import 'package:colabs_mobile/controllers/project_controller.dart';
 import 'package:colabs_mobile/controllers/restservice.dart';
 import 'package:colabs_mobile/models/job.dart';
@@ -73,6 +74,7 @@ class _JobApplicationContainerState extends State<JobApplicationContainer>
     double screenHeight = MediaQuery.of(context).size.height;
     JobController jobController = Provider.of<JobController>(context);
     RESTService restService = Provider.of<RESTService>(context);
+    LayoutController layoutController = Provider.of<LayoutController>(context);
     Authenticator authenticator = Provider.of<Authenticator>(context);
     Widget changeJobStatusButton;
     //TODO: Store job when is being worked on in device (test backend)
@@ -142,14 +144,15 @@ class _JobApplicationContainerState extends State<JobApplicationContainer>
                         ElevatedButton(
                             onPressed: () {
                               //TODO: Send custom message for recruiter for payment
-                              
+
                               restServiceInModal.jobReadyRequest(
                                   // ignore: always_specify_types
-                                  widget.job.jobId, {
-                                "projectShas": restServiceInModal
-                                    .getQueuedProjectFiles
-                                    .join(',')
-                              }).then((bool requestSuccessful) {
+                                  widget.job.jobId,
+                                  {
+                                    "projectShas": restServiceInModal
+                                        .getQueuedProjectFiles
+                                        .join(',')
+                                  }).then((bool requestSuccessful) {
                                 if (!requestSuccessful) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
@@ -162,12 +165,11 @@ class _JobApplicationContainerState extends State<JobApplicationContainer>
                                 restServiceInModal.clearQueue();
                                 Navigator.pop(context);
                               }).whenComplete(() {
-                                chatWithConnection(context, widget.job.owner);
+                                chatWithConnection(context, widget.job.owner.userName!);
                                 sendPrivateMessage(
-                                    context, getChat(context, widget.job.owner),
+                                    context, getChat(context, widget.job.owner.userName!),
                                     message:
                                         'job_completed:${widget.job.jobId},${widget.job.jobTitle}${restServiceInModal.getQueuedProjectFiles.join(',')}');
-                                
                               });
                             },
                             child: const Text('Prepare Files'))
@@ -361,11 +363,20 @@ class _JobApplicationContainerState extends State<JobApplicationContainer>
                                     ? 'By Milestone'
                                     : 'By Project'
                               }).then((bool requestSuccess) {
-                                if (requestSuccess) {
-                                  widget.job.pendingWorkers
-                                      .add(authenticator.getUserId!);
-                                }
+                                // if (requestSuccess) {
+                                //   widget.job.pendingWorkers
+                                //       .add(authenticator.getUserId!);
+                                // }
+
+                                widget.job.pendingWorkers
+                                    .add(authenticator.getUserId!);
+                                widget.job.status = JobStatus.pending;
+                                layoutController.refresh(true);
                                 _toggleContainer();
+                              }).whenComplete(() async {
+                                await Future.delayed(Duration(seconds: 5));
+                                widget.job.status = JobStatus.active;
+                                layoutController.refresh(true);
                               });
                             },
                             child: const Text('Submit Proposal')))

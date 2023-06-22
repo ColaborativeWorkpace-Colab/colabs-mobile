@@ -41,7 +41,8 @@ class ProjectVersionListViewState extends State<ProjectVersionListView> {
         });
       }
     }).whenComplete(() {
-      if (scrollController.hasClients == true) {
+      if (scrollController.hasClients == true &&
+          widget.layoutController.getSelectedVersionIndex != null) {
         scrollController.animateTo(
             widget.layoutController.getSelectedVersionIndex! * 65,
             duration: const Duration(milliseconds: 100),

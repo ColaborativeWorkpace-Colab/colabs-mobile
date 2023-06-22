@@ -26,7 +26,8 @@ class ChatController extends ChangeNotifier {
 
     socket!.onDisconnect((_) => debugPrint('Connection Disconnection'));
     // ignore: always_specify_types
-    socket!.onConnectError((err) => debugPrint(err));
+    socket!.onConnectError((err) => debugPrint(
+      err));
     // ignore: always_specify_types
     socket!.onError((err) => debugPrint(err));
     // ignore: always_specify_types
@@ -85,7 +86,7 @@ class ChatController extends ChangeNotifier {
   }
 
   void addChat(Chat chat, bool listen) {
-    if (!_chatExists(chat.chatId!)) _chats.add(chat);
+    if (chat.chatId == null || !_chatExists(chat.chatId!)) _chats.add(chat);
     if (listen) notifyListeners();
   }
 

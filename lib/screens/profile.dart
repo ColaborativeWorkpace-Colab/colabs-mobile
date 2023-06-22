@@ -26,11 +26,6 @@ class ProfilePage extends StatelessWidget {
         appBar: AppBar(actions: <Widget>[
           IconButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/settings');
-              },
-              icon: const Icon(Icons.settings)),
-          IconButton(
-              onPressed: () {
                 showDialog(
                     context: context,
                     builder: (BuildContext context) {

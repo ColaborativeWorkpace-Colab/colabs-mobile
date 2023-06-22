@@ -1,3 +1,4 @@
+import 'package:colabs_mobile/models/user.dart';
 import 'package:colabs_mobile/types/job_status.dart';
 
 class Job {
@@ -9,7 +10,7 @@ class Job {
   final List<String> requirements;
   final bool isPaymentVerified;
   final double earnings;
-  final String owner;
+  final User owner;
   final List<String> pendingWorkers;
 
   Job(this.jobId, this.jobTitle, this.description, this.status, this.workers,

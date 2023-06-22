@@ -14,7 +14,7 @@ class Navbar extends StatelessWidget {
         child: Row(children: <Widget>[
           SizedBox(
               height: 50,
-              width: screenWidth * .75,
+              width: screenWidth * .68,
               child: TextField(
                   style: const TextStyle(fontSize: 15),
                   decoration: InputDecoration(

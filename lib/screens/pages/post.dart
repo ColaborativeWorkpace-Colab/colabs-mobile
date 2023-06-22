@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:colabs_mobile/components/attachement_viewer.dart';
 import 'package:colabs_mobile/components/connections_grid_view.dart';
 import 'package:colabs_mobile/controllers/content_controller.dart';
@@ -225,41 +227,64 @@ class PostPage extends StatelessWidget {
 
                         List<String>? filteredTags =
                             filterTags(postController.text, contentController);
+                        List<String> imageUrls = <String>[];
 
                         restService.isPosting = true;
                         pageController.animateToPage(0,
                             duration: const Duration(milliseconds: 350),
                             curve: Curves.easeInOut);
 
-                        restService.postContentRequest(<String, dynamic>{
-                          'textContent': postController.text,
-                          'imageContent':
-                              contentController.getAttachments.join(','),
-                          'tags': (filteredTags != null)
-                              ? <String>[
-                                  ...filteredTags,
-                                  ...contentController.getSelectedTags
-                                ].join(',')
-                              : '',
-                          'visibility':
-                              contentController.getIsPublic.toString(),
-                          'taggedUsers':
-                              contentController.getTaggedUsers.join(',')})
-                        .timeout(const Duration(seconds: 15), onTimeout: () {
-                          pageController
-                              .animateToPage(2,
-                                  duration: const Duration(milliseconds: 350),
-                                  curve: Curves.easeInOut)
-                              .whenComplete(() {
+                        Future<void>(() async {
+                          for (File file in contentController.getAttachments) {
+                          
+                          await restService
+                              .uploadImage(file)
+                              .then((String? url) {
+                            if (url != null) {
+                              
+                              imageUrls.add(url);
+                            }
+                          });
+                          }
+                        }).whenComplete(() {
+                          if (imageUrls.length ==
+                              contentController.getAttachments.length) {
+                            restService.postContentRequest(<String, dynamic>{
+                              'textContent': postController.text,
+                              'imageContent': imageUrls.join(','),
+                              'tags': (filteredTags != null)
+                                  ? <String>[
+                                      ...filteredTags,
+                                      ...contentController.getSelectedTags
+                                    ].join(',')
+                                  : '',
+                              'visibility':
+                                  contentController.getIsPublic.toString(),
+                              'taggedUsers':
+                                  contentController.getTaggedUsers.join(',')
+                            }).timeout(const Duration(seconds: 15),
+                                onTimeout: () {
+                              pageController
+                                  .animateToPage(2,
+                                      duration:
+                                          const Duration(milliseconds: 350),
+                                      curve: Curves.easeInOut)
+                                  .whenComplete(() {
                                 // ScaffoldMessenger.of(context)
                                 //   .showSnackBar(const SnackBar(
                                 //       content: Text('Something went wrong')))
                               });
 
-                          return Future<bool>.value(false);
-                        }).whenComplete(() {
-                          restService.isPosting = false;
-                          contentController.clearInputs();
+                              return Future<bool>.value(false);
+                            }).whenComplete(() {
+                              restService.isPosting = false;
+                              contentController.clearInputs();
+                            });
+                          } else {
+                            //TODO: Display error
+                            restService.isPosting = false;
+                            contentController.clearInputs();
+                          }
                         });
                       },
                       child: const Text('Post')))

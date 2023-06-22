@@ -46,7 +46,8 @@ class Feed extends StatelessWidget {
                           child:
                               const Center(child: CircularProgressIndicator()))
                       : PostContainer(
-                          post: isExploring ? posts![index] : restService.getSocialFeedPosts[index]);
+                          post: isExploring ? posts![index] : restService.getSocialFeedPosts[
+                                  restService.isPosting ? index - 1 : index]);
                 })));
   }
 }

@@ -26,15 +26,19 @@ class AttachementViewer extends StatelessWidget {
                 ElevatedButton(
                     child: const Text('Add Files'),
                     onPressed: () async {
-                      FilePickerResult? result = await FilePicker.platform
-                          .pickFiles(allowMultiple: true);
+                      try {
+                        FilePickerResult? result = await FilePicker.platform
+                            .pickFiles(allowMultiple: true);
 
-                      if (result != null) {
-                        List<File> files = result.paths
-                            .map((String? path) => File(path!))
-                            .toList();
+                        if (result != null) {
+                          List<File> files = result.paths
+                              .map((String? path) => File(path!))
+                              .toList();
 
-                        contentController.addAttachements(files);
+                          contentController.addAttachements(files);
+                        }
+                      } on Exception catch (error) {
+                        debugPrint(error.toString());
                       }
                     })
               ]),

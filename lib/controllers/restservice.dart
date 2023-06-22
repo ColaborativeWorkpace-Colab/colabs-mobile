@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:cloudinary/cloudinary.dart';
 import 'package:colabs_mobile/controllers/authenticator.dart';
 import 'package:colabs_mobile/controllers/chat_controller.dart';
 import 'package:colabs_mobile/controllers/job_controller.dart';
@@ -16,8 +18,10 @@ import 'package:colabs_mobile/types/job_status.dart';
 import 'package:colabs_mobile/types/task_status.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http_parser/http_parser.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
+import 'package:mime/mime.dart';
 
 class RESTService extends ChangeNotifier {
   final String urlHost = dotenv.env['DEV_URL']!;
@@ -29,6 +33,11 @@ class RESTService extends ChangeNotifier {
   final List<Post> _socialFeedPosts = <Post>[];
   final List<Post> _exploreFeedPosts = <Post>[];
   final List<String> _queuedProjectFiles = <String>[];
+  final Cloudinary cloudinary = Cloudinary.signedConfig(
+    apiKey: dotenv.env['CLOUDINARY_API_KEY']!,
+    apiSecret: dotenv.env['CLOUDINARY_API_SECRET']!,
+    cloudName: dotenv.env['CLOUDINARY_CLOUD_NAME']!,
+  );
   List<dynamic> commits = <dynamic>[];
   Map<String, dynamic> trees = <String, dynamic>{};
   // ignore: always_specify_types
@@ -123,16 +132,24 @@ class RESTService extends ChangeNotifier {
     }
   }
 
-  // Future<bool> uploadFile() async {
-  //   var request = http.MultipartRequest("POST", uri)
-  //     ..fields['id'] = body['id'].toString()
-  //     ..fields['deviceid'] = body['deviceid'] as String
-  //     ..fields['startdest'] = body['startdest'] as String
-  //     ..files.add(http.MultipartFile.fromBytes(
-  //         'customer_picture', await image.readAsBytes(),
-  //         filename:
-  //             '${body['customer_name']}-${DateTime.now().toString().replaceAll(' ', '').replaceAll('.', '').replaceAll(':', '')}.jpg'));
-  // }
+  Future<String?> uploadImage(File file) async {
+    List<int> fileBytes = file.readAsBytesSync().toList();
+
+    http.MultipartRequest request =
+        http.MultipartRequest('POST', Uri.http(urlHost, '/api/v1/upload'))
+          ..files.add(await http.MultipartFile.fromPath('image', file.path,
+              contentType: MediaType.parse(lookupMimeType(file.path)!)));
+
+    http.Response response =
+        await http.Response.fromStream(await request.send());
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> body = json.decode(response.body);
+      return Future<String?>.value(body['url']);
+    } else {
+      return Future<String?>.value(null);
+    }
+  }
 
   Future<bool> likePostRequest(String postId) async {
     try {
@@ -293,7 +310,7 @@ class RESTService extends ChangeNotifier {
         if (user.userId == userStatus['userId']) {
           user.userName = userStatus['userName'];
           user.isOnline = userStatus['isOnline'];
-          user.lastSeen = DateTime.parse(userStatus['lastSeen']);
+          user.lastSeen = userStatus['lastSeen'] as DateTime?;
         }
       }
     }
@@ -340,8 +357,8 @@ class RESTService extends ChangeNotifier {
 
   Future<bool> getJobsRequest({bool listen = false}) async {
     try {
-      http.Response response = await http
-          .get(Uri.http(urlHost, '/api/v1/jobs/${authenticator!.getUserId}'));
+      http.Response response =
+          await http.get(Uri.http(urlHost, '/api/v1/jobs'));
 
       if (response.statusCode == 200) {
         _populateJobs(response.body, listen);
@@ -355,9 +372,28 @@ class RESTService extends ChangeNotifier {
     }
   }
 
+  Future<bool> postJobRequest(Map<String, dynamic> body) async {
+    try {
+      http.Response response = await http.post(
+          Uri.http(urlHost, '/api/v1/jobs'),
+          headers: <String, String>{'Content-Type': 'application/json'},
+          body: json.encode(body));
+
+      if (response.statusCode == 200) {
+        await getJobsRequest(listen: true);
+        return Future<bool>.value(true);
+      } else
+        // ignore: curly_braces_in_flow_control_structures
+        return Future<bool>.value(false);
+    } on Exception catch (error) {
+      debugPrint(error.toString());
+      return Future<bool>.value(false);
+    }
+  }
+
   void _populateJobs(String body, bool listen) {
     Map<String, dynamic> decodedJsonBody = json.decode(body);
-    List<dynamic> jobs = decodedJsonBody['jobs'];
+    List<dynamic> jobs = decodedJsonBody['data'];
 
     for (Map<String, dynamic> job in jobs) {
       List<String> workers = (job['workers'] as List<dynamic>)
@@ -372,6 +408,7 @@ class RESTService extends ChangeNotifier {
           // ignore: always_specify_types
           .map((worker) => worker as String)
           .toList();
+
       jobController!.addJob(
           Job(
               job['_id'],
@@ -382,7 +419,10 @@ class RESTService extends ChangeNotifier {
               requirements,
               // ignore: always_specify_types
               double.parse(job['earnings'].toString()),
-              job['owner'],
+              // ignore: avoid_dynamic_calls
+              User(job['owner']['_id'],
+                  userName:
+                      '${job['owner']['firstName']}${job['owner']['lastName']}'),
               job['paymentVerified'],
               pendingWorkers),
           listen);
@@ -423,7 +463,7 @@ class RESTService extends ChangeNotifier {
   Future<bool> applyJobRequest(String jobId, Map<String, dynamic> body) async {
     try {
       http.Response response = await http.post(
-          Uri.http(urlHost, '/api/v1/jobs/$jobId/apply'),
+          Uri.http(urlHost, '/api/v1/jobs/apply/$jobId'),
           headers: <String, String>{'Content-Type': 'application/json'},
           body: json.encode(body));
 
@@ -441,7 +481,7 @@ class RESTService extends ChangeNotifier {
   Future<bool> jobReadyRequest(String jobId, Map<String, dynamic> body) async {
     try {
       http.Response response = await http.put(
-          Uri.http(urlHost, '/api/v1/jobs/$jobId/ready'),
+          Uri.http(urlHost, '/api/v1/jobs/ready/$jobId'),
           headers: <String, String>{'Content-Type': 'application/json'},
           body: json.encode(body));
 
@@ -461,7 +501,7 @@ class RESTService extends ChangeNotifier {
     try {
       http.Response response = await http.put(
           Uri.http(urlHost,
-              '/api/v1/workspaces/projects/$projectId/updateTaskStatus'),
+              '/api/v1/workspaces/projects/updateTaskStatus/$projectId'),
           headers: <String, String>{'Content-Type': 'application/json'},
           body: json.encode(body));
 
@@ -538,9 +578,9 @@ class RESTService extends ChangeNotifier {
     _profileInfo = decodedJsonBody['profile'];
     _populateJobsFromProfile(_profileInfo['jobs'], false);
   }
-  
+
   //TODO: Implement approve request for recruiter
-  
+
   Future<bool> getProjectsRequest({bool listen = false}) async {
     try {
       http.Response response = await http.get(Uri.http(

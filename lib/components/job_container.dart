@@ -101,6 +101,7 @@ class JobContainer extends StatelessWidget {
                       label: job.isPaymentVerified
                           ? GestureDetector(
                               onTap: () {
+                                //TODO: Display payment information when job is verified
                                 showModalBottomSheet(
                                     context: context,
                                     builder: (BuildContext context) => SizedBox(

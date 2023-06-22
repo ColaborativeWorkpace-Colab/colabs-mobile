@@ -68,6 +68,8 @@ class SignupScreen extends StatelessWidget {
                         width: screenWidth * .4,
                         height: 50,
                         child: ListTile(
+                          horizontalTitleGap: 1,
+                          contentPadding: EdgeInsets.zero,
                           title: const Text('Freelancer',
                               style: TextStyle(fontSize: 13)),
                           leading: Radio<UserType?>(
@@ -80,9 +82,11 @@ class SignupScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(
-                        width: screenWidth * .38,
+                        width: screenWidth * .35,
                         height: 50,
                         child: ListTile(
+                            horizontalTitleGap: 1,
+                            contentPadding: EdgeInsets.zero,
                             title: const Text('Recruiter',
                                 style: TextStyle(fontSize: 13)),
                             leading: Radio<UserType?>(
@@ -96,44 +100,19 @@ class SignupScreen extends StatelessWidget {
                     ]),
                   ),
                   const SizedBox(height: 15),
-                  SizedBox(
-                    width: screenWidth * .95,
-                    child: Row(
-                      children: <Widget>[
-                        Checkbox(
-                            value: authenticator.hasUserAgreed,
-                            onChanged: (bool? value) {
-                              authenticator.setHasUserAgreed = value!;
-                            }),
-                        Column(
-                          children: <Widget>[
-                            const Text("Yes, I understand and agree to the"),
-                            const Text(
-                                " Colabs Terms of Service, including the "),
-                            Row(
-                              children: <Widget>[
-                                InkWell(
-                                  child: const Text("User Agreement",
-                                      style:
-                                          TextStyle(color: Colors.blueAccent)),
-                                  onTap: () {
-                                    //TODO: Show user agreement
-                                  },
-                                ),
-                                const Text(' and '),
-                                InkWell(
-                                    child: const Text("Privacy Policy",
-                                        style: TextStyle(
-                                            color: Colors.blueAccent)),
-                                    onTap: () {
-                                      //TODO: Show privacy policy
-                                    })
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                  Row(
+                    children: <Widget>[
+                      Checkbox(
+                          value: authenticator.hasUserAgreed,
+                          onChanged: (bool? value) {
+                            authenticator.setHasUserAgreed = value!;
+                          }),
+                      SizedBox(
+                        width: screenWidth * .55,
+                        child: const Text(
+                            "Yes, I understand and agree to the Colabs Terms of Service."),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 15),
                   ElevatedButton(

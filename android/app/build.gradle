@@ -51,6 +51,7 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        manifestPlaceholders += [auth0Domain: "dev-2v754txtnd1f4zcy.us.auth0.com", auth0Scheme: "colabs.mobile"]
     }
 
     buildTypes {

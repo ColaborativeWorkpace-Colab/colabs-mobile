@@ -48,7 +48,7 @@ class JobView extends StatelessWidget {
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 24)),
               ),
-              Text(job.owner),
+              Text(job.owner.userName!),
               Container(
                   alignment: Alignment.centerLeft,
                   margin:
