@@ -138,7 +138,8 @@ class ConnectionsGridView extends StatelessWidget {
                           style: ElevatedButton.styleFrom(
                               shape: const CircleBorder()),
                           child: const CircleAvatar(
-                              radius: 50, backgroundColor: Colors.black)),
+                            //TODO: Get user profile image
+                              radius: 50, backgroundColor: Colors.black, )),
                       if (layoutOption == ConnectionsLayoutOptions.tag ||
                           layoutOption == ConnectionsLayoutOptions.add)
                         toggleTaggedMark(context, index)

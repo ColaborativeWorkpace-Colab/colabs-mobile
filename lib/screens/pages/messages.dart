@@ -55,6 +55,7 @@ class MessagesPage extends StatelessWidget {
                                   shape: const RoundedRectangleBorder(
                                       side: BorderSide(
                                           color: Colors.grey, width: 0.5)),
+                                  //TODO: Get user profile image
                                   leading: const CircleAvatar(radius: 27),
                                   title: Container(
                                     margin: const EdgeInsets.only(bottom: 15),
@@ -63,7 +64,7 @@ class MessagesPage extends StatelessWidget {
                                         overflow: TextOverflow.fade,
                                         style: const TextStyle(
                                             fontSize: 15,
-                                            fontWeight: FontWeight.bold)),
+                                            fontWeight: FontWeight.bold))
                                   ),
                                   subtitle: Text(
                                       (messages[0]
@@ -105,7 +106,7 @@ class MessagesPage extends StatelessWidget {
                                                         .getChats[index],
                                                     user: user)));
                                   }));
-                        }),
+                        })
                   )
                 : Positioned(
                     top: screenHeight * .25,
@@ -137,7 +138,7 @@ class MessagesPage extends StatelessWidget {
                                       width: 20,
                                       height: 20,
                                       child: CircularProgressIndicator(
-                                          color: Colors.white),
+                                          color: Colors.white)
                                     ))
                         ]))),
             Positioned(
@@ -157,7 +158,7 @@ class MessagesPage extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                           shape: const CircleBorder(),
                           padding: const EdgeInsets.all(20)),
-                      child: const Icon(Icons.edit),
+                      child: const Icon(Icons.edit)
                     )))
           ]))
     ]));

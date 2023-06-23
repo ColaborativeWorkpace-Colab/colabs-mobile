@@ -13,13 +13,7 @@ class SocialPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     RESTService restService = Provider.of<RESTService>(context);
-    LayoutController layoutController = Provider.of<LayoutController>(context);
-    Authenticator authenticator = Provider.of<Authenticator>(context);
-
-    if (authenticator.isUserAuthorized) {
-      Future<void>.delayed(
-          const Duration(seconds: 1), () => layoutController.refresh(false));
-    }
+  
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
 

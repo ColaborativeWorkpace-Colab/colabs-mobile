@@ -148,6 +148,7 @@ class _JobApplicationContainerState extends State<JobApplicationContainer>
                               restServiceInModal.jobReadyRequest(
                                   // ignore: always_specify_types
                                   widget.job.jobId,
+                                  // ignore: always_specify_types
                                   {
                                     "projectShas": restServiceInModal
                                         .getQueuedProjectFiles
@@ -165,9 +166,12 @@ class _JobApplicationContainerState extends State<JobApplicationContainer>
                                 restServiceInModal.clearQueue();
                                 Navigator.pop(context);
                               }).whenComplete(() {
-                                chatWithConnection(context, widget.job.owner.userName!);
+                                chatWithConnection(
+                                    context, widget.job.owner.userName!);
                                 sendPrivateMessage(
-                                    context, getChat(context, widget.job.owner.userName!),
+                                    context,
+                                    getChat(
+                                        context, widget.job.owner.userName!),
                                     message:
                                         'job_completed:${widget.job.jobId},${widget.job.jobTitle}${restServiceInModal.getQueuedProjectFiles.join(',')}');
                               });
@@ -363,20 +367,14 @@ class _JobApplicationContainerState extends State<JobApplicationContainer>
                                     ? 'By Milestone'
                                     : 'By Project'
                               }).then((bool requestSuccess) {
-                                // if (requestSuccess) {
-                                //   widget.job.pendingWorkers
-                                //       .add(authenticator.getUserId!);
-                                // }
+                                if (requestSuccess) {
+                                  widget.job.pendingWorkers
+                                      .add(authenticator.getUserId!);
+                                  widget.job.status = JobStatus.pending;
+                                  layoutController.refresh(true);
+                                }
 
-                                widget.job.pendingWorkers
-                                    .add(authenticator.getUserId!);
-                                widget.job.status = JobStatus.pending;
-                                layoutController.refresh(true);
                                 _toggleContainer();
-                              }).whenComplete(() async {
-                                await Future.delayed(Duration(seconds: 5));
-                                widget.job.status = JobStatus.active;
-                                layoutController.refresh(true);
                               });
                             },
                             child: const Text('Submit Proposal')))

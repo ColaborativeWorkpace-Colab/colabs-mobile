@@ -28,7 +28,7 @@ class AttachementViewer extends StatelessWidget {
                     onPressed: () async {
                       try {
                         FilePickerResult? result = await FilePicker.platform
-                            .pickFiles(allowMultiple: true);
+                            .pickFiles(allowMultiple: false);
 
                         if (result != null) {
                           List<File> files = result.paths

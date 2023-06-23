@@ -14,6 +14,7 @@ import 'package:provider/provider.dart';
 class PostContainer extends StatelessWidget {
   String? postOwner;
   String? postOwnerOccupation;
+  String? ownerImageUrl;
   final Post post;
   PostContainer({super.key, required this.post});
 
@@ -29,6 +30,7 @@ class PostContainer extends StatelessWidget {
       postOwner =
           '${restService.getProfileInfo['firstName']} ${restService.getProfileInfo['lastName']}';
       postOwnerOccupation = restService.getProfileInfo['occupation'];
+      ownerImageUrl = restService.getProfileInfo['imageUrl'];
     } else {
       if (post.misc.isEmpty) {
         restService
@@ -38,12 +40,14 @@ class PostContainer extends StatelessWidget {
           if (value is Map<String, dynamic>) {
             post.misc.add('${value['firstName']} ${value['lastName']}');
             post.misc.add(value['occupation']);
+            post.misc.add(value['imageUrl']);
             layoutController.refresh(true);
           }
         });
       } else {
         postOwner = post.misc[0];
         postOwnerOccupation = post.misc[1];
+        ownerImageUrl = post.misc[2];
       }
     }
 
@@ -60,8 +64,13 @@ class PostContainer extends StatelessWidget {
                 Row(children: <Widget>[
                   Container(
                       margin: const EdgeInsets.all(10),
-                      child: const CircleAvatar(
-                          radius: 25, backgroundColor: Colors.black)),
+                      child: CircleAvatar(
+                          radius: 25,
+                          backgroundColor: Colors.black,
+                          backgroundImage: ownerImageUrl != null
+                              ? Image.network(ownerImageUrl!).image
+                              : const AssetImage(
+                                  'assets/images/profile_placeholder.png'))),
                   Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
@@ -86,12 +95,18 @@ class PostContainer extends StatelessWidget {
                             child: const Text('Donate')))
                     : const SizedBox()
               ]),
-          Container(
-              margin: const EdgeInsets.all(10), child: Text(post.textContent)),
+          post.textContent.isNotEmpty
+              ? Container(
+                  margin: const EdgeInsets.all(10),
+                  child: Text(post.textContent))
+              : const SizedBox(),
           Image(
-              fit: BoxFit.cover,
+              fit: BoxFit.contain,
               height: screenHeight * .4,
-              image: const AssetImage('assets/images/placeholder.png')),
+              width: screenWidth,
+              image: post.imageContentUrl.isNotEmpty
+                  ? Image.network(post.imageContentUrl).image
+                  : const AssetImage('assets/images/placeholder.png')),
           Container(
               margin: const EdgeInsets.all(10),
               height: 20,

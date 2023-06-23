@@ -48,7 +48,7 @@ class Authenticate extends StatelessWidget {
                         borderRadius: BorderRadius.circular(5))),
                 onPressed: () {
                   //FIXME: Revert to original
-                  authenticator.getGithubToken().then((value) {
+                  authenticator.getGithubToken().then((void value) {
                     initServices(context);
                     authenticator.setIsAuthorized = true;
                   });

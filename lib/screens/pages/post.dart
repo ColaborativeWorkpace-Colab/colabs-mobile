@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:colabs_mobile/components/attachement_viewer.dart';
 import 'package:colabs_mobile/components/connections_grid_view.dart';
 import 'package:colabs_mobile/controllers/content_controller.dart';
@@ -36,7 +35,14 @@ class PostPage extends StatelessWidget {
         Row(children: <Widget>[
           Container(
               margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-              child: const CircleAvatar(radius: 25)),
+              child: CircleAvatar(
+                  radius: 25,
+                  backgroundImage: restService.getProfileInfo['imageUrl'] !=
+                          null
+                      ? Image.network(restService.getProfileInfo['imageUrl'])
+                          .image
+                      : const AssetImage(
+                          'assets/images/profile_placeholder.png'))),
           const Text('User')
         ]),
         Row(children: <Widget>[
@@ -198,8 +204,7 @@ class PostPage extends StatelessWidget {
                           builder: (BuildContext context) =>
                               const AttachementViewer());
                     },
-                    child: const Icon(Icons.attachment_rounded,
-                        color: Color(0xFF5521B5))),
+                    child: const Icon(Icons.image, color: Color(0xFF5521B5))),
                 (contentController.getAttachments.isNotEmpty)
                     ? Positioned(
                         bottom: 1,
@@ -236,15 +241,13 @@ class PostPage extends StatelessWidget {
 
                         Future<void>(() async {
                           for (File file in contentController.getAttachments) {
-                          
-                          await restService
-                              .uploadImage(file)
-                              .then((String? url) {
-                            if (url != null) {
-                              
-                              imageUrls.add(url);
-                            }
-                          });
+                            await restService
+                                .uploadImage(file)
+                                .then((String? url) {
+                              if (url != null) {
+                                imageUrls.add(url);
+                              }
+                            });
                           }
                         }).whenComplete(() {
                           if (imageUrls.length ==

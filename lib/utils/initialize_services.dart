@@ -28,7 +28,7 @@ Future<bool> initServices(BuildContext context, {bool reload = false}) {
 
   if (authenticator.isUserAuthorized) {
     if (!reload) chatController.initSocket();
-
+    
     restService
         .getProfileInfoRequest()
         .whenComplete(() => restService.getLastSeenRequest());
@@ -36,8 +36,7 @@ Future<bool> initServices(BuildContext context, {bool reload = false}) {
     restService.getMessagesRequest();
     restService.getProjectsRequest();
     restService.getJobsRequest();
-    restService.getLastSeenRequest();
   }
-  
+
   return Future<bool>.value(true);
 }

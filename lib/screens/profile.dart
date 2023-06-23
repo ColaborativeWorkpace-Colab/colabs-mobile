@@ -74,22 +74,29 @@ class ProfilePage extends StatelessWidget {
               Stack(children: <Widget>[
                 SizedBox(height: screenHeight * .31),
                 Positioned(
-                  child: Image(
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      height: screenHeight * .25,
-                      image: const AssetImage('assets/images/placeholder.png')),
-                ),
+                    child: Image(
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: screenHeight * .25,
+                        image:
+                            const AssetImage('assets/images/placeholder.png'))),
                 Positioned(
                     left: screenWidth * .38,
                     bottom: 1,
                     child: Hero(
                         tag:
                             'ProfileTag${layoutController.getSearchFilter.name}',
-                        child: const CircleAvatar(
-                          radius: 50,
-                          backgroundColor: Colors.black,
-                        )))
+                        child: CircleAvatar(
+                            radius: 50,
+                            backgroundColor: Colors.black,
+                            backgroundImage: restService
+                                        .getProfileInfo['imageUrl'] !=
+                                    null
+                                ? Image.network(
+                                        restService.getProfileInfo['imageUrl'])
+                                    .image
+                                : const AssetImage(
+                                    'assets/images/profile_placeholder.png'))))
               ]),
               Padding(
                   padding: const EdgeInsets.only(top: 16),
@@ -210,10 +217,15 @@ class ProfilePage extends StatelessWidget {
                                       margin: const EdgeInsets.only(bottom: 10),
                                       alignment: Alignment.bottomCenter,
                                       child: Text(
-                                          (restService.getProfileInfo['reviews'] != null) ? (restService.getProfileInfo['reviews']
-                                                  as List<dynamic>)
-                                              .length
-                                              .toString() : '',
+                                          (restService.getProfileInfo[
+                                                      'reviews'] !=
+                                                  null)
+                                              ? (restService.getProfileInfo[
+                                                          'reviews']
+                                                      as List<dynamic>)
+                                                  .length
+                                                  .toString()
+                                              : '',
                                           style: TextStyle(
                                             fontSize: 18,
                                             color: Colors.grey[700],
@@ -242,10 +254,13 @@ class ProfilePage extends StatelessWidget {
                                       margin: const EdgeInsets.only(bottom: 10),
                                       alignment: Alignment.bottomCenter,
                                       child: Text(
-                                          (restService.getProfileInfo['jobs'] != null) ? (restService.getProfileInfo['jobs']
-                                                  as List<dynamic>)
-                                              .length
-                                              .toString() : '',
+                                          (restService.getProfileInfo['jobs'] !=
+                                                  null)
+                                              ? (restService.getProfileInfo[
+                                                      'jobs'] as List<dynamic>)
+                                                  .length
+                                                  .toString()
+                                              : '',
                                           style: TextStyle(
                                             fontSize: 18,
                                             color: Colors.grey[700],
@@ -284,7 +299,10 @@ class ProfilePage extends StatelessWidget {
               Container(
                   padding: const EdgeInsets.all(16),
                   height: screenHeight * .3,
-                  child: (restService.getProfileInfo['skills'] != null ? restService.getProfileInfo['skills'] as List<dynamic> : <dynamic>[])
+                  child: (restService.getProfileInfo['skills'] != null
+                              ? restService.getProfileInfo['skills']
+                                  as List<dynamic>
+                              : <dynamic>[])
                           .isNotEmpty
                       ? GridView.builder(
                           shrinkWrap: true,

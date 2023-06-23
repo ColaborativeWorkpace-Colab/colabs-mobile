@@ -5,7 +5,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:oauth2_client/access_token_response.dart';
 import 'package:oauth2_client/github_oauth2_client.dart';
 import 'package:oauth2_client/google_oauth2_client.dart';
-import 'package:oauth2_client/oauth2_helper.dart';
 
 class Authenticator extends ChangeNotifier {
   final GitHubOAuth2Client githubClient = GitHubOAuth2Client(
@@ -24,10 +23,10 @@ class Authenticator extends ChangeNotifier {
 
   //TODO: Get valid github scope
   Future<void> getGithubToken() async {
-    final Credentials credentials = await auth0.webAuthentication().login(
+    Credentials credentials = await auth0.webAuthentication().login(
         redirectUrl:
             "colabs.mobile://dev-2v754txtnd1f4zcy.us.auth0.com/android/com.example.colabs_mobile/callback");
-    print(credentials.user.customClaims);
+    
     // return githubClient.getTokenWithAuthCodeFlow(
     //     clientId: dotenv.env['GITHUB_CLIENT_ID']!,
     //     clientSecret: dotenv.env['GITHUB_CLIENT_SECRET']!,

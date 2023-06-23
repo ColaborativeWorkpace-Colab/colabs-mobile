@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:cloudinary/cloudinary.dart';
 import 'package:colabs_mobile/controllers/authenticator.dart';
 import 'package:colabs_mobile/controllers/chat_controller.dart';
 import 'package:colabs_mobile/controllers/job_controller.dart';
@@ -18,6 +17,7 @@ import 'package:colabs_mobile/types/job_status.dart';
 import 'package:colabs_mobile/types/task_status.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+// ignore: depend_on_referenced_packages
 import 'package:http_parser/http_parser.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
@@ -33,11 +33,6 @@ class RESTService extends ChangeNotifier {
   final List<Post> _socialFeedPosts = <Post>[];
   final List<Post> _exploreFeedPosts = <Post>[];
   final List<String> _queuedProjectFiles = <String>[];
-  final Cloudinary cloudinary = Cloudinary.signedConfig(
-    apiKey: dotenv.env['CLOUDINARY_API_KEY']!,
-    apiSecret: dotenv.env['CLOUDINARY_API_SECRET']!,
-    cloudName: dotenv.env['CLOUDINARY_CLOUD_NAME']!,
-  );
   List<dynamic> commits = <dynamic>[];
   Map<String, dynamic> trees = <String, dynamic>{};
   // ignore: always_specify_types
@@ -133,8 +128,6 @@ class RESTService extends ChangeNotifier {
   }
 
   Future<String?> uploadImage(File file) async {
-    List<int> fileBytes = file.readAsBytesSync().toList();
-
     http.MultipartRequest request =
         http.MultipartRequest('POST', Uri.http(urlHost, '/api/v1/upload'))
           ..files.add(await http.MultipartFile.fromPath('image', file.path,
@@ -422,6 +415,7 @@ class RESTService extends ChangeNotifier {
               // ignore: avoid_dynamic_calls
               User(job['owner']['_id'],
                   userName:
+                      // ignore: avoid_dynamic_calls
                       '${job['owner']['firstName']}${job['owner']['lastName']}'),
               job['paymentVerified'],
               pendingWorkers),

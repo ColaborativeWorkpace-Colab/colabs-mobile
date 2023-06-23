@@ -1,4 +1,5 @@
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
+import 'package:colabs_mobile/controllers/authenticator.dart';
 import 'package:colabs_mobile/controllers/layout_controller.dart';
 import 'package:colabs_mobile/controllers/restservice.dart';
 import 'package:colabs_mobile/screens/pages/jobs.dart';
@@ -18,6 +19,12 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     LayoutController layoutController = Provider.of<LayoutController>(context);
     RESTService restService = Provider.of<RESTService>(context);
+    Authenticator authenticator = Provider.of<Authenticator>(context);
+    
+    if (authenticator.isUserAuthorized) {
+      Future<void>.delayed(
+          const Duration(seconds: 3), () => layoutController.refresh(false));
+    }
 
     return Scaffold(
         resizeToAvoidBottomInset: false,
@@ -69,19 +76,17 @@ class HomeScreen extends StatelessWidget {
                                 : Icons.folder_off,
                             color: Colors.blueGrey),
                         activeItem: Icon(
-                          restService.getProfileInfo['isVerified'] ?? false
-                              ? Icons.folder
-                              : Icons.folder_off,
-                          color: const Color(0xFF5521B5)
-                        ),
+                            restService.getProfileInfo['isVerified'] ?? false
+                                ? Icons.folder
+                                : Icons.folder_off,
+                            color: const Color(0xFF5521B5)),
                         itemLabel: 'Projects'),
                     BottomBarItem(
-                        inActiveItem:
-                            Icon(
-                              restService.getProfileInfo['isVerified'] ?? false
+                        inActiveItem: Icon(
+                            restService.getProfileInfo['isVerified'] ?? false
                                 ? Icons.work_outline
                                 : Icons.work_off,
-                               color: Colors.blueGrey),
+                            color: Colors.blueGrey),
                         activeItem: Icon(
                           restService.getProfileInfo['isVerified'] ?? false
                               ? Icons.work

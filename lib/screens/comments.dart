@@ -82,9 +82,14 @@ class Comments extends StatelessWidget {
                                             CrossAxisAlignment.start,
                                         children: <Widget>[
                                           //TODO: Load images
-                                          const Image(
-                                              image: AssetImage(
-                                                  'assets/images/placeholder.png')),
+                                          Image(
+                                              image: post.imageContentUrl
+                                                      .isNotEmpty
+                                                  ? Image.network(
+                                                          post.imageContentUrl)
+                                                      .image
+                                                  : const AssetImage(
+                                                      'assets/images/placeholder.png')),
                                           const SizedBox(height: 10),
                                           Text(data.content!)
                                         ]))));

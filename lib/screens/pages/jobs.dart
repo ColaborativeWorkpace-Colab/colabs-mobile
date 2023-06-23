@@ -35,8 +35,7 @@ class JobsPage extends StatelessWidget {
           width: screenWidth,
           child: Stack(children: <Widget>[
             (jobController.getJobs.isNotEmpty)
-                ? Expanded(
-                    child: RefreshIndicator(
+                ? RefreshIndicator(
                     onRefresh: () => initServices(context, reload: true)
                         .whenComplete(() => layoutController.refresh(true)),
                     child: ListView.builder(
@@ -45,8 +44,7 @@ class JobsPage extends StatelessWidget {
                         itemBuilder: (BuildContext context, int index) {
                           return JobContainer(
                               job: jobController.getJobs[index]);
-                        })
-                  ))
+                        }))
                 : Positioned(
                     top: screenHeight * .25,
                     left: screenWidth * .17,
