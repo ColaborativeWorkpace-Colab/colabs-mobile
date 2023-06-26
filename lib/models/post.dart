@@ -4,7 +4,7 @@ class Post {
   final String postId;
   final String textContent;
   final String imageContentUrl;
-  final String postOwnerId;
+  final String? postOwnerId;
   final DateTime timeStamp;
   final List<dynamic> likes;
   final List<String> tags;

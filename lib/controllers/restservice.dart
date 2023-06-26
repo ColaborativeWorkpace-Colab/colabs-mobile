@@ -71,7 +71,7 @@ class RESTService extends ChangeNotifier {
           .toList();
       Post post = Post(
           rawPost['_id'],
-          rawPost['userId'],
+          (rawPost['userId'] == null) ? rawPost['userId'] : null,
           rawPost['textContent'],
           rawPost['imageContent'],
           DateTime.parse(rawPost['createdAt']),
@@ -111,7 +111,7 @@ class RESTService extends ChangeNotifier {
   Future<bool> postContentRequest(Map<String, dynamic> body) async {
     try {
       http.Response response = await http.post(
-          Uri.http(urlHost, '/api/v1/social/${authenticator!.getUserId}'),
+          Uri.http(urlHost, '/api/v1/social'),
           headers: <String, String>{'Content-Type': 'application/json'},
           body: json.encode(body));
 
@@ -147,7 +147,7 @@ class RESTService extends ChangeNotifier {
   Future<bool> likePostRequest(String postId) async {
     try {
       http.Response response = await http.put(Uri.http(
-          urlHost, '/api/v1/social/${authenticator!.getUserId}/$postId/like'));
+          urlHost, '/api/v1/social/${authenticator!.getUserId}/like/$postId'));
 
       if (response.statusCode == 200)
         // ignore: curly_braces_in_flow_control_structures
@@ -165,7 +165,7 @@ class RESTService extends ChangeNotifier {
     try {
       http.Response response = await http.put(
           Uri.http(urlHost,
-              '/api/v1/social/${authenticator!.getUserId}/$postId/comment'),
+              '/api/v1/social/${authenticator!.getUserId}/comment/$postId'),
           headers: <String, String>{'Content-Type': 'application/json'},
           // ignore: always_specify_types
           body: json.encode({'comment': comment}));
@@ -229,6 +229,10 @@ class RESTService extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         _populateUserConnections(response.body);
+        await getMultipleProfilesRequest(_userConnections
+            .map((User user) => user.userId)
+            .toList());
+        
         return Future<bool>.value(true);
       } else {
         return Future<bool>.value(false);
@@ -338,8 +342,8 @@ class RESTService extends ChangeNotifier {
           rawMessage['messageId'],
           rawMessage['sender'],
           rawMessage['message'],
-          DateTime.fromMicrosecondsSinceEpoch(
-              (rawMessage['timestamp'] as int) * 1000),
+          rawMessage['timestamp'] != null ? DateTime.fromMicrosecondsSinceEpoch(
+              (rawMessage['timestamp'] as int) * 1000) : null,
           rawUnreadMessages.contains(rawMessage['messageId'] as String)
               ? false
               : true));
@@ -540,12 +544,33 @@ class RESTService extends ChangeNotifier {
       {bool listen = false}) async {
     try {
       http.Response response = await http.put(
-          Uri.http(urlHost, '/api/v1/profile/${authenticator!.getUserId}'),
+          Uri.http(urlHost, '/api/v1/profile/edit/${authenticator!.getUserId}'),
           headers: <String, String>{'Content-Type': 'application/json'},
           // ignore: always_specify_types
           body: json.encode({'data': body}));
 
       if (response.statusCode == 200) {
+        return Future<bool>.value(true);
+      } else {
+        return Future<bool>.value(false);
+      }
+    } on Exception catch (error) {
+      debugPrint(error.toString());
+      return Future<bool>.value(false);
+    }
+  }
+
+  Future<bool> getMultipleProfilesRequest(List<String> body,
+      {bool listen = false}) async {
+    try {
+      http.Response response =
+          await http.post(Uri.http(urlHost, '/api/v1/profile/data'),
+              headers: <String, String>{'Content-Type': 'application/json'},
+              // ignore: always_specify_types
+              body: json.encode({'userIds': body}));
+
+      if (response.statusCode == 200) {
+        print(response.body);
         return Future<bool>.value(true);
       } else {
         return Future<bool>.value(false);

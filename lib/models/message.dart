@@ -1,6 +1,6 @@
 class Message {
   final String messageId;
-  final DateTime timeStamp;
+  final DateTime? timeStamp;
   final String messageText;
   final String senderId;
   bool isRead;

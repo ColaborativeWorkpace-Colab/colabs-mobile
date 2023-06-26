@@ -1,4 +1,3 @@
-import 'package:colabs_mobile/components/authenticate.dart';
 import 'package:colabs_mobile/controllers/authenticator.dart';
 import 'package:colabs_mobile/types/user_type.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +6,11 @@ import 'package:provider/provider.dart';
 class SignupScreen extends StatelessWidget {
   SignupScreen({super.key});
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     Authenticator authenticator = Provider.of<Authenticator>(context);
@@ -28,25 +32,27 @@ class SignupScreen extends StatelessWidget {
             ]),
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <
             Widget>[
-          const Authenticate(),
           Form(
               key: formKey,
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 20),
                 child: Column(children: <Widget>[
                   TextFormField(
+                      controller: firstNameController,
                       validator: (String? value) =>
                           value!.isEmpty ? "Enter your first name" : null,
                       decoration:
                           const InputDecoration(label: Text('First Name'))),
                   const SizedBox(height: 15),
                   TextFormField(
+                      controller: lastNameController,
                       validator: (String? value) =>
                           value!.isEmpty ? "Enter your last name" : null,
                       decoration:
                           const InputDecoration(label: Text('Last Name'))),
                   const SizedBox(height: 15),
                   TextFormField(
+                      controller: emailController,
                       validator: (String? value) => value!.isEmpty
                           ? "Enter your email"
                           : !value.contains(RegExp(
@@ -56,6 +62,7 @@ class SignupScreen extends StatelessWidget {
                       decoration: const InputDecoration(label: Text('Email'))),
                   const SizedBox(height: 15),
                   TextFormField(
+                      controller: passwordController,
                       validator: (String? value) =>
                           value!.isEmpty ? "Enter your password" : null,
                       decoration:
@@ -122,11 +129,18 @@ class SignupScreen extends StatelessWidget {
                         if (!isValid) return;
                         formKey.currentState!.save();
 
+                        authenticator.register(<String, dynamic>{
+                          "firstName": firstNameController.text,
+                          "lastName": lastNameController.text,
+                          "email": emailController.text,
+                          "password": passwordController.text
+                        }, authenticator.getUserType.name);
+
                         //TODO: Save an info if necessary
-                        Navigator.popUntil(
-                          context,
-                          ModalRoute.withName('/'),
-                        );
+                        // Navigator.popUntil(
+                        //   context,
+                        //   ModalRoute.withName('/'),
+                        // );
                       },
                       child: const Text('Sign Up'))
                 ]),
@@ -141,11 +155,11 @@ class SignupScreen extends StatelessWidget {
                   onTap: () {
                     Navigator.pop(context);
                   })
-            ],
+            ]
           ),
           const SizedBox(height: 50)
-        ]),
-      ),
+        ])
+      )
     ));
   }
 }

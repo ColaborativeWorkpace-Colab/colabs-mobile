@@ -60,7 +60,7 @@ class MessagesPage extends StatelessWidget {
                                   title: Container(
                                     margin: const EdgeInsets.only(bottom: 15),
                                     child: Text(
-                                        (user != null) ? user.userName! : '',
+                                        (user != null && user.userName != null) ? user.userName! : '',
                                         overflow: TextOverflow.fade,
                                         style: const TextStyle(
                                             fontSize: 15,
@@ -79,9 +79,9 @@ class MessagesPage extends StatelessWidget {
                                               : FontWeight.bold)),
                                   trailing: Column(children: <Widget>[
                                     const SizedBox(height: 10),
-                                    Text(DateFormat(
-                                            formatDate(messages[0].timeStamp))
-                                        .format(messages[0].timeStamp)),
+                                    messages[0].timeStamp != null ? Text(DateFormat(
+                                            formatDate(messages[0].timeStamp!))
+                                        .format(messages[0].timeStamp!)) : const SizedBox(),
                                     (messages[0].senderId !=
                                             authenticator.getUserId)
                                         ? Icon((messages[0].isRead)

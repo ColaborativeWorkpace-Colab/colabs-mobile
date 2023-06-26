@@ -5,13 +5,17 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:oauth2_client/access_token_response.dart';
 import 'package:oauth2_client/github_oauth2_client.dart';
 import 'package:oauth2_client/google_oauth2_client.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class Authenticator extends ChangeNotifier {
+  final String urlHost = dotenv.env['DEV_URL']!;
   final GitHubOAuth2Client githubClient = GitHubOAuth2Client(
       redirectUri: dotenv.env['GITHUB_CALLBACK_URL']!, customUriScheme: 'http');
 
   final GoogleOAuth2Client googleClient = GoogleOAuth2Client(
       redirectUri: dotenv.env['GOOGLE_CALLBACK_URL']!, customUriScheme: 'http');
+
   Auth0 auth0 = Auth0(
       'dev-2v754txtnd1f4zcy.us.auth0.com', 'gZEsWQ3VcaTMNpPmBVbxX4oqaRv9szCt');
   AccessTokenResponse? _accessToken;
@@ -26,7 +30,7 @@ class Authenticator extends ChangeNotifier {
     Credentials credentials = await auth0.webAuthentication().login(
         redirectUrl:
             "colabs.mobile://dev-2v754txtnd1f4zcy.us.auth0.com/android/com.example.colabs_mobile/callback");
-    
+
     // return githubClient.getTokenWithAuthCodeFlow(
     //     clientId: dotenv.env['GITHUB_CLIENT_ID']!,
     //     clientSecret: dotenv.env['GITHUB_CLIENT_SECRET']!,
@@ -39,6 +43,33 @@ class Authenticator extends ChangeNotifier {
         clientSecret: dotenv.env['GOOGLE_CLIENT_SECRET']!,
         scopes: <String>['profile'],
         afterAuthorizationCodeCb: () {});
+  }
+
+  Future<bool> login(Map<String, dynamic> body) async {
+    http.Response response = await http.post(
+        Uri.http(urlHost, '/api/v1/users/login'),
+        body: json.encode(body),
+        headers: <String, String>{'Content-Type': 'application/json'});
+
+    if (response.statusCode == 200) {
+      print(response.body);
+      return Future<bool>.value(true);
+    } else {
+      return Future<bool>.value(false);
+    }
+  }
+
+  Future<bool> register(Map<String, dynamic> body, String userType) async {
+    http.Response response = await http.post(Uri.http(urlHost, '/api/v1/users', <String, dynamic>{'type': userType, 'isMobile': 'true'}),
+        body: json.encode(body),
+        headers: <String, String>{'Content-Type': 'application/json'});
+
+    if (response.statusCode == 200) {
+      print(response.body);
+      return Future<bool>.value(true);
+    } else {
+      return Future<bool>.value(false);
+    }
   }
 
   set setAccessToken(AccessTokenResponse value) {
