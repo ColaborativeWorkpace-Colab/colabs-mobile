@@ -45,8 +45,8 @@ class RESTService extends ChangeNotifier {
 
   Future<bool> getSocialFeedRequest() async {
     try {
-      http.Response response = await http
-          .get(Uri.http(urlHost, '/api/v1/social/${authenticator!.getUserId}'));
+      http.Response response =
+          await http.get(Uri.http(urlHost, '/api/v1/social'));
 
       if (response.statusCode == 200) {
         _populateFeed(response.body, false);
@@ -62,7 +62,7 @@ class RESTService extends ChangeNotifier {
 
   void _populateFeed(String body, bool isExploring) {
     Map<String, dynamic> decodedJsonBody = json.decode(body);
-    List<dynamic> rawPosts = decodedJsonBody['posts'];
+    List<dynamic> rawPosts = decodedJsonBody['data'];
 
     for (Map<String, dynamic> rawPost in rawPosts) {
       List<String> tags = (rawPost['tags'] as List<dynamic>)
@@ -110,10 +110,13 @@ class RESTService extends ChangeNotifier {
 
   Future<bool> postContentRequest(Map<String, dynamic> body) async {
     try {
-      http.Response response = await http.post(
-          Uri.http(urlHost, '/api/v1/social'),
-          headers: <String, String>{'Content-Type': 'application/json'},
-          body: json.encode(body));
+      http.Response response =
+          await http.post(Uri.http(urlHost, '/api/v1/social'),
+              headers: <String, String>{
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ${authenticator!.getToken!}'
+              },
+              body: json.encode(body));
 
       if (response.statusCode == 200) {
         _addPost(response);
@@ -146,8 +149,12 @@ class RESTService extends ChangeNotifier {
 
   Future<bool> likePostRequest(String postId) async {
     try {
-      http.Response response = await http.put(Uri.http(
-          urlHost, '/api/v1/social/${authenticator!.getUserId}/like/$postId'));
+      http.Response response = await http.put(
+        Uri.http(urlHost, '/api/v1/social/like/$postId'),
+        headers: <String, String>{
+          'Authorization': 'Bearer ${authenticator!.getToken!}'
+        },
+      );
 
       if (response.statusCode == 200)
         // ignore: curly_braces_in_flow_control_structures
@@ -163,12 +170,14 @@ class RESTService extends ChangeNotifier {
 
   Future<bool> commentPostRequest(String postId, String comment) async {
     try {
-      http.Response response = await http.put(
-          Uri.http(urlHost,
-              '/api/v1/social/${authenticator!.getUserId}/comment/$postId'),
-          headers: <String, String>{'Content-Type': 'application/json'},
-          // ignore: always_specify_types
-          body: json.encode({'comment': comment}));
+      http.Response response =
+          await http.put(Uri.http(urlHost, '/api/v1/social/comment/$postId'),
+              headers: <String, String>{
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ${authenticator!.getToken!}'
+              },
+              // ignore: always_specify_types
+              body: json.encode({'comment': comment}));
 
       if (response.statusCode == 200)
         // ignore: curly_braces_in_flow_control_structures
@@ -224,15 +233,18 @@ class RESTService extends ChangeNotifier {
 
   Future<bool> getUserConnectionsRequest() async {
     try {
-      http.Response response = await http.get(Uri.http(
-          urlHost, '/api/v1/social/connections/${authenticator!.getUserId}'));
+      http.Response response = await http.get(
+        Uri.http(urlHost, '/api/v1/social/connections'),
+        headers: <String, String>{
+          'Authorization': 'Bearer ${authenticator!.getToken!}'
+        },
+      );
 
       if (response.statusCode == 200) {
         _populateUserConnections(response.body);
-        await getMultipleProfilesRequest(_userConnections
-            .map((User user) => user.userId)
-            .toList());
-        
+        await getMultipleProfilesRequest(
+            _userConnections.map((User user) => user.userId).toList());
+
         return Future<bool>.value(true);
       } else {
         return Future<bool>.value(false);
@@ -259,8 +271,8 @@ class RESTService extends ChangeNotifier {
 
   Future<bool> getMessagesRequest({bool listen = false}) async {
     try {
-      http.Response response = await http.get(
-          Uri.http(urlHost, '/api/v1/messaging/${authenticator!.getUserId}'));
+      http.Response response =
+          await http.get(Uri.http(urlHost, '/api/v1/messaging'));
 
       if (response.statusCode == 200) {
         _populateChats(response.body, listen);
@@ -283,7 +295,10 @@ class RESTService extends ChangeNotifier {
       http.Response response = await http.post(
           // ignore: always_specify_types
           body: json.encode({'userIds': userIds}),
-          headers: <String, String>{'Content-Type': 'application/json'},
+          headers: <String, String>{
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${authenticator!.getToken!}'
+          },
           Uri.http(urlHost, '/api/v1/messaging/lastSeen'));
 
       if (response.statusCode == 200) {
@@ -342,8 +357,10 @@ class RESTService extends ChangeNotifier {
           rawMessage['messageId'],
           rawMessage['sender'],
           rawMessage['message'],
-          rawMessage['timestamp'] != null ? DateTime.fromMicrosecondsSinceEpoch(
-              (rawMessage['timestamp'] as int) * 1000) : null,
+          rawMessage['timestamp'] != null
+              ? DateTime.fromMicrosecondsSinceEpoch(
+                  (rawMessage['timestamp'] as int) * 1000)
+              : null,
           rawUnreadMessages.contains(rawMessage['messageId'] as String)
               ? false
               : true));
@@ -371,10 +388,13 @@ class RESTService extends ChangeNotifier {
 
   Future<bool> postJobRequest(Map<String, dynamic> body) async {
     try {
-      http.Response response = await http.post(
-          Uri.http(urlHost, '/api/v1/jobs'),
-          headers: <String, String>{'Content-Type': 'application/json'},
-          body: json.encode(body));
+      http.Response response =
+          await http.post(Uri.http(urlHost, '/api/v1/jobs'),
+              headers: <String, String>{
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ${authenticator!.getToken!}'
+              },
+              body: json.encode(body));
 
       if (response.statusCode == 200) {
         await getJobsRequest(listen: true);
@@ -460,10 +480,13 @@ class RESTService extends ChangeNotifier {
 
   Future<bool> applyJobRequest(String jobId, Map<String, dynamic> body) async {
     try {
-      http.Response response = await http.post(
-          Uri.http(urlHost, '/api/v1/jobs/apply/$jobId'),
-          headers: <String, String>{'Content-Type': 'application/json'},
-          body: json.encode(body));
+      http.Response response =
+          await http.post(Uri.http(urlHost, '/api/v1/jobs/apply/$jobId'),
+              headers: <String, String>{
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ${authenticator!.getToken!}'
+              },
+              body: json.encode(body));
 
       if (response.statusCode == 200) {
         return Future<bool>.value(true);
@@ -565,10 +588,13 @@ class RESTService extends ChangeNotifier {
     try {
       http.Response response =
           await http.post(Uri.http(urlHost, '/api/v1/profile/data'),
-              headers: <String, String>{'Content-Type': 'application/json'},
+              headers: <String, String>{
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ${authenticator!.getToken!}'
+              },
               // ignore: always_specify_types
               body: json.encode({'userIds': body}));
-
+      print(body);
       if (response.statusCode == 200) {
         print(response.body);
         return Future<bool>.value(true);

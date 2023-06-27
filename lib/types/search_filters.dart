@@ -16,7 +16,7 @@ extension SearchExtension on SearchFilter {
       case SearchFilter.message:
         return 'Messages';
       default:
-        return '';
+        return 'Socials';
     }
   }
 }

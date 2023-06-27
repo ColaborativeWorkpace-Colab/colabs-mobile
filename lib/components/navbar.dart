@@ -18,37 +18,10 @@ class Navbar extends StatelessWidget {
           SizedBox(
               height: 50,
               width: screenWidth * .68,
-              child: TextField(
-                  style: const TextStyle(fontSize: 15),
-                  decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(
-                          vertical: 0, horizontal: 15),
-                      suffixIcon: IconButton(
-                          onPressed: () {
-                            switch (searchFilter) {
-                              case SearchFilter.social:
-                                //TODO: Go to explore page
-                                //TODO: Search Connections
-                                break;
-                              case SearchFilter.message:
-                                //TODO: Search messages
-                                //TODO: Search Connections
-                                break;
-                              case SearchFilter.project:
-                                //TODO: Search projects
-                                break;
-                              case SearchFilter.job:
-                                //TODO: Search job
-                                break;
-                              case SearchFilter.post:
-                                break;
-                            }
-                          },
-                          icon: const Icon(Icons.search_rounded)),
-                      hintText: 'Search ${searchFilter.name}',
-                      border: const OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(45)))))),
+              child: Container(
+                  margin: EdgeInsets.only(left: screenWidth * .35),
+                  child: Text(searchFilter.name,
+                      style: const TextStyle(fontSize: 20)))),
           Hero(
               tag: 'ProfileTag${searchFilter.name}',
               child: ElevatedButton(

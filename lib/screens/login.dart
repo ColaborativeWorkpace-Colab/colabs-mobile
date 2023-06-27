@@ -1,5 +1,6 @@
 import 'package:colabs_mobile/components/authenticate.dart';
 import 'package:colabs_mobile/controllers/authenticator.dart';
+import 'package:colabs_mobile/utils/initialize_services.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -64,9 +65,18 @@ class LoginScreen extends StatelessWidget {
                                   formKey.currentState!.save();
 
                                   //TODO: Save an info if necessary
-                                  authenticator.login({
+                                  authenticator.login(<String, dynamic>{
                                     "email": emailController.text,
                                     "password": passwordController.text
+                                  }).then((bool responseSuccessful) {
+                                    if (responseSuccessful) {
+                                      initServices(context);
+                                      
+                                      Navigator.popUntil(
+                                        context,
+                                        ModalRoute.withName('/'),
+                                      );
+                                    }
                                   });
                                   // Navigator.popUntil(
                                   //   context,

@@ -8,6 +8,8 @@ import 'package:oauth2_client/google_oauth2_client.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 class Authenticator extends ChangeNotifier {
   final String urlHost = dotenv.env['DEV_URL']!;
   final GitHubOAuth2Client githubClient = GitHubOAuth2Client(
@@ -16,6 +18,10 @@ class Authenticator extends ChangeNotifier {
   final GoogleOAuth2Client googleClient = GoogleOAuth2Client(
       redirectUri: dotenv.env['GOOGLE_CALLBACK_URL']!, customUriScheme: 'http');
 
+  Authenticator() {
+    _getPref();
+  }
+
   Auth0 auth0 = Auth0(
       'dev-2v754txtnd1f4zcy.us.auth0.com', 'gZEsWQ3VcaTMNpPmBVbxX4oqaRv9szCt');
   AccessTokenResponse? _accessToken;
@@ -23,7 +29,8 @@ class Authenticator extends ChangeNotifier {
   bool _isAuthorized = false;
   UserType _selectedUserType = UserType.freelancer;
   //TODO: Get UserId
-  final String _userId = '6493f06af7663ee7c3c486e4';
+  String? _userId;
+  String? _token;
 
   //TODO: Get valid github scope
   Future<void> getGithubToken() async {
@@ -52,15 +59,42 @@ class Authenticator extends ChangeNotifier {
         headers: <String, String>{'Content-Type': 'application/json'});
 
     if (response.statusCode == 200) {
-      print(response.body);
+      Map<String, dynamic> body = json.decode(response.body);
+
+      _token = body['token'];
+      // ignore: avoid_dynamic_calls
+      _userId = body['data']['_id'];
+      await setPref(<String, dynamic>{'token': _token, 'userId': _userId});
+      notifyListeners();
       return Future<bool>.value(true);
     } else {
       return Future<bool>.value(false);
     }
   }
 
+  Future<void> _getPref() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+
+    _token = pref.getString("token");
+    _userId = pref.getString("userId");
+
+    notifyListeners();
+  }
+
+  Future<bool> setPref(Map<String, dynamic> authInfo) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+
+    await pref.setString('token', authInfo['token']);
+    await pref.setString('userId', authInfo['userId']);
+
+    notifyListeners();
+    return Future<bool>.value(true);
+  }
+
   Future<bool> register(Map<String, dynamic> body, String userType) async {
-    http.Response response = await http.post(Uri.http(urlHost, '/api/v1/users', <String, dynamic>{'type': userType, 'isMobile': 'true'}),
+    http.Response response = await http.post(
+        Uri.http(urlHost, '/api/v1/users',
+            <String, dynamic>{'type': userType, 'isMobile': 'true'}),
         body: json.encode(body),
         headers: <String, String>{'Content-Type': 'application/json'});
 
@@ -96,4 +130,5 @@ class Authenticator extends ChangeNotifier {
   bool get hasUserAgreed => _hasUserAgreed;
   UserType get getUserType => _selectedUserType;
   String? get getUserId => _userId;
+  String? get getToken => _token;
 }

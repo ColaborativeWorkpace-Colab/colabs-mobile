@@ -17,7 +17,6 @@ class ConnectionsGridView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
-    double screenWidth = MediaQuery.of(context).size.width;
     RESTService restService = Provider.of<RESTService>(context);
     ContentController contentController =
         Provider.of<ContentController>(context);
@@ -27,73 +26,52 @@ class ConnectionsGridView extends StatelessWidget {
         height: screenHeight * .4,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
             Widget>[
-          Text(layoutOption.name, style: const TextStyle(fontSize: 17)),
-          Row(children: <Widget>[
-            Container(
-                margin:
-                    const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                height: 50,
-                width: layoutOption == ConnectionsLayoutOptions.send ||
+          Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(layoutOption.name, style: const TextStyle(fontSize: 17)),
+                layoutOption == ConnectionsLayoutOptions.send ||
                         layoutOption == ConnectionsLayoutOptions.add
-                    ? screenWidth * .72
-                    : screenWidth * .89,
-                child: TextField(
-                    onChanged: (String value) {
-                      //TODO: When searching, auto filter while typing for user
-                    },
-                    style: const TextStyle(fontSize: 15),
-                    decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 0, horizontal: 15),
-                        suffixIcon: IconButton(
-                            onPressed: () {},
-                            icon: const Icon(Icons.search_rounded)),
-                        hintText: 'Search Connections',
-                        border: const OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(45)))))),
-            layoutOption == ConnectionsLayoutOptions.send ||
-                    layoutOption == ConnectionsLayoutOptions.add
-                ? ElevatedButton(
-                    onPressed: () {
-                      if (layoutOption == ConnectionsLayoutOptions.add) {
-                        List<String> newMembers = <String>[];
+                    ? ElevatedButton(
+                        onPressed: () {
+                          if (layoutOption == ConnectionsLayoutOptions.add) {
+                            List<String> newMembers = <String>[];
 
-                        for (String newMember
-                            in contentController.getTaggedUsers) {
-                          if (!project!.members.contains(newMember)) {
-                            newMembers.add(newMember);
-                          }
-                        }
+                            for (String newMember
+                                in contentController.getTaggedUsers) {
+                              if (!project!.members.contains(newMember)) {
+                                newMembers.add(newMember);
+                              }
+                            }
 
-                        if (newMembers.isNotEmpty) {
-                          // ignore: always_specify_types
-                          restService.addMembersRequest(project!.projectId, {
-                            "workerIds": newMembers.join(',')
-                          }).then((bool requestSuccessful) {
-                            if (requestSuccessful) {
-                              project!.members
-                                  .addAll(contentController.getTaggedUsers);
-                              contentController.clearInputs();
+                            if (newMembers.isNotEmpty) {
+                              // ignore: always_specify_types
+                              restService.addMembersRequest(
+                                  project!.projectId, {
+                                "workerIds": newMembers.join(',')
+                              }).then((bool requestSuccessful) {
+                                if (requestSuccessful) {
+                                  project!.members
+                                      .addAll(contentController.getTaggedUsers);
+                                  contentController.clearInputs();
 
+                                  Navigator.pop(context);
+                                }
+                              });
+                            } else {
                               Navigator.pop(context);
                             }
-                          });
-                        } else {
-                          Navigator.pop(context);
-                        }
-                      }
+                          }
 
-                      if (layoutOption == ConnectionsLayoutOptions.send) {
-                        //TODO: Send message to group chat
-                        
-                      }
-                    },
-                    child: layoutOption == ConnectionsLayoutOptions.add
-                        ? const Text('Add')
-                        : const Text('Send'))
-                : const SizedBox()
-          ]),
+                          if (layoutOption == ConnectionsLayoutOptions.send) {
+                            //TODO: Send message to group chat
+                          }
+                        },
+                        child: layoutOption == ConnectionsLayoutOptions.add
+                            ? const Text('Add')
+                            : const Text('Send'))
+                    : const SizedBox()
+              ]),
           SizedBox(
               height: screenHeight * .27,
               child: GridView.builder(
@@ -139,7 +117,8 @@ class ConnectionsGridView extends StatelessWidget {
                               shape: const CircleBorder()),
                           child: const CircleAvatar(
                             //TODO: Get user profile image
-                              radius: 50, backgroundColor: Colors.black, )),
+                            radius: 50, backgroundColor: Colors.black,
+                          )),
                       if (layoutOption == ConnectionsLayoutOptions.tag ||
                           layoutOption == ConnectionsLayoutOptions.add)
                         toggleTaggedMark(context, index)

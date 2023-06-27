@@ -74,7 +74,7 @@ class Comments extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(20),
                                 color: Colors.white),
                             child: ListTile(
-                                title: Text(data.userName!),
+                                title: Text(data.userName ?? ''),
                                 subtitle: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Column(
