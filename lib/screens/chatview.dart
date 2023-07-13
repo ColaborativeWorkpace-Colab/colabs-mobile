@@ -27,8 +27,10 @@ class ChatView extends StatelessWidget {
         appBar: AppBar(
             title: Row(children: <Widget>[
               const CircleAvatar(
-                backgroundColor: Colors.black,
-              ),
+                              radius: 20,
+                              backgroundColor: Colors.black,
+                              backgroundImage:  AssetImage(
+                                      'assets/images/profile_placeholder.png')),
               const SizedBox(width: 10),
               Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

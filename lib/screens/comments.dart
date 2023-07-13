@@ -50,11 +50,19 @@ class Comments extends StatelessWidget {
                       avatarRoot: (BuildContext context, Comment data) =>
                           const PreferredSize(
                               preferredSize: Size(50, 50),
-                              child: CircleAvatar()),
+                              child: CircleAvatar(
+                                  radius: 20,
+                                  backgroundColor: Colors.black,
+                                  backgroundImage: AssetImage(
+                                      'assets/images/profile_placeholder.png'))),
                       avatarChild: (BuildContext context, Comment data) =>
                           const PreferredSize(
                               preferredSize: Size(50, 50),
-                              child: CircleAvatar()),
+                              child: CircleAvatar(
+                                  radius: 20,
+                                  backgroundColor: Colors.black,
+                                  backgroundImage: AssetImage(
+                                      'assets/images/profile_placeholder.png'))),
                       contentChild: (BuildContext context, Comment data) {
                         return Container(
                             margin: const EdgeInsets.only(bottom: 10),

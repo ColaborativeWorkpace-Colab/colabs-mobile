@@ -173,7 +173,11 @@ class PostPage extends StatelessWidget {
                                         1) *
                                     10,
                             //TODO: Add user pictures
-                            child: const CircleAvatar())),
+                            child: const CircleAvatar(
+                                radius: 20,
+                                backgroundColor: Colors.black,
+                                backgroundImage: AssetImage(
+                                    'assets/images/profile_placeholder.png')))),
                     ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.all(10),

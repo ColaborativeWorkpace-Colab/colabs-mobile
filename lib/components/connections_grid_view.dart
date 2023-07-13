@@ -47,7 +47,7 @@ class ConnectionsGridView extends StatelessWidget {
                             if (newMembers.isNotEmpty) {
                               // ignore: always_specify_types
                               restService.addMembersRequest(
-                                  project!.projectId, {
+                                  project!.projectId, <String, dynamic>{
                                 "workerIds": newMembers.join(',')
                               }).then((bool requestSuccessful) {
                                 if (requestSuccessful) {
@@ -116,9 +116,10 @@ class ConnectionsGridView extends StatelessWidget {
                           style: ElevatedButton.styleFrom(
                               shape: const CircleBorder()),
                           child: const CircleAvatar(
-                            //TODO: Get user profile image
-                            radius: 50, backgroundColor: Colors.black,
-                          )),
+                              radius: 20,
+                              backgroundColor: Colors.black,
+                              backgroundImage:  AssetImage(
+                                      'assets/images/profile_placeholder.png'))),
                       if (layoutOption == ConnectionsLayoutOptions.tag ||
                           layoutOption == ConnectionsLayoutOptions.add)
                         toggleTaggedMark(context, index)

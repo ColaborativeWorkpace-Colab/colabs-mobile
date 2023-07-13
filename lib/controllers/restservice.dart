@@ -607,6 +607,48 @@ class RESTService extends ChangeNotifier {
     }
   }
 
+  Future<bool> initiatePayment(List<String> body,
+      {bool listen = false}) async {
+    try {
+      http.Response response =
+          await http.post(Uri.http(urlHost, '/api/v1/chapa/init'),
+              headers: <String, String>{
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ${authenticator!.getToken!}'
+              },
+              // ignore: always_specify_types
+              body: json.encode(body));
+      
+      if (response.statusCode == 200) {
+        return Future<bool>.value(true);
+      } else {
+        return Future<bool>.value(false);
+      }
+    } on Exception catch (error) {
+      debugPrint(error.toString());
+      return Future<bool>.value(false);
+    }
+  }
+
+  Future<bool> requestPayment(String projectId, {bool listen = false}) async {
+    try {
+      http.Response response =
+          await http.put(Uri.http(urlHost, '/api/v1/projects/request-payment/$projectId'),
+              headers: <String, String>{
+                'Authorization': 'Bearer ${authenticator!.getToken!}'
+              });
+
+      if (response.statusCode == 200) {
+        return Future<bool>.value(true);
+      } else {
+        return Future<bool>.value(false);
+      }
+    } on Exception catch (error) {
+      debugPrint(error.toString());
+      return Future<bool>.value(false);
+    }
+  }
+
   void updateProfileInfo(Map<String, dynamic> updatedInfo) {
     _profileInfo['firstName'] = updatedInfo['firstName'];
     _profileInfo['lastName'] = updatedInfo['lastName'];

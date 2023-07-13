@@ -56,7 +56,11 @@ class MessagesPage extends StatelessWidget {
                                       side: BorderSide(
                                           color: Colors.grey, width: 0.5)),
                                   //TODO: Get user profile image
-                                  leading: const CircleAvatar(radius: 27),
+                                  leading: const CircleAvatar(
+                              radius: 27,
+                              backgroundColor: Colors.black,
+                              backgroundImage:  AssetImage(
+                                      'assets/images/profile_placeholder.png')),
                                   title: Container(
                                     margin: const EdgeInsets.only(bottom: 15),
                                     child: Text(
